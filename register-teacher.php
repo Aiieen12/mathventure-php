@@ -1,0 +1,123 @@
+<?php include 'config.php'; ?>
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <title>Mathventure | Daftar Masuk Guru</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="stylesheet" href="asset/css/login-style.css">
+</head>
+<body>
+
+<div class="reg-page-wrapper">
+    <!-- butang sound + audio DI DALAM wrapper -->
+    <button class="mute-btn" id="muteBtn">🔊</button>
+    <audio id="bgAudio" src="asset/audio/login-theme.mp3" loop></audio>
+
+    <div class="reg-card-glass">
+
+        <div class="reg-header">
+            <div class="reg-title-icon">🦕</div>
+            <h1 class="reg-title">Daftar Masuk Guru</h1>
+        </div>
+
+        <?php if (isset($_SESSION['error'])): ?>
+            <div class="alert-error">
+                <?php 
+                    echo $_SESSION['error']; 
+                    unset($_SESSION['error']);
+                ?>
+            </div>
+        <?php endif; ?>
+
+        <form action="auth/register_teacher_process.php" method="POST" class="reg-form">
+
+            <!-- BLOK 1: Maklumat asas -->
+            <h2 class="reg-section-title">Maklumat Peribadi</h2>
+
+            <div class="reg-grid-2">
+                <div class="reg-field">
+                    <label class="reg-label">Nama Pertama</label>
+                    <input type="text" name="firstname" class="reg-input" required>
+                </div>
+
+                <div class="reg-field">
+                    <label class="reg-label">Nama Terakhir</label>
+                    <input type="text" name="lastname" class="reg-input" required>
+                </div>
+
+                <div class="reg-field">
+                    <label class="reg-label">Tarikh Lahir</label>
+                    <input type="date" name="dob" class="reg-input">
+                </div>
+            </div>
+
+            <div class="reg-field reg-field-full">
+                <label class="reg-label">Biodata</label>
+                <textarea name="bio" class="reg-textarea" rows="3" placeholder="Sedikit tentang diri anda..."></textarea>
+            </div>
+
+            <hr class="reg-divider">
+
+            <!-- BLOK 2: Akaun log masuk -->
+            <h2 class="reg-section-title">Maklumat Akaun</h2>
+
+            <div class="reg-grid-2 reg-grid-2-bottom">
+                <div class="reg-field">
+                    <label class="reg-label">Nama Pengguna</label>
+                    <input type="text" name="username" class="reg-input" required>
+                </div>
+
+                <div class="reg-field">
+                    <label class="reg-label">Kata Laluan</label>
+                    <input type="password" name="password" class="reg-input" required>
+                </div>
+
+                <div class="reg-field">
+                    <label class="reg-label">Sahkan Kata Laluan</label>
+                    <input type="password" name="password_confirm" class="reg-input" required>
+                </div>
+
+                <div class="reg-field">
+                    <label class="reg-label">Tahun Mengajar (Opsyen)</label>
+                    <input type="text" name="year" class="reg-input" placeholder="cth. Tahun 4–6">
+                </div>
+            </div>
+
+            <div class="reg-actions">
+                <a href="choose-role.php" class="reg-secondary-btn">Kembali</a>
+                <button type="submit" class="reg-primary-btn">Daftar Sebagai Guru</button>
+            </div>
+
+            <p class="reg-footer-text">
+                Sudah ada akaun? <a href="index.php">Log Masuk</a>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script>
+const audio = document.getElementById('bgAudio');
+const muteBtn = document.getElementById('muteBtn');
+let isPlaying = false;
+
+muteBtn.addEventListener('click', async function () {
+    try {
+        if (!isPlaying) {
+            await audio.play();
+            isPlaying = true;
+            muteBtn.textContent = '🔈';
+        } else {
+            audio.pause();
+            isPlaying = false;
+            muteBtn.textContent = '🔊';
+        }
+    } catch (e) {
+        console.error(e);
+    }
+});
+</script>
+
+</body>
+</html>
