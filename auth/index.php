@@ -1,4 +1,6 @@
-<?php include 'config.php'; ?>
+<?php
+require_once '../config.php';
+?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -6,18 +8,16 @@
     <title>Mathventure | Log Masuk</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="asset/css/auth-base.css">
-    <link rel="stylesheet" href="asset/css/login-style.css">
-
+    <!-- dari /auth/ ke /asset/ kena naik satu level: ../ -->
+    <link rel="stylesheet" href="../asset/css/auth-base.css">
+    <link rel="stylesheet" href="../asset/css/login-style.css">
 </head>
 <body>
 
 <div class="container">
-    <!-- butang mute -->
     <button class="mute-btn" id="muteBtn">🔊</button>
-    <audio id="bgAudio" src="asset/sounds/bg_sound.mp3" loop></audio>
+    <audio id="bgAudio" src="../asset/sounds/bg_sound.mp3" loop></audio>
 
-    <!-- kad log masuk -->
     <div class="login-box">
         <h2>Log Masuk</h2>
 
@@ -30,7 +30,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="auth/login_process.php" method="POST">
+        <form action="login_process.php" method="POST">
             <input 
                 type="text" 
                 name="username" 
@@ -45,12 +45,6 @@
                 required
             >
 
-            <select name="role_ui">
-                <option value="" disabled selected>Pilih peranan</option>
-                <option value="pelajar">Pelajar</option>
-                <option value="guru">Guru</option>
-            </select>
-
             <a href="forgot-password.php" class="forgot-link">
                 Lupa kata laluan?
             </a>
@@ -61,22 +55,35 @@
         <div class="register-link">
             Tiada Akaun? <a href="choose-role.php">Daftar Sekarang</a>
         </div>
-
     </div>
 
-    <!-- mascot dino -->
     <div class="dino-box">
         <div class="signboard">
             Bersedia untuk meneroka matematik? ✨
         </div>
-        <img src="asset/images/dino.png" alt="Mathventure Dino" class="dino-img">
+        <img src="../asset/images/dino.png" alt="Mathventure Dino" class="dino-img">
     </div>
 </div>
 
-
 <script>
-document.getElementById('muteBtn').addEventListener('click', function () {
-    this.textContent = this.textContent === '🔊' ? '🔈' : '🔊';
+const audio = document.getElementById('bgAudio');
+const muteBtn = document.getElementById('muteBtn');
+let isPlaying = false;
+
+muteBtn.addEventListener('click', async function () {
+    try {
+        if (!isPlaying) {
+            await audio.play();
+            isPlaying = true;
+            muteBtn.textContent = '🔈';
+        } else {
+            audio.pause();
+            isPlaying = false;
+            muteBtn.textContent = '🔊';
+        }
+    } catch (e) {
+        console.error(e);
+    }
 });
 </script>
 

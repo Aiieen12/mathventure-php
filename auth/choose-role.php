@@ -1,4 +1,7 @@
-<?php include 'config.php'; ?>
+<?php
+// choose-role.php
+require_once '../config.php';
+?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -6,15 +9,15 @@
     <title>Pilih Peranan | Mathventure</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="asset/css/auth-base.css">
-    <link rel="stylesheet" href="asset/css/role.css">
-
+    <!-- CSS umum + CSS khas role -->
+    <link rel="stylesheet" href="../asset/css/auth-base.css">
+    <link rel="stylesheet" href="../asset/css/role.css">
 </head>
 <body>
 
 <!-- BUTANG SOUND ATAS KANAN + AUDIO -->
 <button class="mute-btn" id="muteBtn">🔊</button>
-<audio id="bgAudio" src="asset/audio/login-theme.mp3" loop></audio>
+<audio id="bgAudio" src="../asset/sounds/bg_sound.mp3" loop></audio>
 
 <!-- KAD PILIH PERANAN -->
 <div class="role-page-wrapper">
@@ -40,7 +43,7 @@
 <!-- OVERLAY LOADING DINO -->
 <div id="loadingOverlay" class="loading-overlay hidden">
     <div class="loading-card">
-        <img src="asset/images/egg.png" alt="Dino Egg" class="loading-dino" id="loadingEgg">
+        <img src="../asset/images/egg.png" alt="Dino Egg" class="loading-dino" id="loadingEgg">
         <p class="loading-text" id="loadingText">Dino Sedang Menetas...</p>
     </div>
 </div>
@@ -80,7 +83,7 @@ roleCards.forEach(card => {
         const targetUrl = this.getAttribute('href');
 
         // Reset state overlay (kalau user reload balik page)
-        loadingEgg.src = 'asset/images/egg.png';
+        loadingEgg.src = '../asset/images/egg.png';
         loadingText.textContent = 'Dino Sedang Menetas...';
 
         // Tunjuk overlay
@@ -88,7 +91,7 @@ roleCards.forEach(card => {
 
         // Lepas 0.6s → tukar kepada egg-crack
         setTimeout(() => {
-            loadingEgg.src = 'asset/images/egg-crack.png';
+            loadingEgg.src = '../asset/images/egg-crack.png';
             loadingText.textContent = 'Dino Hampir Siap! 🐣';
         }, 600);
 

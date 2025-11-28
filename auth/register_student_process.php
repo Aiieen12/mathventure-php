@@ -1,98 +1,127 @@
 <?php
-include '../config.php';
+// auth/register_student_process.php
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+require_once '../config.php';
 
-    // Ambil data dari form
-    $firstname        = trim($_POST['firstname']);
-    $lastname         = trim($_POST['lastname']);
-    $dob              = $_POST['dob'] ?? null;
-    $class            = trim($_POST['class']);
-    $year_level       = $_POST['year_level'] ?? null;
-    $bio              = trim($_POST['bio']);
-
-    $username         = trim($_POST['username']);
-    $password         = $_POST['password'];
-    $password_confirm = $_POST['password_confirm'];
-
-    // Validasi asas
-    if ($password !== $password_confirm) {
-        $_SESSION['error'] = "Kata laluan dan sahihan tidak sama.";
-        header("Location: ../register-student.php");
-        exit;
-    }
-
-    if ($firstname === '' || $lastname === '' || $username === '') {
-        $_SESSION['error'] = "Sila isi semua maklumat wajib.";
-        header("Location: ../register-student.php");
-        exit;
-    }
-
-    // Escape untuk SQL
-    $username_sql   = mysqli_real_escape_string($conn, $username);
-    $firstname_sql  = mysqli_real_escape_string($conn, $firstname);
-    $lastname_sql   = mysqli_real_escape_string($conn, $lastname);
-    $class_sql      = mysqli_real_escape_string($conn, $class);
-    $bio_sql        = mysqli_real_escape_string($conn, $bio);
-
-    $dob_sql        = $dob ? "'" . mysqli_real_escape_string($conn, $dob) . "'" : "NULL";
-    $year_level_sql = $year_level !== '' ? (int)$year_level : "NULL";
-
-    // Semak username unik
-    $check = mysqli_query($conn, "SELECT id_user FROM users WHERE username = '$username_sql' LIMIT 1");
-    if ($check && mysqli_num_rows($check) > 0) {
-        $_SESSION['error'] = "Username sudah digunakan. Sila pilih yang lain.";
-        header("Location: ../register-student.php");
-        exit;
-    }
-
-    // Hash password
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-    $password_hash_sql = mysqli_real_escape_string($conn, $password_hash);
-
-    // 1) Masuk ke jadual users (role = pelajar)
-    $sql_user = "
-        INSERT INTO users (username, password_hash, role)
-        VALUES ('$username_sql', '$password_hash_sql', 'pelajar')
-    ";
-
-    if (!mysqli_query($conn, $sql_user)) {
-        $_SESSION['error'] = "Ralat semasa simpan ke jadual users: " . mysqli_error($conn);
-        header("Location: ../register-student.php");
-        exit;
-    }
-
-    $id_user = mysqli_insert_id($conn);
-
-    // 2) Masuk ke jadual student
-    $sql_student = "
-        INSERT INTO student (id_user, firstname, lastname, dob, class, year_level, bio, avatar)
-        VALUES (
-            $id_user,
-            '$firstname_sql',
-            '$lastname_sql',
-            $dob_sql,
-            '$class_sql',
-            $year_level_sql,
-            '$bio_sql',
-            NULL
-        )
-    ";
-
-    if (!mysqli_query($conn, $sql_student)) {
-        // rollback kalau gagal
-        mysqli_query($conn, "DELETE FROM users WHERE id_user = $id_user");
-        $_SESSION['error'] = "Ralat semasa simpan ke jadual student: " . mysqli_error($conn);
-        header("Location: ../register-student.php");
-        exit;
-    }
-
-    // Berjaya
-    $_SESSION['success'] = "Pendaftaran pelajar berjaya! Sila log masuk.";
-    header("Location: ../index.php");
-    exit;
-
-} else {
-    header("Location: ../register-student.php");
+// Pastikan request guna POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: register-student.php');
     exit;
 }
+
+// Ambil data dari form
+$firstname  = trim($_POST['firstname'] ?? '');
+$lastname   = trim($_POST['lastname'] ?? '');
+$dob        = trim($_POST['dob'] ?? '');        // format: YYYY-MM-DD
+$class      = trim($_POST['class'] ?? '');
+$year_level = trim($_POST['year_level'] ?? '');
+$bio        = trim($_POST['bio'] ?? '');
+
+$username   = trim($_POST['username'] ?? '');
+$password   = $_POST['password'] ?? '';
+$confirm    = $_POST['password_confirm'] ?? '';
+
+$errors = [];
+
+// =========== VALIDASI ASAS ===========
+if ($firstname === '' || $lastname === '') {
+    $errors[] = 'Sila isi nama pertama dan nama terakhir.';
+}
+
+if ($username === '') {
+    $errors[] = 'Sila isi nama pengguna.';
+}
+
+if ($class === '') {
+    $errors[] = 'Sila isi kelas pelajar.';
+}
+
+if ($year_level === '') {
+    $errors[] = 'Sila pilih tahun pelajar.';
+}
+
+if ($password === '' || $confirm === '') {
+    $errors[] = 'Sila isi kata laluan dan pengesahan kata laluan.';
+} elseif ($password !== $confirm) {
+    $errors[] = 'Kata laluan dan pengesahan tidak sepadan.';
+}
+
+// Kalau ada error, balik ke form
+if (!empty($errors)) {
+    $_SESSION['error'] = implode('<br>', $errors);
+    header('Location: register-student.php');
+    exit;
+}
+
+// =========== SEMAK USERNAME UNIK ===========
+$stmt = $conn->prepare("SELECT id_user FROM users WHERE username = ?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$exists = $result->num_rows > 0;
+$stmt->close();
+
+if ($exists) {
+    $_SESSION['error'] = 'Nama pengguna sudah digunakan. Sila pilih nama lain.';
+    header('Location: register-student.php');
+    exit;
+}
+
+// =========== 1. INSERT KE `users` ===========
+$role      = 'pelajar';
+$pass_hash = password_hash($password, PASSWORD_DEFAULT);
+
+$stmt = $conn->prepare("
+    INSERT INTO users (username, password_hash, role, created_at)
+    VALUES (?, ?, ?, NOW())
+");
+$stmt->bind_param('sss', $username, $pass_hash, $role);
+
+if (!$stmt->execute()) {
+    $_SESSION['error'] = 'Ralat semasa mendaftar akaun pengguna: ' . $stmt->error;
+    $stmt->close();
+    header('Location: register-student.php');
+    exit;
+}
+
+$user_id = $stmt->insert_id;
+$stmt->close();
+
+// =========== 2. INSERT KE `student` ===========
+$avatar = '';                 // buat masa ni kosong
+$year_level_int = (int)$year_level;
+
+// Struktur table student:
+// (id_user, firstname, lastname, dob, class, year_level, bio, avatar, created_at)
+$stmt = $conn->prepare("
+    INSERT INTO student (id_user, firstname, lastname, dob, class, year_level, bio, avatar, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+");
+$stmt->bind_param(
+    'issssiss',
+    $user_id,
+    $firstname,
+    $lastname,
+    $dob,
+    $class,
+    $year_level_int,
+    $bio,
+    $avatar
+);
+
+if (!$stmt->execute()) {
+    $_SESSION['error'] = 'Akaun pengguna dibuat, tetapi gagal simpan maklumat pelajar: ' . $stmt->error;
+    $stmt->close();
+    header('Location: register-student.php');
+    exit;
+}
+
+$stmt->close();
+
+// =========== 3. AUTO LOGIN & REDIRECT ===========
+$_SESSION['user_id']  = $user_id;
+$_SESSION['username'] = $username;
+$_SESSION['role']     = 'pelajar';
+
+header('Location: dashboard-student.php');
+exit;

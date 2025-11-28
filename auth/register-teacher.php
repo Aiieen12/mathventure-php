@@ -1,27 +1,30 @@
-<?php include 'config.php'; ?>
+<?php
+// register-teacher.php
+require_once '../config.php';
+?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Mathventure | Daftar Masuk Pelajar</title>
+    <title>Mathventure | Daftar Guru</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="asset/css/auth-base.css">
-    <link rel="stylesheet" href="asset/css/register.css">
-
+    <!-- CSS umum + khas register -->
+    <link rel="stylesheet" href="../asset/css/auth-base.css">
+    <link rel="stylesheet" href="../asset/css/register.css">
 </head>
 <body>
 
 <div class="reg-page-wrapper">
     <!-- butang sound + audio -->
     <button class="mute-btn" id="muteBtn">🔊</button>
-    <audio id="bgAudio" src="asset/audio/login-theme.mp3" loop></audio>
+    <audio id="bgAudio" src="../asset/sounds/bg_sound.mp3" loop></audio>
 
     <div class="reg-card-glass">
 
         <div class="reg-header">
-            <div class="reg-title-icon">🎒</div>
-            <h1 class="reg-title">Daftar Masuk Pelajar</h1>
+            <div class="reg-title-icon">🦕</div>
+            <h1 class="reg-title">Daftar Sebagai Guru</h1>
         </div>
 
         <?php if (isset($_SESSION['error'])): ?>
@@ -33,7 +36,7 @@
             </div>
         <?php endif; ?>
 
-        <form action="auth/register_student_process.php" method="POST" class="reg-form">
+        <form action="register_teacher_process.php" method="POST" class="reg-form">
             <!-- BLOK 1: Maklumat Peribadi -->
             <h2 class="reg-section-title">Maklumat Peribadi</h2>
 
@@ -49,35 +52,24 @@
                 </div>
 
                 <div class="reg-field">
-                    <label class="reg-label">Tarikh Lahir</label>
-                    <input type="date" name="dob" class="reg-input">
-                </div>
-
-                <div class="reg-field">
-                    <label class="reg-label">Kelas</label>
+                    <label class="reg-label">Kelas (Opsyen)</label>
                     <input type="text" name="class" class="reg-input" placeholder="cth. 5 Bestari">
                 </div>
 
                 <div class="reg-field">
-                    <label class="reg-label">Tahun</label>
-                    <select name="year_level" class="reg-input">
-                        <option value="">Pilih Tahun</option>
-                        <option value="4">Tahun 4</option>
-                        <option value="5">Tahun 5</option>
-                        <option value="6">Tahun 6</option>
-                    </select>
+                    <label class="reg-label">Tahun Mengajar (Opsyen)</label>
+                    <input type="text" name="year" class="reg-input" placeholder="cth. Tahun 4–6">
                 </div>
+            </div>
 
-                <div class="reg-field">
-                    <label class="reg-label">Biodata (Opsyen)</label>
-                    <textarea name="bio" class="reg-textarea reg-textarea-bio" rows="4"
-                              placeholder="Sedikit tentang diri anda..."></textarea>
-                </div>
+            <div class="reg-field reg-field-full">
+                <label class="reg-label">Biodata (Opsyen)</label>
+                <textarea name="bio" class="reg-textarea" rows="3" placeholder="Sedikit tentang diri anda..."></textarea>
             </div>
 
             <hr class="reg-divider">
 
-            <!-- BLOK 2: Akaun Log Masuk -->
+            <!-- BLOK 2: Akaun log masuk -->
             <h2 class="reg-section-title">Maklumat Akaun</h2>
 
             <div class="reg-grid-2 reg-grid-2-bottom">
@@ -99,7 +91,7 @@
 
             <div class="reg-actions">
                 <a href="choose-role.php" class="reg-secondary-btn">Kembali</a>
-                <button type="submit" class="reg-primary-btn">Daftar Sebagai Pelajar</button>
+                <button type="submit" class="reg-primary-btn">Daftar Sebagai Guru</button>
             </div>
 
             <p class="reg-footer-text">

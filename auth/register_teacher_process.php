@@ -1,124 +1,116 @@
-<?php include 'config.php'; ?>
-<!DOCTYPE html>
-<html lang="ms">
-<head>
-    <meta charset="UTF-8">
-    <title>Mathventure | Daftar Masuk Guru</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<?php
+// auth/register_teacher_process.php
 
-    <link rel="stylesheet" href="asset/css/login-style.css">
-</head>
-<body>
+require_once '../config.php';
 
-<div class="reg-page-wrapper">
-    <!-- butang sound + audio DI DALAM wrapper -->
-    <button class="mute-btn" id="muteBtn">🔊</button>
-    <audio id="bgAudio" src="asset/audio/login-theme.mp3" loop></audio>
+// Pastikan request guna POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    header('Location: register-teacher.php');
+    exit;
+}
 
-    <div class="reg-card-glass">
+// Ambil data dari form
+$firstname = trim($_POST['firstname'] ?? '');
+$lastname  = trim($_POST['lastname'] ?? '');
+$class     = trim($_POST['class'] ?? '');   // opsyen
+$year      = trim($_POST['year'] ?? '');    // opsyen
+$bio       = trim($_POST['bio'] ?? '');     // opsyen
 
-        <div class="reg-header">
-            <div class="reg-title-icon">🦕</div>
-            <h1 class="reg-title">Daftar Masuk Guru</h1>
-        </div>
+$username  = trim($_POST['username'] ?? '');
+$password  = $_POST['password'] ?? '';
+$confirm   = $_POST['password_confirm'] ?? '';
 
-        <?php if (isset($_SESSION['error'])): ?>
-            <div class="alert-error">
-                <?php 
-                    echo $_SESSION['error']; 
-                    unset($_SESSION['error']);
-                ?>
-            </div>
-        <?php endif; ?>
+$errors = [];
 
-        <form action="auth/register_teacher_process.php" method="POST" class="reg-form">
+// =========== VALIDASI ASAS ===========
+if ($firstname === '' || $lastname === '') {
+    $errors[] = 'Sila isi nama pertama dan nama terakhir.';
+}
 
-            <!-- BLOK 1: Maklumat asas -->
-            <h2 class="reg-section-title">Maklumat Peribadi</h2>
+if ($username === '') {
+    $errors[] = 'Sila isi nama pengguna.';
+}
 
-            <div class="reg-grid-2">
-                <div class="reg-field">
-                    <label class="reg-label">Nama Pertama</label>
-                    <input type="text" name="firstname" class="reg-input" required>
-                </div>
+if ($password === '' || $confirm === '') {
+    $errors[] = 'Sila isi kata laluan dan pengesahan kata laluan.';
+} elseif ($password !== $confirm) {
+    $errors[] = 'Kata laluan dan pengesahan tidak sepadan.';
+}
 
-                <div class="reg-field">
-                    <label class="reg-label">Nama Terakhir</label>
-                    <input type="text" name="lastname" class="reg-input" required>
-                </div>
+// Kalau ada error, balik ke form
+if (!empty($errors)) {
+    $_SESSION['error'] = implode('<br>', $errors);
+    header('Location: register-teacher.php');
+    exit;
+}
 
-                <div class="reg-field">
-                    <label class="reg-label">Tarikh Lahir</label>
-                    <input type="date" name="dob" class="reg-input">
-                </div>
+// =========== SEMAK USERNAME UNIK ===========
+$stmt = $conn->prepare("SELECT id_user FROM users WHERE username = ?");
+$stmt->bind_param('s', $username);
+$stmt->execute();
+$result = $stmt->get_result();
+$exists = $result->num_rows > 0;
+$stmt->close();
 
-                <div class="reg-field">
-                    <label class="reg-label">Biodata</label>
-                    <textarea name="bio" class="reg-textarea reg-textarea-bio" rows="4"
-                              placeholder="Sedikit tentang diri anda..."></textarea>
-                </div>
-            </div>
+if ($exists) {
+    $_SESSION['error'] = 'Nama pengguna sudah digunakan. Sila pilih nama lain.';
+    header('Location: register-teacher.php');
+    exit;
+}
 
-            <hr class="reg-divider">
+// =========== 1. INSERT KE `users` ===========
+$role      = 'guru';
+$pass_hash = password_hash($password, PASSWORD_DEFAULT);
 
-            <!-- BLOK 2: Akaun log masuk -->
-            <h2 class="reg-section-title">Maklumat Akaun</h2>
+$stmt = $conn->prepare("
+    INSERT INTO users (username, password_hash, role, created_at)
+    VALUES (?, ?, ?, NOW())
+");
+$stmt->bind_param('sss', $username, $pass_hash, $role);
 
-            <div class="reg-grid-2 reg-grid-2-bottom">
-                <div class="reg-field">
-                    <label class="reg-label">Nama Pengguna</label>
-                    <input type="text" name="username" class="reg-input" required>
-                </div>
+if (!$stmt->execute()) {
+    $_SESSION['error'] = 'Ralat semasa mendaftar akaun pengguna: ' . $stmt->error;
+    $stmt->close();
+    header('Location: register-teacher.php');
+    exit;
+}
 
-                <div class="reg-field">
-                    <label class="reg-label">Kata Laluan</label>
-                    <input type="password" name="password" class="reg-input" required>
-                </div>
+$user_id = $stmt->insert_id; // id_user baru
+$stmt->close();
 
-                <div class="reg-field">
-                    <label class="reg-label">Sahkan Kata Laluan</label>
-                    <input type="password" name="password_confirm" class="reg-input" required>
-                </div>
+// =========== 2. INSERT KE `teacher` ===========
+$avatar = ''; // buat masa ni kosong, nanti bila ada upload boleh update
 
-                <div class="reg-field">
-                    <label class="reg-label">Tahun Mengajar (Opsyen)</label>
-                    <input type="text" name="year" class="reg-input" placeholder="cth. Tahun 4–6">
-                </div>
-            </div>
+// Struktur table teacher:
+// (id_user, firstname, lastname, class, year, bio, avatar, created_at)
+$stmt = $conn->prepare("
+    INSERT INTO teacher (id_user, firstname, lastname, class, year, bio, avatar, created_at)
+    VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+");
+$stmt->bind_param(
+    'issssss',
+    $user_id,
+    $firstname,
+    $lastname,
+    $class,
+    $year,
+    $bio,
+    $avatar
+);
 
-            <div class="reg-actions">
-                <a href="choose-role.php" class="reg-secondary-btn">Kembali</a>
-                <button type="submit" class="reg-primary-btn">Daftar Sebagai Guru</button>
-            </div>
+if (!$stmt->execute()) {
+    $_SESSION['error'] = 'Akaun pengguna dibuat, tetapi gagal simpan maklumat guru: ' . $stmt->error;
+    $stmt->close();
+    header('Location: register-teacher.php');
+    exit;
+}
 
-            <p class="reg-footer-text">
-                Sudah ada akaun? <a href="index.php">Log Masuk</a>
-            </p>
-        </form>
-    </div>
-</div>
+$stmt->close();
 
-<script>
-const audio = document.getElementById('bgAudio');
-const muteBtn = document.getElementById('muteBtn');
-let isPlaying = false;
+// =========== 3. AUTO LOGIN & REDIRECT ===========
+$_SESSION['user_id']  = $user_id;
+$_SESSION['username'] = $username;
+$_SESSION['role']     = 'guru';
 
-muteBtn.addEventListener('click', async function () {
-    try {
-        if (!isPlaying) {
-            await audio.play();
-            isPlaying = true;
-            muteBtn.textContent = '🔈';
-        } else {
-            audio.pause();
-            isPlaying = false;
-            muteBtn.textContent = '🔊';
-        }
-    } catch (e) {
-        console.error(e);
-    }
-});
-</script>
-
-</body>
-</html>
+header('Location: dashboard-teacher.php');
+exit;
