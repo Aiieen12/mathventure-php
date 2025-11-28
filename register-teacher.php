@@ -6,7 +6,9 @@
     <title>Mathventure | Daftar Masuk Guru</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="asset/css/login-style.css">
+    <link rel="stylesheet" href="asset/css/auth-base.css">
+    <link rel="stylesheet" href="asset/css/register.css">
+
 </head>
 <body>
 
