@@ -8,34 +8,36 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
     header('Location: index.php');
     exit;
 }
+
+$nama = $_SESSION['username'] ?? 'Pelajar';
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Pelajar | Mathventure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link rel="stylesheet" href="../asset/css/auth-base.css">
 </head>
 <body>
 
-<h1>Hai <?php echo htmlspecialchars($_SESSION['username']); ?>! 🎒</h1>
+<h1>Dashboard Pelajar</h1>
+<p>Selamat datang, <strong><?php echo htmlspecialchars($nama); ?></strong>!</p>
 
-<p>Ini adalah dashboard pelajar.</p>
-<ul>
-    <li>Nanti boleh tambah butang “Mula Permainan”</li>
-    <li>Senarai topik matematik</li>
-    <li>Markah kuiz sebelum ini</li>
-</ul>
-
-<p>
-    <a href="dashboard-teacher.php">⚠️ Cuba masuk dashboard guru (sepatutnya akan dihalang)</a>
-</p>
-
-<p>
+<!-- Nav bar ringkas (kosong dulu, hanya link asas) -->
+<nav>
+    <a href="dashboard-student.php">Dashboard</a> |
+    <a href="game-menu.php">Peta</a> |
     <a href="logout.php">Log Keluar</a>
+</nav>
+
+<hr>
+
+<h2>Menu Utama</h2>
+<p>
+    Buat masa ini, kita fokus untuk lihat pergerakan sistem permainan.
 </p>
+<ul>
+    <li>Klik <strong>Permainan Matematik</strong> di bahagian nav untuk ke menu game.</li>
+</ul>
 
 </body>
 </html>
