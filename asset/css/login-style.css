@@ -1,170 +1,208 @@
-/* =====================
-   CONTAINER
-===================== */
+/* ============================
+   1. GLOBAL & BACKGROUND
+============================ */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'Fredoka One', 'Varela Round', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+    overflow-x: hidden;
+}
 .container {
     display: flex;
     flex-wrap: wrap;
     min-height: 100vh;
     justify-content: center;
     align-items: center;
+    gap: 50px;
     padding: 20px;
-    gap: 40px;
     background-image: url('../images/background.jpg');
     background-size: cover;
     background-position: center;
 }
 
-/* =====================
-   LOGIN BOX (Glassmorphism)
-===================== */
-.login-box {
-    width: 380px;
-    padding: 40px;
-    border-radius: 20px;
-    background: rgba(255, 255, 255, 0.23);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-    text-align: center;
-    animation: fadeIn 0.7s ease;
+/* ============================
+   2. SOUND BUTTON
+============================ */
+.mute-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 60px; height: 60px;
+    background: #FF9800;
+    border-radius: 50%;
+    font-size: 28px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 6px 0 #b35f00, 0 10px 15px rgba(0,0,0,0.3);
+    transition: all 0.2s ease;
+    z-index: 1000;
 }
+.mute-btn:hover { transform: scale(1.1); }
+.mute-btn:active { transform: translateY(6px); box-shadow: 0 0 0 #b35f00; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
+/* ============================
+   3. DINO & BUBBLE (Game Style)
+============================ */
+.dino-box { text-align: center; max-width: 350px; z-index: 10; order:2; }
 
-.login-box h2 {
-    color: #2c2c2c;
-    font-size: 2em;
-    margin-bottom: 25px;
-    font-weight: 700;
-}
-
-/* =====================
-   Input Field
-===================== */
-
-.input-wrapper {
-    position: relative;
-    width: 100%;
-}
-
-.user-level {
-    position: absolute;
-    right: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 14px;
-    background: rgba(255,255,255,0.5);
-    padding: 4px 8px;
-    border-radius: 8px;
-    color: #333;
-    pointer-events: none;
-}
-
-.login-box input,
-.login-box button {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border-radius: 10px;
-    border: none;
-    font-size: 16px;
-    background: rgba(255,255,255,0.6);
-}
-
-.login-box input::placeholder {
-    color: #444;
-}
-
-.login-box button {
-    background: #4CAF50;
-    color: #fff;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.login-box button:hover {
-    background: #3d9142;
-}
-
-/* =====================
-   TEXT LINKS
-===================== */
-
-.forgot-link {
-    text-align: right;
-    display: block;
-    margin-top: -10px;
-    margin-bottom: 15px;
-    color: #222;
-    text-decoration: none;
-    font-size: 14px;
-}
-
-.register-link a {
-    color: #000;
-    font-weight: bold;
-}
-
-/* =====================
-   DINO + SIGNBOARD
-===================== */
-
-.dino-box {
-    text-align: center;
-}
-
-.dino-img {
-    width: 300px;
-    animation: dinoBounce 3s infinite ease-in-out;
-}
-
-@keyframes dinoBounce {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-16px); }
-}
-
+/* Bubble Text Floating */
 .signboard {
-    margin-bottom: 5px;
-    padding: 14px 22px;
-    background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-    animation: bubbleFloat 3s infinite ease-in-out;
+    position: relative;
+    background: linear-gradient(135deg, #fff7e6, #fff1f3);
+    color: #333; font-weight: 700;
+    font-size: 18px; padding: 20px 25px;
+    border-radius: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 25px #ffd70088, 0 0 45px #ffd70033 inset;
+    margin-bottom: 25px;
+    animation: floatBubble 3s infinite ease-in-out, neonGlowBubble 4s infinite alternate;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.signboard:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.25), 0 0 40px #ffd700aa, 0 0 45px #ffd70055 inset;
+}
+.signboard::after {
+    content: '';
+    position: absolute;
+    bottom: -18px; left: 50%;
+    transform: translateX(-50%);
+    border-width: 18px 18px 0; border-style: solid;
+    border-color: #fff7e6 transparent transparent transparent;
+}
+.signboard::before {
+    content: '';
+    position: absolute;
+    bottom: -14px; left: 50%;
+    transform: translateX(-50%);
+    border-width: 14px 14px 0; border-style: solid;
+    border-color: #fff transparent transparent transparent; z-index:1;
 }
 
-@keyframes bubbleFloat {
+/* Dino Animation */
+.dino-img {
+    width: 280px;
+    filter: drop-shadow(0 0 20px #4facfe88);
+    animation: dinoIdle 4s infinite ease-in-out, dinoGlow 3s infinite alternate;
+    transition: transform 0.3s, filter 0.3s;
+}
+.dino-img:hover {
+    transform: scale(1.05);
+    filter: drop-shadow(0 0 35px #4facfeaa);
+}
+
+/* Keyframes */
+@keyframes floatBubble {
     0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-12px); }
+}
+@keyframes neonGlowBubble {
+    0% { box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 25px #ffd70088, 0 0 45px #ffd70033 inset; }
+    50% { box-shadow: 0 10px 30px rgba(0,0,0,0.25), 0 0 35px #ffd700aa, 0 0 50px #ffd70055 inset; }
+    100% { box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 25px #ffd70088, 0 0 45px #ffd70033 inset; }
+}
+@keyframes dinoIdle {
+    0%,100% { transform: scale(1) rotate(0deg); }
+    25% { transform: scale(1.02) rotate(1deg); }
+    50% { transform: scale(1.05) rotate(-2deg); }
+    75% { transform: scale(1.02) rotate(1deg); }
+}
+@keyframes dinoGlow {
+    0% { filter: drop-shadow(0 0 20px #4facfe88); }
+    100% { filter: drop-shadow(0 0 40px #4facfeaa); }
 }
 
-/* =====================
-   RESPONSIVE DESIGN
-===================== */
-
-@media(max-width: 900px) {
-    .container {
-        flex-direction: column;
-        padding-top: 60px;
-    }
-    .login-box {
-        width: 90%;
-    }
-    .dino-img {
-        width: 240px;
-    }
+/* ============================
+   4. LOGIN BOX
+============================ */
+.login-box {
+    width: 400px; padding: 50px 30px 35px 30px;
+    border-radius: 35px;
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25), 0 0 25px #4facfe55;
+    text-align: center; z-index: 10; order:1;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3), 0 0 35px #4facfe88;
+}
+.login-box h2 {
+    color: #fff; font-size: 38px; margin-bottom: 40px;
+    font-weight: 900;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.5), 0 0 10px #29b6f6aa;
+    letter-spacing:1px;
 }
 
-@media(max-width: 500px) {
-    .login-box {
-        padding: 25px;
-    }
-    .login-box h2 {
-        font-size: 1.6em;
-    }
-    .dino-img {
-        width: 180px;
-    }
+/* ============================
+   5. INPUT, BUTTON & BADGE
+============================ */
+.input-wrapper { position: relative; width: 100%; margin-bottom:20px; }
+.login-box input {
+    width: 100%; height: 60px; padding: 0 110px 0 20px; border-radius: 20px;
+    border: none; font-size:18px; font-weight:bold; background:#f0f4f8;
+    box-shadow: inset 0 5px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s, background 0.3s;
+}
+.login-box input:focus {
+    outline:none; background:#fff;
+    box-shadow:0 0 0 4px #4facfe, 0 0 15px #4facfe88;
+}
+.user-level {
+    position:absolute; right:15px; top:50%; transform:translateY(-50%);
+    font-size:12px; font-weight:800; padding:5px 12px; border-radius:20px;
+    z-index:5; pointer-events:none;
+}
+.user-level.guru{background:#FFD54F;color:#6d4c41;}
+.user-level.pelajar{background:#69F0AE;color:#1b5e20;}
+.user-level.notfound{background:#ff5252;color:#fff;}
+
+.login-box button {
+    width:100%; padding:15px; border:none; border-radius:50px;
+    font-size:20px;font-weight:900;cursor:pointer;
+    background: linear-gradient(135deg,#29b6f6,#0288d1);
+    color:white;
+    box-shadow: 0 6px 0 #01579b, 0 12px 20px rgba(0,0,0,0.3), 0 0 10px #29b6f688;
+    transition: all 0.2s, box-shadow 0.3s;
+}
+.login-box button:hover {
+    filter:brightness(1.15);
+    transform:translateY(-2px) scale(1.02);
+    box-shadow:0 8px 0 #01579b, 0 14px 25px rgba(0,0,0,0.35), 0 0 20px #29b6f6aa, 0 0 30px #29b6f6ff inset;
+}
+.login-box button:active {
+    transform: translateY(6px);
+    box-shadow:0 0 0 #01579b;
+}
+
+/* ============================
+   6. LINKS
+============================ */
+.forgot-link { display:block;text-align:right;margin:10px 0 20px;font-size:15px;color:#fff;font-weight:bold;text-decoration:none;text-shadow:0 1px 3px rgba(0,0,0,0.5);transition:all 0.2s;}
+.forgot-link:hover { color:#ffeb3b;text-decoration:underline; }
+
+.register-link {
+    margin-top:20px; display:inline-block;
+    background:rgba(255,255,255,0.95); padding:12px 25px; border-radius:25px;
+    font-size:15px; font-weight:700;
+    box-shadow:0 8px 25px rgba(0,0,0,0.15),0 0 10px #d81b6055;
+    transition:all 0.3s,box-shadow 0.3s;
+}
+.register-link:hover {
+    transform:translateY(-3px) scale(1.03);
+    box-shadow:0 10px 35px rgba(0,0,0,0.2),0 0 25px #d81b60aa,0 0 15px #d81b60ff inset;
+}
+.register-link a { color:#d81b60; font-weight:900; text-decoration:none; }
+.register-link a:hover { text-decoration:underline; }
+
+/* ============================
+   7. RESPONSIVE
+============================ */
+@media(max-width:900px){
+    .container { flex-direction:column; gap:25px; padding-top:80px; }
+    .dino-box { order:1; }
+    .login-box { order:2; width:100%; max-width:380px; padding:40px 20px 30px 20px; }
+    .signboard { font-size:16px; padding:15px; }
+    .dino-img { width:200px; }
+    .register-link { margin-top:15px; }
 }

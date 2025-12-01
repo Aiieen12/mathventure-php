@@ -1,14 +1,19 @@
 <?php
 require_once '../config.php';
 
-if (!isset($_GET['u'])) {
-    echo "—";
+header("Content-Type: application/json");
+
+if (!isset($_GET['u']) || trim($_GET['u']) == "") {
+    echo json_encode([
+        "status" => "empty",
+        "label" => "—",
+        "level" => null
+    ]);
     exit;
 }
 
-$username = $_GET['u'];
+$username = trim($_GET['u']);
 
-// semak di DB
 $stmt = $conn->prepare("SELECT user_level FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
@@ -18,10 +23,23 @@ $stmt->bind_result($level);
 if ($stmt->num_rows > 0) {
     $stmt->fetch();
 
-    if ($level == "guru") echo "Guru 👨‍🏫";
-    else if ($level == "pelajar") echo "Pelajar 👧🧒";
-    else echo ucfirst($level);
+    // label text untuk dipaparkan
+    $label = match($level) {
+        "guru" => "Guru 👨‍🏫",
+        "pelajar" => "Pelajar 👧🧒",
+        default => ucfirst($level)
+    };
+
+    echo json_encode([
+        "status" => "found",
+        "label" => $label,
+        "level" => $level
+    ]);
 
 } else {
-    echo "Tidak ditemui";
+    echo json_encode([
+        "status" => "notfound",
+        "label" => "Tidak ditemui",
+        "level" => null
+    ]);
 }

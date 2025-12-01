@@ -9,7 +9,8 @@ require_once '../config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="../asset/css/auth-base.css">
-    <link rel="stylesheet" href="../asset/css/login-style.css">
+    <link rel="stylesheet" href="../asset/css/login-style.css?v=12345">
+
 
 </head>
 <body>
@@ -93,18 +94,33 @@ const usernameInput = document.getElementById("username");
 const userLevel = document.getElementById("userLevel");
 
 usernameInput.addEventListener("keyup", async () => {
-    let username = usernameInput.value;
+    let username = usernameInput.value.trim();
 
     if (username.length < 3) {
         userLevel.textContent = "—";
+        userLevel.className = "user-level";
         return;
     }
 
-    let res = await fetch("check_user.php?u=" + username);
-    let data = await res.text();
+    userLevel.textContent = "⌛";
+    userLevel.className = "user-level loading";
 
-    userLevel.textContent = data;
+    let res = await fetch("check_user.php?u=" + username);
+    let data = await res.json();
+
+    userLevel.textContent = data.label;
+
+    if (data.status === "notfound") {
+        userLevel.className = "user-level notfound";
+    } else if (data.level === "guru") {
+        userLevel.className = "user-level guru";
+    } else if (data.level === "pelajar") {
+        userLevel.className = "user-level pelajar";
+    } else {
+        userLevel.className = "user-level";
+    }
 });
+
 </script>
 
 </body>
