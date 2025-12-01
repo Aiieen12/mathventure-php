@@ -8,9 +8,9 @@ require_once '../config.php';
     <title>Mathventure | Log Masuk</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- dari /auth/ ke /asset/ kena naik satu level: ../ -->
     <link rel="stylesheet" href="../asset/css/auth-base.css">
     <link rel="stylesheet" href="../asset/css/login-style.css">
+
 </head>
 <body>
 
@@ -31,23 +31,26 @@ require_once '../config.php';
         <?php endif; ?>
 
         <form action="login_process.php" method="POST">
-            <input 
-                type="text" 
-                name="username" 
-                placeholder="nama pengguna" 
-                required
-            >
+
+            <div class="input-wrapper">
+                <input 
+                    type="text" 
+                    name="username" 
+                    id="username" 
+                    placeholder="Nama Pengguna"
+                    required
+                >
+                <span id="userLevel" class="user-level">—</span>
+            </div>
 
             <input 
                 type="password" 
                 name="password" 
-                placeholder="kata laluan" 
+                placeholder="Kata Laluan"
                 required
             >
 
-            <a href="forgot-password.php" class="forgot-link">
-                Lupa kata laluan?
-            </a>
+            <a href="forgot-password.php" class="forgot-link">Lupa kata laluan?</a>
 
             <button type="submit">Masuk Sekarang</button>
         </form>
@@ -61,16 +64,17 @@ require_once '../config.php';
         <div class="signboard">
             Bersedia untuk meneroka matematik? ✨
         </div>
-        <img src="../asset/images/dino.png" alt="Mathventure Dino" class="dino-img">
+        <img src="../asset/images/dino.png" class="dino-img" alt="">
     </div>
 </div>
 
 <script>
+// 🎵 Sound Button
 const audio = document.getElementById('bgAudio');
 const muteBtn = document.getElementById('muteBtn');
 let isPlaying = false;
 
-muteBtn.addEventListener('click', async function () {
+muteBtn.onclick = async () => {
     try {
         if (!isPlaying) {
             await audio.play();
@@ -81,9 +85,25 @@ muteBtn.addEventListener('click', async function () {
             isPlaying = false;
             muteBtn.textContent = '🔊';
         }
-    } catch (e) {
-        console.error(e);
+    } catch (e) { console.error(e); }
+};
+
+// 🧠 Auto Detect User Level (Guru/Pelajar)
+const usernameInput = document.getElementById("username");
+const userLevel = document.getElementById("userLevel");
+
+usernameInput.addEventListener("keyup", async () => {
+    let username = usernameInput.value;
+
+    if (username.length < 3) {
+        userLevel.textContent = "—";
+        return;
     }
+
+    let res = await fetch("check_user.php?u=" + username);
+    let data = await res.text();
+
+    userLevel.textContent = data;
 });
 </script>
 
