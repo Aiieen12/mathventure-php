@@ -12,6 +12,30 @@ require_once '../config.php';
     <!-- CSS umum + CSS khas role -->
     <link rel="stylesheet" href="../asset/css/auth-base.css">
     <link rel="stylesheet" href="../asset/css/role.css">
+
+    <style>
+        /* ================================
+           GAMBAR GANTI EMOJI (BARU)
+        ================================= */
+        .role-img {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .role-img img {
+            width: 130px;
+            height: 130px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 12px rgba(0,0,0,0.25));
+            transition: transform .35s ease, filter .35s ease;
+        }
+
+        .role-card:hover .role-img img {
+            transform: scale(1.15);
+            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.3));
+        }
+    </style>
 </head>
 <body>
 
@@ -21,21 +45,28 @@ require_once '../config.php';
 
 <!-- KAD PILIH PERANAN -->
 <div class="role-page-wrapper">
-    <div class="role-glass-card">
+    <div class="role-glass-card aura-float">
         <h1 class="role-title">Pilih Peranan Anda</h1>
+        <div class="title-underline"></div>
 
         <div class="role-grid">
+
             <!-- Kad Guru -->
             <a href="register-teacher.php" class="role-card role-card-guru">
-                <div class="role-emoji">👩‍🏫</div>
+                <div class="role-img">
+                    <img src="../asset/images/teacher.png" alt="Guru">
+                </div>
                 <div class="role-label">Guru</div>
             </a>
 
             <!-- Kad Pelajar -->
             <a href="register-student.php" class="role-card role-card-pelajar">
-                <div class="role-emoji">🧒</div>
+                <div class="role-img">
+                    <img src="../asset/images/student.png" alt="Pelajar">
+                </div>
                 <div class="role-label">Pelajar</div>
             </a>
+
         </div>
     </div>
 </div>
@@ -59,11 +90,11 @@ muteBtn.addEventListener('click', async function () {
         if (!isPlaying) {
             await audio.play();
             isPlaying = true;
-            muteBtn.textContent = '🔈';   // icon bila sedang main
+            muteBtn.textContent = '🔈';
         } else {
             audio.pause();
             isPlaying = false;
-            muteBtn.textContent = '🔊';   // icon bila mute
+            muteBtn.textContent = '🔊';
         }
     } catch (e) {
         console.error(e);
@@ -78,24 +109,19 @@ const roleCards      = document.querySelectorAll('.role-card');
 
 roleCards.forEach(card => {
     card.addEventListener('click', function (e) {
-        e.preventDefault();                        // jangan terus pergi link
+        e.preventDefault();
 
         const targetUrl = this.getAttribute('href');
 
-        // Reset state overlay (kalau user reload balik page)
         loadingEgg.src = '../asset/images/egg.png';
         loadingText.textContent = 'Dino Sedang Menetas...';
-
-        // Tunjuk overlay
         loadingOverlay.classList.remove('hidden');
 
-        // Lepas 0.6s → tukar kepada egg-crack
         setTimeout(() => {
             loadingEgg.src = '../asset/images/egg-crack.png';
             loadingText.textContent = 'Dino Hampir Siap! 🐣';
         }, 600);
 
-        // Lepas 1.8s → pergi ke page register
         setTimeout(() => {
             window.location.href = targetUrl;
         }, 1800);

@@ -129,3 +129,305 @@
         opacity: 1;
     }
 }
+/* 🔥 Glow lembut di belakang glass-card */
+.role-glass-card {
+    position: relative;
+    overflow: visible;
+}
+.role-glass-card::before {
+    content: "";
+    position: absolute;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 70%);
+    filter: blur(60px);
+    z-index: -1;
+    animation: glowPulse 6s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+    50% { opacity: 0.95; transform: translateX(-50%) scale(1.15); }
+    100% { opacity: 0.6; transform: translateX(-50%) scale(1); }
+}
+
+/* 🌟 Glow gradient keliling kad Guru/Pelajar */
+.role-card {
+    position: relative;
+}
+.role-card::after {
+    content: "";
+    position: absolute;
+    inset: -4px;
+    border-radius: inherit;
+    background: linear-gradient(135deg, rgba(255,255,255,0.35), rgba(255,255,255,0));
+    z-index: -1;
+    filter: blur(14px);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+.role-card:hover::after {
+    opacity: 1;
+}
+
+/* 🌈 Animasi lembut untuk emoji */
+.role-emoji {
+    animation: floatEmoji 3.8s ease-in-out infinite;
+}
+
+@keyframes floatEmoji {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+}
+
+/* ✨ Animated background particles (tak kacau gambar background asal) */
+.role-page-wrapper::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../images/background.jpg");
+    background-size: cover;
+    background-position: center;
+    opacity: 0.25; /* tambah depth */
+    filter: brightness(1.1) saturate(1.2);
+    z-index: -3;
+}
+
+.role-page-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://i.imgur.com/w1X1d1F.png");
+    background-size: 260px;
+    background-repeat: repeat;
+    opacity: 0.22;
+    animation: bgMove 30s linear infinite;
+    z-index: -2;
+}
+
+@keyframes bgMove {
+    0% { background-position: 0 0; }
+    100% { background-position: -600px 600px; }
+}
+
+/* 💫 Glow hover extra untuk role-card */
+.role-card:hover {
+    box-shadow: 0 0 25px rgba(255,255,255,0.55), 
+                0 20px 40px rgba(15,23,42,0.38),
+                inset 0 0 15px rgba(255,255,255,0.15);
+}
+
+/* ⚡ Pop-in animasi untuk grid role */
+.role-grid {
+    animation: popGrid 0.7s ease-out;
+}
+@keyframes popGrid {
+    0% { transform: scale(0.92); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+/* 🪩 Glow title */
+.role-title {
+    text-shadow: 0 3px 10px rgba(255,255,255,0.6),
+                 0 0 18px rgba(99,102,241,0.35);
+}
+
+/* ============================================================
+   🚀 LEVEL 2 UPGRADE — PARTICLES, HIGHLIGHT GLOW, FLOATING LIGHTS
+============================================================== */
+
+/* 🎇 1. Sparkle particles halus (atas background) */
+.role-page-wrapper::before {
+    pointer-events: none;
+}
+.role-page-wrapper::after {
+    pointer-events: none;
+}
+
+/* Tambah sparkle overlay */
+.role-page-wrapper .sparkle-layer {
+    position: absolute;
+    inset: 0;
+    background: url("https://i.imgur.com/6gA7p8n.png");
+    background-size: 350px;
+    background-repeat: repeat;
+    opacity: 0.18;
+    animation: sparkleScroll 18s linear infinite;
+    z-index: -1;
+}
+@keyframes sparkleScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 800px 800px; }
+}
+
+/* Inject sparkle layer via JS apabila load page */
+body.loaded .sparkle-layer {
+    opacity: 0.25;
+    transition: opacity 2s ease-in-out;
+}
+
+/* 🎉 2. Kad hover ada RAINBOW SHINE effect */
+.role-card {
+    position: relative;
+    overflow: hidden;
+}
+.role-card::before {
+    pointer-events: none;
+}
+.role-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent 0%,
+        rgba(255,255,255,0.45) 50%,
+        transparent 100%
+    );
+    transform: translateX(-100%);
+    transition: transform 0.8s ease;
+    opacity: 0.18;
+}
+.role-card:hover::after {
+    transform: translateX(120%);
+}
+
+/* 🎈 3. Kad floating subtle rumble + glow pulse */
+.role-card {
+    animation: cardFloat 6s ease-in-out infinite;
+}
+@keyframes cardFloat {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-6px); }
+    100% { transform: translateY(0px); }
+}
+
+.role-card:hover {
+    animation: none;
+}
+.role-card:hover .role-emoji {
+    transform: scale(1.2) rotate(5deg);
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.6));
+}
+
+/* 🔮 4. EXTRA NEON BORDER untuk role-card */
+.role-card {
+    box-shadow:
+        0 0 14px rgba(255,255,255,0.3),
+        0 15px 40px rgba(0,0,0,0.25),
+        inset 0 0 12px rgba(255,255,255,0.25);
+}
+
+/* GURU = hijau extra neon */
+.role-card-guru {
+    box-shadow:
+        0 0 22px rgba(74,222,128,0.65),
+        0 18px 40px rgba(0,0,0,0.3),
+        inset 0 0 14px rgba(255,255,255,0.25);
+}
+
+/* PELAJAR = biru extra neon */
+.role-card-pelajar {
+    box-shadow:
+        0 0 22px rgba(96,165,250,0.65),
+        0 18px 40px rgba(0,0,0,0.3),
+        inset 0 0 14px rgba(255,255,255,0.25);
+}
+
+/* 💫 5. Title ada glowing aura bergerak */
+.role-title {
+    position: relative;
+}
+.role-title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 4px;
+    background: linear-gradient(90deg, #38bdf8, #818cf8, #c084fc);
+    border-radius: 10px;
+    filter: blur(6px);
+    animation: underlineGlow 2.8s ease-in-out infinite;
+}
+
+@keyframes underlineGlow {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+/* 🦖 6. Dino loading: tambah gempar efek getar manja */
+.loading-card {
+    animation: shakeLoad 1.2s ease-in-out infinite;
+}
+@keyframes shakeLoad {
+    0% { transform: translateX(0px); }
+    50% { transform: translateX(2px); }
+    100% { transform: translateX(0px); }
+}
+
+/* ✨ 7. Tambahkan lights floating dalam glass-card */
+.role-glass-card::after {
+    content: "";
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(255,255,255,0.35), transparent 65%);
+    top: -40px;
+    right: -20px;
+    filter: blur(45px);
+    opacity: 0.5;
+    animation: glowMove 10s ease-in-out infinite;
+    z-index: -1;
+}
+
+@keyframes glowMove {
+    0% { transform: translate(0,0); opacity: 0.45; }
+    50% { transform: translate(-30px,20px); opacity: 0.9; }
+    100% { transform: translate(0,0); opacity: 0.45; }
+}
+
+.mute-btn {
+    position: fixed !important;
+    top: 20px !important;
+    left: 20px !important;
+    width: 60px !important;
+    height: 60px !important;
+    background: #FF9800 !important;
+    border-radius: 50% !important;
+    font-size: 28px !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 2000 !important;
+
+    /* Game Shadow */
+    box-shadow: 
+        0 6px 0 #b35f00, 
+        0 10px 15px rgba(0,0,0,0.3) !important;
+
+    transition: all 0.2s ease !important;
+}
+
+/* Hover effect */
+.mute-btn:hover {
+    transform: scale(1.1) !important;
+}
+
+/* Pressed state */
+.mute-btn:active {
+    transform: translateY(6px) !important;
+    box-shadow: 0 0 0 #b35f00 !important;
+}
+
+/* Extra Glow (biar matching dengan neon UI lain) */
+.mute-btn {
+    filter: drop-shadow(0 0 10px #ff980066) !important;
+}
