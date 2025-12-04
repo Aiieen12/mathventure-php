@@ -1,5 +1,6 @@
 <?php
 // auth/game-menu.php
+
 require_once '../config.php';
 
 // Pastikan user sudah login & role = pelajar
@@ -9,11 +10,33 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role
     exit;
 }
 
-$nama = $_SESSION['username'] ?? 'Pelajar';
+$userId = $_SESSION['user_id'];
+$nama   = $_SESSION['username'] ?? 'Pelajar';
 
-// Senarai tahun & level (boleh ubah kemudian)
+// Senarai tahun dalam permainan
 $tahunList = [4, 5, 6];
-$levelPerYear = 3; // sekarang 3 level dulu setiap tahun
+
+// Tetapkan bilangan level maksimum bagi setiap tahun
+$maxLevelByYear = [
+    4 => 5,
+    5 => 3,
+    6 => 3,
+];
+
+// Inisialisasi progress dalam SESSION
+if (!isset($_SESSION['progress'])) {
+    $_SESSION['progress'] = [];
+}
+if (!isset($_SESSION['progress'][$userId])) {
+    $_SESSION['progress'][$userId] = [];
+}
+
+// Untuk setiap tahun, kalau belum ada rekod, level 1 sahaja yang dibuka
+foreach ($tahunList as $t) {
+    if (!isset($_SESSION['progress'][$userId][$t])) {
+        $_SESSION['progress'][$userId][$t] = 1;
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -24,29 +47,36 @@ $levelPerYear = 3; // sekarang 3 level dulu setiap tahun
 <body>
 
 <h1>Menu Permainan Matematik</h1>
+
 <p>Pelajar: <strong><?php echo htmlspecialchars($nama); ?></strong></p>
-
-<nav>
-    <a href="dashboard-student.php">Kembali ke Dashboard</a> |
-    <a href="logout.php">Log Keluar</a>
-</nav>
-
+<p>Sila pilih tahun dan level untuk memulakan permainan.</p>
 <hr>
-
-<p>Pilih <strong>Tahun</strong> dan <strong>Level</strong> untuk mula permainan.</p>
 
 <?php foreach ($tahunList as $tahun): ?>
     <h2>Tahun <?php echo $tahun; ?></h2>
     <ul>
-        <?php for ($level = 1; $level <= $levelPerYear; $level++): ?>
+        <?php
+        $maxLevel   = $maxLevelByYear[$tahun] ?? 1;
+        $maxUnlocked = $_SESSION['progress'][$userId][$tahun] ?? 1;
+
+        for ($level = 1; $level <= $maxLevel; $level++):
+        ?>
             <li>
-                <a href="game-play.php?tahun=<?php echo $tahun; ?>&level=<?php echo $level; ?>">
-                    Mula Tahun <?php echo $tahun; ?> — Level <?php echo $level; ?>
-                </a>
+                <?php if ($level <= $maxUnlocked): ?>
+                    <a href="game-play.php?tahun=<?php echo $tahun; ?>&level=<?php echo $level; ?>">
+                        Mula Tahun <?php echo $tahun; ?> — Level <?php echo $level; ?>
+                    </a>
+                <?php else: ?>
+                    Level <?php echo $level; ?> (Terkunci)
+                <?php endif; ?>
             </li>
         <?php endfor; ?>
     </ul>
 <?php endforeach; ?>
+
+<p>
+    <a href="dashboard-student.php">← Kembali ke Dashboard Pelajar</a>
+</p>
 
 </body>
 </html>
