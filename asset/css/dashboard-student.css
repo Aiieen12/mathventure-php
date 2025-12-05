@@ -1,0 +1,70 @@
+/* ========================
+   1. GLOBAL & BACKGROUND
+======================== */
+* { margin:0; padding:0; box-sizing:border-box; font-family:'Fredoka One','Varela Round','Segoe UI',sans-serif; }
+body { background: linear-gradient(135deg,#b3e6b5,#e0ffd8); overflow-x:hidden; }
+.container { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:50px; padding:20px; position:relative; }
+
+/* BACKGROUND PARALLAX */
+.dino-bg {
+    position: fixed; inset:0;
+    background: url('../asset/img/dino-landscape.png') center/cover no-repeat;
+    opacity:0.1; z-index:-1;
+    filter: blur(3px) brightness(1.1);
+    transition: transform 0.2s ease-out;
+}
+
+/* ========================
+   2. TOPBAR
+======================== */
+.topbar {
+    width:100%; padding:15px 40px; display:flex; justify-content:space-between; align-items:center;
+    background: rgba(40,80,30,0.85); color:white;
+    box-shadow:0 5px 25px rgba(0,0,0,0.5);
+    position:sticky; top:0; z-index:100; backdrop-filter:blur(6px); border-bottom:2px solid #00ff88;
+}
+.logo { font-size:30px; font-weight:900; text-shadow:0 0 10px #00ff88,0 0 15px #00ffaa; }
+.navbar a { margin-left:25px; color:white; font-weight:700; text-decoration:none; position:relative; transition:0.3s; }
+.navbar a::after { content:''; position:absolute; width:0; height:3px; background:#00ff88; left:0; bottom:-6px; transition:0.3s; }
+.navbar a:hover::after { width:100%; }
+.logout { color:#ffbbbb !important; }
+
+/* ========================
+   3. HERO
+======================== */
+.hero { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:30px; width:100%; padding:50px; }
+.hero-content { max-width:500px; text-align:left; }
+.signboard {
+    background: linear-gradient(135deg,#fff7e6,#fff1f3); color:#333; font-weight:700;
+    font-size:22px; padding:20px 25px; border-radius:25px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+    margin-bottom:15px; display:inline-block;
+    animation: floatBubble 3s infinite ease-in-out;
+}
+.signboard span { color:#1f7e30; text-shadow:0 0 8px #00ff88; }
+.hero p { font-size:18px; color:#2b5e36; margin-top:5px; }
+
+/* Dino Hero Animation */
+.dino-hero { width:320px; animation: dinoIdle 4s infinite ease-in-out; transition: transform 0.2s ease-out; }
+@keyframes floatBubble { 0%,100% {transform:translateY(0);} 50% {transform:translateY(-12px);} }
+@keyframes dinoIdle { 0%,100% {transform:scale(1) rotate(0deg);} 25% {transform:scale(1.02) rotate(1deg);} 50% {transform:scale(1.05) rotate(-2deg);} 75% {transform:scale(1.02) rotate(1deg);} }
+
+/* ========================
+   4. MENU GRID & CARD
+======================== */
+.menu-section { width:100%; padding:30px 50px; text-align:center; }
+.menu-section h2 { font-size:32px; color:#355c3b; margin-bottom:25px; }
+.menu-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:25px; }
+
+.card {
+    background: rgba(255,255,255,0.15); backdrop-filter:blur(12px);
+    padding:25px; border-radius:18px; text-decoration:none; color:#333;
+    box-shadow:0 8px 15px rgba(0,0,0,0.15); transition:0.3s; text-align:center;
+}
+.card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow:0 12px 25px rgba(0,0,0,0.25), 0 0 15px #00ff88 inset;
+}
+.card .icon { width:85px; margin-bottom:10px; transition:0.3s; }
+.card:hover .icon { transform:scale(1.1); }
+.card.soon { opacity:0.5; cursor:default; }
