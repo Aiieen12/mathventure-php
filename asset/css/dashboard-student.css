@@ -1,70 +1,455 @@
-/* ========================
-   1. GLOBAL & BACKGROUND
-======================== */
-* { margin:0; padding:0; box-sizing:border-box; font-family:'Fredoka One','Varela Round','Segoe UI',sans-serif; }
-body { background: linear-gradient(135deg,#b3e6b5,#e0ffd8); overflow-x:hidden; }
-.container { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:50px; padding:20px; position:relative; }
+/* --- VARS & IMPORT FONT --- */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
 
-/* BACKGROUND PARALLAX */
-.dino-bg {
-    position: fixed; inset:0;
-    background: url('../asset/img/dino-landscape.png') center/cover no-repeat;
-    opacity:0.1; z-index:-1;
-    filter: blur(3px) brightness(1.1);
-    transition: transform 0.2s ease-out;
+:root {
+    --primary: #55E6C1;
+    --primary-dark: #2bc4a1;
+    --secondary: #2C3A47;
+    --accent: #F8EFBA;
+    --bg-glass: rgba(255, 255, 255, 0.85);
+    --border-glass: rgba(255, 255, 255, 0.4);
+    --shadow-soft: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+    --sidebar-w: 280px;
 }
 
-/* ========================
-   2. TOPBAR
-======================== */
-.topbar {
-    width:100%; padding:15px 40px; display:flex; justify-content:space-between; align-items:center;
-    background: rgba(40,80,30,0.85); color:white;
-    box-shadow:0 5px 25px rgba(0,0,0,0.5);
-    position:sticky; top:0; z-index:100; backdrop-filter:blur(6px); border-bottom:2px solid #00ff88;
-}
-.logo { font-size:30px; font-weight:900; text-shadow:0 0 10px #00ff88,0 0 15px #00ffaa; }
-.navbar a { margin-left:25px; color:white; font-weight:700; text-decoration:none; position:relative; transition:0.3s; }
-.navbar a::after { content:''; position:absolute; width:0; height:3px; background:#00ff88; left:0; bottom:-6px; transition:0.3s; }
-.navbar a:hover::after { width:100%; }
-.logout { color:#ffbbbb !important; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* ========================
-   3. HERO
-======================== */
-.hero { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:30px; width:100%; padding:50px; }
-.hero-content { max-width:500px; text-align:left; }
-.signboard {
-    background: linear-gradient(135deg,#fff7e6,#fff1f3); color:#333; font-weight:700;
-    font-size:22px; padding:20px 25px; border-radius:25px;
-    box-shadow:0 8px 25px rgba(0,0,0,0.2);
-    margin-bottom:15px; display:inline-block;
-    animation: floatBubble 3s infinite ease-in-out;
+body {
+    font-family: 'Varela Round', sans-serif;
+    background-color: #d1f2eb;
+    color: var(--secondary);
+    overflow-x: hidden;
 }
-.signboard span { color:#1f7e30; text-shadow:0 0 8px #00ff88; }
-.hero p { font-size:18px; color:#2b5e36; margin-top:5px; }
 
-/* Dino Hero Animation */
-.dino-hero { width:320px; animation: dinoIdle 4s infinite ease-in-out; transition: transform 0.2s ease-out; }
-@keyframes floatBubble { 0%,100% {transform:translateY(0);} 50% {transform:translateY(-12px);} }
-@keyframes dinoIdle { 0%,100% {transform:scale(1) rotate(0deg);} 25% {transform:scale(1.02) rotate(1deg);} 50% {transform:scale(1.05) rotate(-2deg);} 75% {transform:scale(1.02) rotate(1deg);} }
+/* Scrollbar Comel */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: #e0f2f1; }
+::-webkit-scrollbar-thumb { background: #81ecec; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #00cec9; }
 
-/* ========================
-   4. MENU GRID & CARD
-======================== */
-.menu-section { width:100%; padding:30px 50px; text-align:center; }
-.menu-section h2 { font-size:32px; color:#355c3b; margin-bottom:25px; }
-.menu-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:25px; }
-
-.card {
-    background: rgba(255,255,255,0.15); backdrop-filter:blur(12px);
-    padding:25px; border-radius:18px; text-decoration:none; color:#333;
-    box-shadow:0 8px 15px rgba(0,0,0,0.15); transition:0.3s; text-align:center;
+/* --- BACKGROUND ANIMATED --- */
+.game-bg {
+    position: fixed;
+    inset: 0;
+    background: url('../images/bgdino.png') center bottom/cover no-repeat;
+    z-index: -2;
 }
-.card:hover {
-    transform: translateY(-8px) scale(1.03);
-    box-shadow:0 12px 25px rgba(0,0,0,0.25), 0 0 15px #00ff88 inset;
+
+/* Lapisan Kabus/Corak Overlay */
+.game-bg::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2), rgba(162, 222, 208, 0.5));
+    z-index: -1;
 }
-.card .icon { width:85px; margin-bottom:10px; transition:0.3s; }
-.card:hover .icon { transform:scale(1.1); }
-.card.soon { opacity:0.5; cursor:default; }
+
+/* --- SIDEBAR GLASSMORPHISM --- */
+.sidebar {
+    position: fixed;
+    top: 20px; left: 20px; bottom: 20px; /* Terapung sikit dari tepi */
+    width: var(--sidebar-w);
+    background: var(--bg-glass);
+    backdrop-filter: blur(12px); /* Efek Kaca Kabur */
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 24px;
+    border: 1px solid var(--border-glass);
+    box-shadow: var(--shadow-soft);
+    display: flex; flex-direction: column;
+    z-index: 1000;
+    transition: 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    padding: 10px;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-120%);
+}
+
+.sidebar-header {
+    padding: 15px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 16px;
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 20px;
+}
+
+.logo-text {
+    font-family: 'Fredoka One';
+    color: #00b894;
+    font-size: 22px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 0px #dff9fb;
+}
+
+.logo-icon { font-size: 26px; animation: wobble 3s infinite ease-in-out; }
+
+/* Menu Navigation */
+.side-nav {
+    flex: 1; display: flex; flex-direction: column; gap: 8px; padding: 0 5px;
+}
+
+.nav-item {
+    text-decoration: none;
+    padding: 14px 16px;
+    color: #636e72;
+    font-weight: bold;
+    border-radius: 14px;
+    display: flex; align-items: center; gap: 12px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.nav-item:hover {
+    background: white;
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.nav-item.active {
+    background: white;
+    color: #00b894;
+    border-color: #55E6C1;
+    box-shadow: 0 4px 15px rgba(85, 230, 193, 0.3);
+}
+
+.nav-item .icon { font-size: 1.2rem; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.1)); }
+
+.nav-item.logout { margin-top: auto; color: #ff7675; }
+.nav-item.logout:hover { background: #ffeaa7; border-color: #ff7675; }
+
+/* Player Profile Card */
+.sidebar-footer { margin-top: 10px; }
+.player-card {
+    background: linear-gradient(135deg, #fff, #f0fdf4);
+    padding: 15px;
+    border-radius: 20px;
+    border: 2px solid #b8e994;
+    display: flex; align-items: center; gap: 12px;
+    position: relative;
+    overflow: hidden;
+}
+
+.player-card::after {
+    content:''; position: absolute; top: -50%; right: -50%;
+    width: 100px; height: 100px; background: rgba(184, 233, 148, 0.3);
+    border-radius: 50%;
+}
+
+.avatar-frame {
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    border: 3px solid #78e08f;
+    padding: 2px; background: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.avatar-frame img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+.player-info { flex: 1; z-index: 2; }
+.lvl-badge {
+    font-family: 'Fredoka One'; font-size: 12px;
+    background: #fab1a0; color: white;
+    padding: 2px 8px; border-radius: 10px;
+    display: inline-block; margin-bottom: 4px;
+    box-shadow: 0 2px 0 #e17055;
+}
+
+.xp-track {
+    height: 12px; background: #dfe6e9; border-radius: 20px;
+    overflow: hidden; border: 2px solid white;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Animasi Belang pada XP Bar */
+.xp-fill {
+    height: 100%;
+    background: repeating-linear-gradient(
+        45deg,
+        #00b894,
+        #00b894 10px,
+        #55efc4 10px,
+        #55efc4 20px
+    );
+    background-size: 200% 200%;
+    animation: moveStripe 2s linear infinite;
+    border-radius: 20px;
+    transition: width 0.5s ease;
+}
+
+/* --- MAIN CONTENT --- */
+.main-content {
+    margin-left: calc(var(--sidebar-w) + 40px); /* Jarak extra sikit */
+    padding: 30px 40px 30px 0; /* Padding kanan */
+    transition: margin-left 0.4s;
+    min-height: 100vh;
+}
+
+/* Top Header */
+.top-bar {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 30px;
+}
+
+.welcome-badge {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 12px 25px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 2px solid white;
+    color: #636e72;
+}
+.highlight { font-family: 'Fredoka One'; color: #0984e3; }
+
+.game-clock {
+    background: #2d3436; color: #fdcb6e;
+    font-family: 'Fredoka One'; padding: 8px 16px;
+    border-radius: 12px;
+    border-bottom: 4px solid #000;
+    letter-spacing: 1px;
+}
+
+/* HERO SECTION */
+.hero-section { display: flex; gap: 25px; flex-wrap: wrap; margin-bottom: 40px; }
+
+.hero-card {
+    flex: 2;
+    background: linear-gradient(120deg, #81ecec, #00cec9);
+    border-radius: 30px;
+    padding: 40px;
+    position: relative;
+    color: white;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0, 206, 201, 0.4);
+    border: 4px solid rgba(255,255,255,0.3);
+}
+
+/* Corak background Hero */
+.hero-card::before {
+    content: ''; position: absolute; top: -50px; left: -50px;
+    width: 200px; height: 200px; background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+}
+.hero-card::after {
+    content: ''; position: absolute; bottom: -30px; right: 20%;
+    width: 150px; height: 150px; background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+}
+
+.hero-text h1 { font-size: 2.5rem; margin-bottom: 10px; text-shadow: 0 4px 0 rgba(0,0,0,0.1); }
+.hero-text p { font-size: 1.1rem; margin-bottom: 25px; opacity: 0.9; max-width: 70%; }
+
+.cta-btn {
+    background: #fdcb6e; color: #d35400;
+    border: none; padding: 14px 30px; font-size: 1.2rem;
+    border-radius: 15px; font-weight: 900;
+    box-shadow: 0 6px 0 #e17055;
+    cursor: pointer; transition: 0.2s;
+}
+.cta-btn:active { transform: translateY(6px); box-shadow: none; }
+.cta-btn:hover { background: #ffeaa7; }
+
+.dino-mascot img {
+    position: absolute; bottom: -20px; right: -20px;
+    width: 280px; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.2));
+    transition: transform 0.2s;
+}
+
+/* HUD STATS - FLOATING */
+.hud-stats { flex: 0.8; display: flex; flex-direction: column; gap: 15px; min-width: 220px; }
+
+.stat-box {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 20px; border-radius: 18px;
+    display: flex; align-items: center; gap: 15px;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.05);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 2px solid white;
+}
+
+.stat-box:hover { transform: scale(1.05) rotate(-2deg); }
+
+.stat-box.red .stat-icon { background: #ff7675; }
+.stat-box.yellow .stat-icon { background: #ffeaa7; }
+.stat-box.blue .stat-icon { background: #74b9ff; }
+
+.stat-icon {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; justify-content: center; align-items: center;
+    font-size: 24px; color: white;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.stat-info small { color: #b2bec3; font-weight: 800; font-size: 0.7rem; letter-spacing: 1px; }
+.stat-info strong { color: #2d3436; font-size: 1.4rem; font-family: 'Fredoka One'; }
+
+/* MENU GRID */
+.menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
+
+.game-card {
+    background: rgba(255,255,255,0.9);
+    padding: 30px; border-radius: 25px;
+    text-align: center; text-decoration: none;
+    color: var(--secondary);
+    transition: 0.3s;
+    border: 4px solid transparent;
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+}
+
+.game-card .card-icon { font-size: 3.5rem; margin-bottom: 15px; transition: 0.3s; }
+.game-card h3 { font-size: 1.4rem; margin-bottom: 5px; }
+.game-card p { color: #636e72; font-size: 0.9rem; }
+
+/* Warna Kad Spesifik */
+.game-card.green { border-bottom: 8px solid #55efc4; }
+.game-card.green:hover { transform: translateY(-10px); background: #e0fbf6; border-color: #55efc4; }
+
+.game-card.orange { border-bottom: 8px solid #ffeaa7; opacity: 0.7; }
+.game-card.purple { border-bottom: 8px solid #a29bfe; }
+.game-card.purple:hover { transform: translateY(-10px); background: #ecebff; border-color: #a29bfe; }
+
+.game-card:hover .card-icon { transform: scale(1.2) rotate(10deg); }
+
+/* Butang Terapung */
+.floating-menu-btn {
+    position: fixed; top: 20px; left: 20px;
+    width: 55px; height: 55px;
+    background: white; color: #00b894;
+    border: none; border-radius: 16px;
+    font-size: 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 900; cursor: pointer; display: none;
+    transition: 0.3s;
+}
+.floating-menu-btn.visible { display: block; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+.close-btn { background: #ff7675; color: white; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+
+/* ANIMATION KEYFRAMES */
+@keyframes moveStripe {
+    0% { background-position: 0 0; }
+    100% { background-position: 40px 40px; }
+}
+
+@keyframes wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .sidebar { left: -300px; } /* Hide fully off screen */
+    .sidebar.collapsed { transform: none; left: 20px; } /* Show when toggled (logic reversed for mobile if needed, or stick to standard) */
+    
+    .main-content { margin-left: 0; padding: 20px; }
+    .hero-section { flex-direction: column-reverse; }
+    .dino-mascot img { width: 150px; right: 0; bottom: 0; }
+}
+
+/* --- TAMBAHAN UNTUK EDIT PROFILE MODAL --- */
+
+/* Butang Edit Kecil pada Sidebar */
+.edit-profile-btn {
+    position: absolute;
+    top: 5px; right: 5px;
+    background: white; border: none;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: 0.2s;
+    z-index: 10;
+}
+.edit-profile-btn:hover { transform: scale(1.1); background: #ffeaa7; }
+
+/* Modal Background (Gelap) */
+.modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(5px);
+    z-index: 2000;
+    display: flex; justify-content: center; align-items: center;
+    opacity: 0; pointer-events: none;
+    transition: 0.3s;
+}
+.modal-overlay.active { opacity: 1; pointer-events: all; }
+
+/* Kotak Modal */
+.modal-box {
+    background: #fff;
+    width: 90%; max-width: 500px;
+    border-radius: 25px;
+    padding: 30px;
+    border: 5px solid #55E6C1;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.modal-overlay.active .modal-box { transform: scale(1); }
+
+.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.modal-header h2 { font-family: 'Fredoka One'; color: #2d3436; }
+.close-modal { background: #ff7675; border: none; color: white; width: 30px; height: 30px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+
+/* Grid Pilihan Avatar */
+.avatar-selection-area { margin-bottom: 20px; text-align: center; }
+.label { font-weight: bold; margin-bottom: 10px; display: block; color: #636e72; }
+.avatar-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+
+/* Radio Button Tersembunyi tapi Gambar Boleh Klik */
+.avatar-option { cursor: pointer; position: relative; transition: 0.2s; }
+.avatar-option input { display: none; } /* Sorok radio asal */
+.avatar-option img {
+    width: 60px; height: 60px;
+    border-radius: 50%;
+    border: 3px solid #dfe6e9;
+    padding: 3px;
+    background: #f1f2f6;
+    transition: 0.2s;
+}
+
+/* Bila Dipilih */
+.avatar-option input:checked + img {
+    border-color: #55E6C1;
+    background: #e0fbf6;
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(85, 230, 193, 0.4);
+}
+.avatar-option:hover img { transform: translateY(-3px); }
+
+/* Form Inputs */
+.form-group { margin-bottom: 15px; text-align: left; }
+.form-group label { display: block; font-size: 0.9rem; font-weight: bold; color: #2d3436; margin-bottom: 5px; }
+.form-group input, .form-group textarea {
+    width: 100%; padding: 12px;
+    border: 2px solid #dfe6e9;
+    border-radius: 12px;
+    font-family: 'Varela Round';
+    font-size: 1rem;
+    transition: 0.2s;
+}
+.form-group input:focus, .form-group textarea:focus {
+    border-color: #55E6C1; outline: none; background: #f0fdf4;
+}
+
+/* Save Button */
+.save-btn {
+    width: 100%; padding: 15px;
+    background: #55E6C1; color: #006266;
+    border: none; border-radius: 15px;
+    font-family: 'Fredoka One'; font-size: 1.2rem;
+    cursor: pointer; margin-top: 10px;
+    box-shadow: 0 5px 0 #2bc4a1;
+    transition: 0.1s;
+}
+.save-btn:active { transform: translateY(5px); box-shadow: none; }
+
+/* Notify Box */
+.notify {
+    padding: 15px; margin-bottom: 20px; border-radius: 15px;
+    font-weight: bold; text-align: center;
+}
+.notify.success { background: #dff9fb; color: #00b894; border: 2px solid #00b894; }
