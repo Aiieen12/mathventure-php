@@ -1,0 +1,323 @@
+/* ==========================================
+   GLOBAL SETTINGS
+========================================== */
+:root {
+    --card-dark-bg: rgba(18, 18, 18, 0.95); /* Warna Hitam Pekat */
+    --text-color: #ffffff;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 40px 20px;
+}
+
+/* ==========================================
+   KAD MODUL (MODULE CARD) - MASTER STYLE
+========================================== */
+.module-card {
+    position: relative;
+    border-radius: 20px;
+    padding: 30px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+    
+    /* --- PEMBAIKAN UTAMA DI SINI --- */
+    /* Kita paksa background jadi gelap untuk SEMUA kad */
+    background: var(--card-dark-bg) !important; 
+    
+    /* Glass Effect Halus */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    
+    /* Border halus putih */
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    
+    /* Shadow biasa */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+}
+
+/* Typography */
+.module-card h3 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    color: #fff !important; /* Paksa jadi putih */
+    margin: 15px 0 10px;
+    letter-spacing: 1px;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+    z-index: 2;
+}
+
+.module-card p {
+    font-size: 1.05rem;
+    color: #e0e0e0 !important; /* Putih terang sedikit */
+    line-height: 1.5;
+    margin-bottom: 25px;
+    font-weight: 600;
+    z-index: 2;
+    opacity: 1 !important; /* Pastikan tak pudar */
+}
+
+.card-icon {
+    font-size: 4rem;
+    transition: transform 0.3s ease;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    z-index: 2;
+}
+
+/* ==========================================
+   WARNA & GLOW (HOVER FIX)
+   Reset background supaya tak bertukar warna pudar
+========================================== */
+
+/* Pastikan class warna TIDAK menukar background */
+.module-card.green,
+.module-card.orange,
+.module-card.blue,
+.module-card.purple,
+.module-card.red {
+    background: var(--card-dark-bg) !important;
+}
+
+/* --- 1. HIJAU (Nombor Bulat) --- */
+.module-card.green { border-bottom: 6px solid #2ecc71; }
+.module-card.green:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(46, 204, 113, 0.7); /* Glow Kuat */
+    border-color: #2ecc71;
+}
+
+/* --- 2. OREN (Pecahan) - FIXED --- */
+.module-card.orange { border-bottom: 6px solid #f39c12; }
+.module-card.orange:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(243, 156, 18, 0.7); /* Glow Kuat */
+    border-color: #f39c12;
+}
+
+/* --- 3. BIRU (Perpuluhan) --- */
+.module-card.blue { border-bottom: 6px solid #3498db; }
+.module-card.blue:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.7); /* Glow Kuat */
+    border-color: #3498db;
+}
+
+/* --- 4. UNGU (Wang) --- */
+.module-card.purple { border-bottom: 6px solid #9b59b6; }
+.module-card.purple:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(155, 89, 182, 0.7); /* Glow Kuat */
+    border-color: #9b59b6;
+}
+
+/* --- 5. MERAH (Masa) --- */
+.module-card.red { border-bottom: 6px solid #e74c3c; }
+.module-card.red:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 0 30px rgba(231, 76, 60, 0.7); /* Glow Kuat */
+    border-color: #e74c3c;
+}
+
+/* Icon Animation on Hover */
+.module-card:hover .card-icon {
+    transform: scale(1.15) rotate(5deg);
+}
+
+/* ==========================================
+   BUTTON STYLE
+========================================== */
+.btn-gempak {
+    background: linear-gradient(to right, #FFD200, #F7971E);
+    border: none;
+    border-radius: 50px;
+    padding: 12px 25px;
+    width: 100%;
+    cursor: pointer;
+    transition: transform 0.2s;
+    box-shadow: 0 5px 15px rgba(247, 151, 30, 0.4);
+    position: relative;
+    z-index: 5;
+}
+
+.btn-gempak:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #F7971E, #FFD200);
+    box-shadow: 0 0 20px rgba(255, 210, 0, 0.6); /* Button pun glow */
+}
+
+.btn-text {
+    font-family: 'Fredoka One', cursive;
+    color: #fff;
+    font-size: 1.1rem;
+    text-shadow: 0 2px 2px rgba(0,0,0,0.2);
+    letter-spacing: 0.5px;
+}
+
+.btn-gempak.small {
+    width: auto;
+    padding: 10px 40px;
+}
+
+/* ==========================================
+   MODAL (POPUP) STYLE
+========================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(8px);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-box {
+    background: #fff;
+    width: 90%;
+    max-width: 600px;
+    border-radius: 20px;
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh;
+}
+
+.modal-overlay.active .modal-box {
+    transform: translateY(0);
+}
+
+.modal-header {
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+.modal-header.green { background: #2ecc71; }
+.modal-header.orange { background: #e67e22; }
+.modal-header.blue { background: #3498db; }
+.modal-header.purple { background: #9b59b6; }
+.modal-header.red { background: #e74c3c; }
+
+.modal-header h2 {
+    margin: 0;
+    font-family: 'Fredoka One';
+    font-size: 1.5rem;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.modal-body-scroll {
+    padding: 25px;
+    overflow-y: auto;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.modal-footer-btn {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #eee;
+}
+
+/* Helper Class untuk Nota */
+.calculation-box {
+    background: #2d3436;
+    color: #fff;
+    font-family: monospace;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 10px 0;
+    white-space: pre;
+    overflow-x: auto;
+}
+.math-card {
+    background: #eefbff;
+    border: 2px dashed #3498db;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+    color: #2c3e50;
+}
+.table-box table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+.table-box th, .table-box td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+.table-box th { background: #f1f2f6; }
+.dino-list li { margin-bottom: 5px; }
+
+/* ==========================================
+   STYLE UNTUK TAJUK HALAMAN
+========================================== */
+.page-title-area {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.page-title-area h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 3.5rem; /* Besar dan jelas */
+    color: #ffffff;
+    margin: 0;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.6); /* Bayang supaya timbul */
+    letter-spacing: 2px;
+}
+
+.page-title-area p {
+    color: #e0e0e0;
+    font-size: 1.2rem;
+    margin-top: 5px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Responsif untuk skrin kecil (Handphone) */
+@media (max-width: 768px) {
+    .page-title-area h1 {
+        font-size: 2.2rem;
+    }
+    .page-title-area p {
+        font-size: 1rem;
+    }
+}

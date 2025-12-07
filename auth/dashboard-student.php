@@ -60,7 +60,7 @@ $xp_percentage = ($student['max_xp'] > 0) ? ($student['current_xp'] / $student['
         <nav class="side-nav">
             <a href="dashboard-student.php" class="nav-item active"><span class="icon">🏠</span> Dashboard</a>
             <a href="game-menu.php" class="nav-item"><span class="icon">🗺️</span> Peta Dunia</a>
-            <a href="#" class="nav-item"><span class="icon">📚</span> Modul</a>
+            <a href="modul-belajar.php" class="nav-item"><span class="icon">📚</span> Modul</a>
             <a href="#" class="nav-item"><span class="icon">🏆</span> Pencapaian</a>
             <div class="divider"></div>
             <a href="logout.php" class="nav-item logout"><span class="icon">🚪</span> Log Keluar</a>
