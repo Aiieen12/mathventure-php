@@ -19,18 +19,22 @@ $level = isset($_GET['level']) ? (int)$_GET['level'] : 1;
 // Tetapan bilangan level maksimum setiap tahun
 $maxLevelByYear = [
     4 => 5,
-    5 => 3,
-    6 => 3,
+    5 => 5,
+    6 => 5,
 ];
 $maxLevel = $maxLevelByYear[$tahun] ?? 1;
 
+// ===============================
 // Baca fail soalan ikut tahun
-$soalanFile = "soalan_tahun{$tahun}.php";
+// ===============================
+$soalanFile = __DIR__ . "/soalan_tahun{$tahun}.php";
 $currentQuestions = [];
 
 if (file_exists($soalanFile)) {
     $questionSets = include $soalanFile;
-    if (isset($questionSets[$level])) {
+
+    // Pastikan fail soalan return array dan level wujud
+    if (is_array($questionSets) && isset($questionSets[$level])) {
         $currentQuestions = $questionSets[$level];
     }
 }

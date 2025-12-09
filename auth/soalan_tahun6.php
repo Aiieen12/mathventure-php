@@ -53,6 +53,7 @@ return [
                 '53 , 59',
                 '53 dan 59',
                 '53 dan59',
+                '53 59',
             ],
         ],
     ],
@@ -170,6 +171,7 @@ return [
                 'q',
                 'Garis Q',
                 'garis Q',
+                'garisan Q',
             ],
         ],
     ],
@@ -203,9 +205,8 @@ return [
         [
             'type'   => 'visual',
             'text'   => 'Carta palang di bawah menunjukkan bilangan buku yang dibaca oleh 4 orang murid dalam sebulan. Hitung min (purata) bilangan buku yang dibaca oleh seorang murid.',
-            // Dalam soalan asal tertulis T6L6; di sini guna T6L5.png.
-            // Tukar ikut nama sebenar fail carta palang.
-            'image'  => 'qimages/T6/T6L5.png',
+            // Dalam soalan asal tertulis Folder : qimages/T6/T6L6
+            'image'  => 'qimages/T6/T6L6.png', // tukar jika nama fail lain
             'answer' => [
                 '7.5',
                 '7.50',

@@ -19,8 +19,8 @@ $tahunList = [4, 5, 6];
 // Tetapkan bilangan level maksimum bagi setiap tahun
 $maxLevelByYear = [
     4 => 5,
-    5 => 3,
-    6 => 3,
+    5 => 5,
+    6 => 5,
 ];
 
 // Inisialisasi progress dalam SESSION
@@ -34,7 +34,7 @@ if (!isset($_SESSION['progress'][$userId])) {
 // Untuk setiap tahun, kalau belum ada rekod, level 1 sahaja yang dibuka
 foreach ($tahunList as $t) {
     if (!isset($_SESSION['progress'][$userId][$t])) {
-        $_SESSION['progress'][$userId][$t] = 1;
+        $_SESSION['progress'][$userId][$t] = 1;  // level dibuka
     }
 }
 ?>
@@ -56,7 +56,7 @@ foreach ($tahunList as $t) {
     <h2>Tahun <?php echo $tahun; ?></h2>
     <ul>
         <?php
-        $maxLevel   = $maxLevelByYear[$tahun] ?? 1;
+        $maxLevel    = $maxLevelByYear[$tahun] ?? 1;
         $maxUnlocked = $_SESSION['progress'][$userId][$tahun] ?? 1;
 
         for ($level = 1; $level <= $maxLevel; $level++):
