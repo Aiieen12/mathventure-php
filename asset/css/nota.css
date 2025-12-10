@@ -1,0 +1,240 @@
+/* modul-belajar.css */
+/* Gaya khas untuk halaman Nota Matematik (Nota Untuk Kamu)
+   Layout ini menggunakan sidebar & background dari student-layout.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
+
+/* HERO PENGENALAN */
+
+.note-hero {
+    margin-bottom: 22px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 24px;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.note-hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.9rem;
+    color: #00b894;
+    margin-bottom: 6px;
+}
+
+.note-hero p {
+    font-size: 0.95rem;
+    color: #2d3436;
+}
+
+/* WRAPPER UTAMA (ikut wireframe: panel kiri + kanan) */
+
+.note-wrapper {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 20px;
+}
+
+/* PANEL KIRI */
+
+.note-sidebar {
+    background: rgba(255,255,255,0.92);
+    border-radius: 24px;
+    padding: 16px 14px 18px;
+    border: 3px solid rgba(255,255,255,0.95);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* kotak logo */
+
+.note-logo-box {
+    height: 80px;
+    border-radius: 16px;
+    border: 2px dashed #b2bec3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f6fa;
+}
+
+.note-logo-text {
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+/* title NOTA */
+
+.note-sidebar-title {
+    font-family: 'Fredoka One';
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    color: #2d3436;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #ffeaa7;
+    text-align: center;
+}
+
+/* senarai nota */
+
+.note-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.note-list li a {
+    display: block;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #dfe6e9;
+    color: #2d3436;
+    text-decoration: none;
+    transition: 0.18s;
+}
+
+.note-list li a:hover {
+    background: #dff9fb;
+    border-color: #00cec9;
+    color: #006266;
+    transform: translateX(3px);
+}
+
+/* PANEL KANAN */
+
+.note-main {
+    background: rgba(255,255,255,0.94);
+    border-radius: 24px;
+    padding: 18px 20px 22px;
+    border: 3px solid rgba(255,255,255,0.95);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+}
+
+/* header "NOTA UNTUK KAMU" di dalam panel kanan */
+
+.note-main-header {
+    padding: 10px 14px;
+    border-radius: 16px;
+    border: 2px solid #dfe6e9;
+    background: #f5f6fa;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.note-main-header span {
+    font-family: 'Fredoka One';
+    letter-spacing: 1px;
+    font-size: 0.98rem;
+    color: #2d3436;
+}
+
+/* GRID KAD DARJAH */
+
+.note-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+/* kad satu darjah */
+
+.note-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px solid #dfe6e9;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* banner biru seperti wireframe (ruang gambar awal) */
+
+.note-card-banner {
+    height: 130px;
+    background: #1e6f91;
+}
+
+/* boleh beza warna ikut darjah kalau mahu */
+
+.note-card-banner.banner-4 {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+}
+.note-card-banner.banner-5 {
+    background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+}
+.note-card-banner.banner-6 {
+    background: linear-gradient(135deg, #55efc4, #00cec9);
+}
+
+/* isi kad */
+
+.note-card-body {
+    padding: 12px 14px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.note-card-body h3 {
+    font-family: 'Fredoka One';
+    font-size: 1.05rem;
+    margin: 0;
+    color: #2d3436;
+}
+
+.note-card-body p {
+    font-size: 0.9rem;
+    color: #636e72;
+    margin: 0 0 6px;
+}
+
+/* butang pada kad */
+
+.note-btn {
+    margin-top: 4px;
+    align-self: flex-start;
+    padding: 8px 14px;
+    border-radius: 12px;
+    background: #00cec9;
+    color: #ffffff;
+    font-family: 'Fredoka One';
+    font-size: 0.9rem;
+    text-decoration: none;
+    box-shadow: 0 4px 0 #009393;
+    transition: 0.15s;
+}
+
+.note-btn:hover {
+    background: #55efc4;
+    color: #006266;
+}
+
+.note-btn:active {
+    transform: translateY(2px);
+    box-shadow: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .note-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .note-sidebar {
+        order: 2;
+    }
+
+    .note-main {
+        order: 1;
+    }
+}

@@ -1,78 +1,202 @@
 <?php
 require_once '../config.php';
 
-if (session_status() === PHP_SESSION_NONE) { session_start(); }
-
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'pelajar') {
-    $_SESSION['error'] = 'Sila log masuk.';
-    header('Location: index.php');
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
+    $_SESSION['error'] = 'Sila log masuk sebagai pelajar untuk akses halaman ini.';
+    header('Location: ../index.php');
     exit;
 }
 
-$user_id = $_SESSION['user_id'];
-$nama = $_SESSION['username'] ?? 'Pelajar';
+$nama = $_SESSION['username'] ?? 'Pelajar Dino';
 
-// --- TARIK DATA PELAJAR ---
-$stmt = $conn->prepare("SELECT * FROM student WHERE id_user = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$student = $result->fetch_assoc();
+/*
+ * Placeholder data – nanti boleh ganti dengan data sebenar dari DB
+ * Contoh:
+ *  - nyawa disimpan dalam jadual pelajar
+ *  - mata = total markah yang pelajar kumpul
+ *  - progress peta / nota / lencana ikut jadual lain
+ */
+$nyawaMaks   = 5;
+$nyawaBaki   = $_SESSION['nyawa']        ?? 5;   // buat sementara, default 5
+$jumlahMata  = $_SESSION['total_mata']   ?? 120; // contoh, sama macam total markah lama
 
-// Default data jika pelajar baru
-if (!$student) {
-    $student = ['firstname'=>'Pelajar', 'lastname'=>'Baru', 'bio'=>'Saya suka matematik!', 'level'=>1, 'current_xp'=>0, 'max_xp'=>100, 'coins'=>0, 'lives'=>5, 'avatar'=>'dino-1.png'];
-    // Auto insert data kosong jika perlu, tapi setakat ini kita guna default array display
-}
-
-// Senarai Avatar (Pastikan nama file ini wujud dalam folder images, atau guna placeholder)
-$avatar_list = [
-    'dinasour2.png', // Default anda
-    'dino-red.png',  // Sila letak gambar lain jika ada
-    'dino-blue.png',
-    'dino-girl.png'
-];
-
-$xp_percentage = ($student['max_xp'] > 0) ? ($student['current_xp'] / $student['max_xp']) * 100 : 0;
+$progressPeta  = $_SESSION['progress_peta']
+    ?? 'Belum mula — Jom buka Tahun 4 • Level 1!';
+$progressNota  = $_SESSION['progress_nota']
+    ?? 'Belum baca — Pilih mana-mana nota untuk bermula.';
+$progressBadge = $_SESSION['progress_badge']
+    ?? '0 lencana terkumpul — Jawab soalan untuk kumpul badge!';
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard | Mathventure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../asset/css/dashboard-student.css?v=<?php echo time(); ?>">
+    <title>Dashboard Pelajar</title>
+    <link rel="stylesheet" href="../asset/css/student-layout.css">
+    <link rel="stylesheet" href="../asset/css/dashboard-student.css">
 </head>
 <body>
 
-    <div class="game-bg"></div>
+<div class="game-bg"></div>
 
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-area">
-                <div class="logo-icon">🦖</div>
-                <div class="logo-text">Mathventure</div>
+<button class="floating-menu-btn visible" onclick="toggleSidebar()">☰</button>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div>
+            <div class="logo-text">Mathventure</div>
+            <small>Student Mode</small>
+        </div>
+        <button class="close-btn" onclick="toggleSidebar()">✕</button>
+    </div>
+
+    <nav class="side-nav">
+        <a href="dashboard-student.php" class="nav-item active">
+            <span class="icon">🏠</span> <span>Dashboard</span>
+        </a>
+        <a href="game-menu.php" class="nav-item">
+            <span class="icon">🗺️</span> <span>Peta Permainan</span>
+        </a>
+        <a href="nota.php" class="nav-item">
+            <span class="icon">📚</span> <span>Nota Matematik</span>
+        </a>
+        <a href="badges.php" class="nav-item">
+            <span class="icon">🏅</span> <span>Pencapaian</span>
+        </a>
+        <a href="profile.php" class="nav-item">
+            <span class="icon">👤</span> <span>Profil</span>
+        </a>
+        <a href="logout.php" class="nav-item logout">
+            <span class="icon">🚪</span> <span>Log Keluar</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="player-card">
+            <div class="avatar-frame">
+                <img src="../asset/images/avatar1.png" alt="Avatar">
             </div>
-            <button class="close-btn" id="closeSidebarBtn">✖</button>
+            <div class="player-info">
+                <div class="lvl-badge">Level Dino</div>
+                <div><strong><?php echo htmlspecialchars($nama); ?></strong></div>
+                <div class="xp-track">
+                    <div class="xp-fill" style="width: 40%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</aside>
+
+<main class="main-content">
+    <!-- bar atas: greeting + jam -->
+    <div class="top-bar">
+        <div class="welcome-badge">
+            Hai <span class="highlight"><?php echo htmlspecialchars($nama); ?></span>, jom mulakan pengembaraan Matematik hari ini! 🌟
+        </div>
+        <div class="game-clock" id="gameClock">--:--</div>
+    </div>
+
+    <!-- HERO + KAD NYAWA / MATA -->
+    <section class="hero-section">
+        <div class="hero-card">
+            <div class="hero-text">
+                <h1>Selamat datang ke Mathventure!</h1>
+                <p>
+                    Jawab soalan, buka level baharu dan kumpul lencana hebat bersama Dino.
+                </p>
+            </div>
+
+            <!-- gambar kecil dinosour2 dalam kotak -->
+            <div class="hero-dino-small">
+                <img src="../asset/images/dinasour2.png" alt="Dino comel">
+            </div>
         </div>
 
-        <nav class="side-nav">
-            <a href="dashboard-student.php" class="nav-item active"><span class="icon">🏠</span> Dashboard</a>
-            <a href="game-menu.php" class="nav-item"><span class="icon">🗺️</span> Peta Dunia</a>
-            <a href="modul-belajar.php" class="nav-item"><span class="icon">📚</span> Modul</a>
-            <a href="#" class="nav-item"><span class="icon">🏆</span> Pencapaian</a>
-            <div class="divider"></div>
-            <a href="logout.php" class="nav-item logout"><span class="icon">🚪</span> Log Keluar</a>
-        </nav>
+        <div class="hud-stats">
+            <!-- NYAWA -->
+            <div class="stat-box yellow">
+                <div class="stat-icon">❤️</div>
+                <div class="stat-info">
+                    <small>NYAWA</small>
+                    <strong><?php echo $nyawaBaki . ' / ' . $nyawaMaks; ?></strong>
+                    <div class="stat-desc">Satu jawapan salah akan tolak satu nyawa.</div>
+                </div>
+            </div>
 
-<h2>Menu Utama</h2>
-<p>
-    Buat masa ini, kita fokus untuk lihat pergerakan sistem permainan.
-</p>
-<ul>
-    <li>Klik <strong>Peta</strong> di bahagian nav untuk ke menu game.</li>
-</ul>
+            <!-- MATA -->
+            <div class="stat-box blue">
+                <div class="stat-icon">⭐</div>
+                <div class="stat-info">
+                    <small>MATA TERKUMPUL</small>
+                    <strong><?php echo $jumlahMata; ?></strong>
+                    <div class="stat-desc">Setiap jawapan betul akan menambah mata kamu.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SEKSYEN BAWAH: 3 KOLUM PROGRESS -->
+    <section class="quick-links">
+        <!-- Peta Permainan -->
+        <article class="quick-card q-map" onclick="location.href='game-menu.php'">
+            <div class="quick-header">
+                <div class="quick-icon">🗺️</div>
+                <div>
+                    <h3>Peta Permainan</h3>
+                    <span class="quick-sub">Lihat level yang telah dibuka</span>
+                </div>
+            </div>
+            <p class="quick-progress">
+                <?php echo htmlspecialchars($progressPeta); ?>
+            </p>
+            <button class="quick-btn">Pergi ke Peta Permainan</button>
+        </article>
+
+        <!-- Nota Matematik -->
+        <article class="quick-card q-note" onclick="location.href='nota.php'">
+            <div class="quick-header">
+                <div class="quick-icon">📚</div>
+                <div>
+                    <h3>Nota Matematik</h3>
+                    <span class="quick-sub">Sambung bacaan nota terakhir</span>
+                </div>
+            </div>
+            <p class="quick-progress">
+                <?php echo htmlspecialchars($progressNota); ?>
+            </p>
+            <button class="quick-btn">Pergi ke Nota Matematik</button>
+        </article>
+
+        <!-- Pencapaian -->
+        <article class="quick-card q-badge" onclick="location.href='badges.php'">
+            <div class="quick-header">
+                <div class="quick-icon">🏅</div>
+                <div>
+                    <h3>Pencapaian</h3>
+                    <span class="quick-sub">Lihat lencana yang telah dikumpul</span>
+                </div>
+            </div>
+            <p class="quick-progress">
+                <?php echo htmlspecialchars($progressBadge); ?>
+            </p>
+            <button class="quick-btn">Pergi ke Pencapaian</button>
+        </article>
+    </section>
+</main>
+
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function updateClock() {
+    const el = document.getElementById('gameClock');
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
 
 </body>
 </html>

@@ -1,0 +1,330 @@
+/* game-play.css */
+/* UI comel untuk kuiz Mathventure */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
+
+/* ===== LAYOUT ASAS PAGE ===== */
+body {
+    margin: 0;
+    padding: 40px 16px;
+    min-height: 100vh;
+    font-family: 'Varela Round', sans-serif;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background-color: #d1f2eb;
+    background-image: url('../images/bg2.jpg'); /* default = bg2 */
+    background-size: cover;
+    background-position: center bottom;
+}
+
+/* Kalau nak beza ikut tahun, boleh control guna class pada body */
+body.tahun-4 {
+    background-image: url('../images/bg2.jpg');
+}
+
+/* overlay lembut */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at 20% 0, rgba(255,255,255,0.6), transparent 60%),
+                radial-gradient(circle at 80% 100%, rgba(255,255,255,0.4), transparent 60%);
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ===== KAD SOALAN & KEPUTUSAN ===== */
+
+#quiz-section,
+#result-section {
+    max-width: 920px;
+    width: 100%;
+    background: rgba(255,255,255,0.9);
+    border-radius: 30px;
+    padding: 28px 28px 30px;
+    border: 4px solid rgba(255,255,255,0.95);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.18);
+}
+
+/* spacing di bawah quiz bila result belum keluar */
+#quiz-section {
+    margin-bottom: 40px;
+}
+
+/* HEADER ATAS KAD */
+#quiz-section h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    margin: 0 0 10px;
+    color: #00b894;
+    text-shadow: 0 3px 0 rgba(0,0,0,0.12);
+}
+
+#quiz-section p {
+    margin: 3px 0;
+}
+
+#qNumber {
+    color: #0984e3;
+}
+
+#qText {
+    margin-top: 14px;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3436;
+}
+
+/* Gambar soalan */
+#qImageWrapper {
+    margin: 18px 0 10px;
+    display: none;
+    justify-content: center;
+}
+#qImage {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 16px;
+    border: 4px solid #81ecec;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.2);
+}
+
+/* ===== PILIHAN JAWAPAN (MCQ) ===== */
+
+#mcqOptions {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+}
+
+/* satu kad pilihan */
+.option-card {
+    position: relative;
+}
+
+/* sorok radio, guna label sebagai kad boleh klik */
+.option-card input[type="radio"] {
+    display: none;
+}
+
+.option-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 12px 14px;
+    border: 2px solid #dfe6e9;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+    transition: 0.2s;
+}
+
+/* bulatan huruf A/B/C/D */
+.option-letter {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 20%, #ffffff, #74b9ff);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One';
+    font-size: 1rem;
+    color: #2d3436;
+    box-shadow: 0 4px 0 #0984e3;
+}
+
+.option-text {
+    font-size: 0.95rem;
+    color: #2d3436;
+    line-height: 1.3;
+}
+
+/* bila hover */
+.option-label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+}
+
+/* bila dipilih */
+.option-card input[type="radio"]:checked + .option-label {
+    background: #55efc4;
+    border-color: #00b894;
+    box-shadow: 0 6px 0 #00b894, 0 12px 24px rgba(0,0,0,0.2);
+}
+.option-card input[type="radio"]:checked + .option-label .option-letter {
+    background: radial-gradient(circle at 30% 20%, #ffffff, #00b894);
+    box-shadow: 0 4px 0 #006a4e;
+}
+.option-card input[type="radio"]:checked + .option-label .option-text {
+    color: #006266;
+}
+
+/* ===== INPUT TEKS ===== */
+
+#textAnswerWrapper {
+    margin-top: 18px;
+    display: none; /* default, hanya untuk soalan jenis text */
+}
+
+#textAnswerWrapper label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+#textAnswer {
+    margin-top: 6px;
+    border: 2px solid #dfe6e9;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 1rem;
+    width: 70%;
+    transition: 0.3s;
+}
+#textAnswer:focus {
+    border-color: #55E6C1;
+    background: #f0fdf4;
+    outline: none;
+}
+
+/* ===== BUTANG HANTAR & FEEDBACK ===== */
+
+#submitBtn {
+    display: inline-block;
+    margin-top: 18px;
+    background: #fdcb6e;
+    color: #d35400;
+    font-family: 'Fredoka One';
+    border: none;
+    border-radius: 16px;
+    padding: 10px 26px;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #e17055;
+    transition: 0.15s;
+}
+#submitBtn:hover {
+    background: #ffeaa7;
+}
+#submitBtn:active {
+    transform: translateY(4px);
+    box-shadow: none;
+}
+
+#feedback {
+    font-weight: 700;
+    margin-top: 12px;
+    text-align: center;
+    font-size: 1.05rem;
+    color: #0984e3;
+}
+
+#feedback.salah {
+    color: #d63031;
+}
+
+/* ===== KAD RESULT ===== */
+
+#result-section {
+    margin-top: 30px;
+    text-align: center;
+}
+
+#result-section h2 {
+    font-family: 'Fredoka One', cursive;
+    color: #00b894;
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+#finalScore {
+    font-family: 'Fredoka One';
+    color: #0984e3;
+}
+
+#msgLayak,
+#msgTakLayak {
+    margin-top: 12px;
+    font-weight: 700;
+}
+
+#msgLayak {
+    color: #00b894;
+}
+
+#msgTakLayak {
+    color: #d63031;
+}
+
+/* badge – gunakan wrapper supaya bila gagal, tiada kotak kosong */
+.badge-wrapper {
+    margin: 20px 0 10px;
+    display: none;          /* default disembunyikan, JS yang kawal */
+    text-align: center;
+}
+
+.badge-wrapper img,
+#badgeImage {
+    max-width: 180px;
+    max-height: 180px;
+    display: none;          /* JS akan jadikan block bila lulus */
+    animation: badgePulse 2s infinite ease-in-out;
+}
+
+/* link navigasi */
+#repeatWrapper a,
+#nextLevelWrapper a,
+#result-section > p a {
+    display: inline-block;
+    margin: 8px 6px;
+    text-decoration: none;
+    background: #00cec9;
+    color: #ffffff;
+    padding: 9px 18px;
+    border-radius: 14px;
+    font-family: 'Fredoka One';
+    font-size: 0.9rem;
+    box-shadow: 0 4px 0 #009393;
+    transition: 0.15s;
+}
+#repeatWrapper a:hover,
+#nextLevelWrapper a:hover,
+#result-section > p a:hover {
+    background: #55efc4;
+    color: #006266;
+}
+#repeatWrapper a:active,
+#nextLevelWrapper a:active,
+#result-section > p a:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+/* ===== ANIMASI ===== */
+@keyframes badgePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    body {
+        padding: 24px 10px;
+    }
+
+    #quiz-section,
+    #result-section {
+        padding: 20px 18px 22px;
+    }
+
+    #qText {
+        font-size: 1.1rem;
+    }
+
+    #textAnswer {
+        width: 100%;
+    }
+}

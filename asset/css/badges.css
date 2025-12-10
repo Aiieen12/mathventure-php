@@ -1,0 +1,271 @@
+/* badges.css */
+/* Gaya khas untuk halaman Pencapaian Anda
+   – susun mengikut Tahun 4,5,6 dan Level 1–5 */
+
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
+
+/* HERO PENGENALAN */
+
+.achv-hero {
+    margin-bottom: 22px;
+    padding: 18px 22px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 24px;
+    border: 3px solid rgba(255,255,255,0.9);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+}
+
+.achv-hero h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.9rem;
+    color: #e17055;
+    margin-bottom: 6px;
+}
+
+.achv-hero p {
+    font-size: 0.95rem;
+    color: #2d3436;
+}
+
+/* WRAPPER UTAMA */
+
+.achv-wrapper {
+    display: grid;
+    grid-template-columns: 260px minmax(0, 1fr);
+    gap: 20px;
+}
+
+/* PANEL KIRI */
+
+.achv-sidebar {
+    background: rgba(255,255,255,0.92);
+    border-radius: 24px;
+    padding: 16px 14px 18px;
+    border: 3px solid rgba(255,255,255,0.95);
+    box-shadow: 0 12px 26px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* kotak logo */
+
+.achv-logo-box {
+    height: 80px;
+    border-radius: 16px;
+    border: 2px dashed #b2bec3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f6fa;
+}
+
+.achv-logo-text {
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+/* title PENCAPAIAN */
+
+.achv-sidebar-title {
+    font-family: 'Fredoka One';
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    color: #2d3436;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #fab1a0;
+    text-align: center;
+}
+
+/* senarai link */
+
+.achv-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.achv-list li a {
+    display: block;
+    font-size: 0.85rem;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #ffffff;
+    border: 1px solid #dfe6e9;
+    color: #2d3436;
+    text-decoration: none;
+    transition: 0.18s;
+}
+
+.achv-list li a:hover {
+    background: #ffeaa7;
+    border-color: #e17055;
+    color: #6c3b22;
+    transform: translateX(3px);
+}
+
+/* PANEL KANAN */
+
+.achv-main {
+    background: rgba(255,255,255,0.94);
+    border-radius: 24px;
+    padding: 18px 20px 22px;
+    border: 3px solid rgba(255,255,255,0.95);
+    box-shadow: 0 14px 30px rgba(0,0,0,0.08);
+}
+
+/* header */
+
+.achv-main-header {
+    padding: 10px 14px;
+    border-radius: 16px;
+    border: 2px solid #dfe6e9;
+    background: #f5f6fa;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.achv-main-header span {
+    font-family: 'Fredoka One';
+    letter-spacing: 1px;
+    font-size: 0.98rem;
+    color: #2d3436;
+}
+
+/* SEKSI MENGIKUT TAHUN */
+
+.year-section {
+    margin-bottom: 22px;
+}
+
+.year-section h2 {
+    font-family: 'Fredoka One';
+    font-size: 1.2rem;
+    color: #00b894;
+    margin: 4px 0 10px;
+}
+
+/* baris badge Level 1–5 untuk satu tahun */
+
+.badge-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+}
+
+/* kad satu lencana */
+
+.badge-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 2px solid #dfe6e9;
+    box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+    padding: 12px 12px 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+/* bulatan lencana */
+
+.badge-circle {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    border: 4px solid #b2bec3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f6fa;
+    position: relative;
+    overflow: hidden;
+}
+
+.badge-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+/* icon lock bila belum buka */
+
+.badge-lock {
+    font-size: 1.8rem;
+}
+
+/* isi kad */
+
+.badge-body {
+    text-align: center;
+}
+
+.badge-body h3 {
+    font-family: 'Fredoka One';
+    font-size: 1rem;
+    margin: 0 0 4px;
+    color: #2d3436;
+}
+
+.badge-body p {
+    font-size: 0.83rem;
+    color: #636e72;
+    margin: 0 0 6px;
+}
+
+/* status badge */
+
+.badge-status {
+    display: inline-block;
+    font-size: 0.8rem;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: #dfe6e9;
+    color: #2d3436;
+    font-weight: 600;
+}
+
+/* ===== BEZA UNLOCKED / LOCKED ===== */
+
+.badge-card.unlocked .badge-circle {
+    background: radial-gradient(circle at 30% 20%, #ffffff, #ffeaa7);
+    border-color: #e17055;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.badge-card.unlocked .badge-status {
+    background: #55efc4;
+    color: #006266;
+}
+
+.badge-card.unlocked .badge-circle img {
+    filter: none;
+}
+
+.badge-card.locked {
+    opacity: 0.8;
+}
+
+.badge-card.locked .badge-circle img {
+    filter: grayscale(1) opacity(0.4);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 900px) {
+    .achv-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .achv-sidebar {
+        order: 2;
+    }
+
+    .achv-main {
+        order: 1;
+    }
+}
