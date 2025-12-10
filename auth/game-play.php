@@ -40,6 +40,9 @@ if (file_exists($soalanFile)) {
 }
 
 $totalSoalan = count($currentQuestions);
+
+// Sediakan laluan gambar badge ikut Tahun & Level
+$badgePath = "badges/T{$tahun}L{$level}.png";
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -97,13 +100,13 @@ $totalSoalan = count($currentQuestions);
             Sila cuba lagi level ini.
         </p>
 
-        <!-- Lencana ringkas -->
+        <!-- Lencana (Badge) bergambar -->
         <div style="margin:20px 0;">
-            <p>Lencana (Badge) yang diperoleh:</p>
             <div style="width:200px; height:200px; border:1px solid #555; display:flex; align-items:center; justify-content:center;">
-                <div style="width:120px; height:120px; border-radius:50%; border:3px solid #000; display:flex; align-items:center; justify-content:center; font-size:30px;">
-                    ★
-                </div>
+                <img id="badgeImage"
+                     src="<?php echo htmlspecialchars($badgePath); ?>"
+                     alt="Badge pencapaian"
+                     style="max-width:180px; max-height:180px; display:none;">
             </div>
         </div>
 
@@ -155,6 +158,7 @@ $totalSoalan = count($currentQuestions);
         const nextLevelLinkEl    = document.getElementById('nextLevelLink');
         const repeatWrapperEl    = document.getElementById('repeatWrapper');
         const repeatLinkEl       = document.getElementById('repeatLink');
+        const badgeImgEl         = document.getElementById('badgeImage');
 
         function normalise(str) {
             return str.toString().trim().toLowerCase();
@@ -298,6 +302,9 @@ $totalSoalan = count($currentQuestions);
                 msgLayakEl.style.display    = 'block';
                 msgTakLayakEl.style.display = 'none';
 
+                // Tunjuk badge bila lulus
+                badgeImgEl.style.display = 'block';
+
                 // Jika masih ada level seterusnya
                 if (level < maxLevel) {
                     nextLevelWrapperEl.style.display = 'block';
@@ -317,6 +324,9 @@ $totalSoalan = count($currentQuestions);
                 msgTakLayakEl.style.display = 'block';
 
                 nextLevelWrapperEl.style.display = 'none';
+
+                // Sorok badge kalau gagal
+                badgeImgEl.style.display = 'none';
 
                 // Papar butang "Ulang Permainan Level Ini"
                 repeatWrapperEl.style.display = 'block';
