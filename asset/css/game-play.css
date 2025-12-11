@@ -34,6 +34,11 @@ body::before {
     z-index: -1;
 }
 
+/* Pusatkan kad */
+.card-center {
+    margin: 0 auto;
+}
+
 /* ===== KAD SOALAN & KEPUTUSAN ===== */
 
 #quiz-section,
@@ -53,7 +58,7 @@ body::before {
 }
 
 /* HEADER ATAS KAD */
-#quiz-section h1 {
+.quiz-header h1 {
     font-family: 'Fredoka One', cursive;
     font-size: 2rem;
     margin: 0 0 10px;
@@ -61,7 +66,7 @@ body::before {
     text-shadow: 0 3px 0 rgba(0,0,0,0.12);
 }
 
-#quiz-section p {
+.quiz-header p {
     margin: 3px 0;
 }
 
@@ -69,6 +74,8 @@ body::before {
     color: #0984e3;
 }
 
+/* TEKS SOALAN */
+.question-text,
 #qText {
     margin-top: 14px;
     font-size: 1.25rem;
@@ -149,7 +156,7 @@ body::before {
     box-shadow: 0 10px 20px rgba(0,0,0,0.12);
 }
 
-/* bila dipilih */
+/* bila dipilih – style asas */
 .option-card input[type="radio"]:checked + .option-label {
     background: #55efc4;
     border-color: #00b894;
@@ -163,16 +170,42 @@ body::before {
     color: #006266;
 }
 
+/* state BETUL / SALAH selepas semak */
+.option-card.correct .option-label {
+    background: #55efc4;
+    border-color: #00b894;
+    box-shadow: 0 8px 22px rgba(0,184,148,0.5);
+    animation: correctPop 0.35s ease-out;
+}
+.option-card.correct .option-letter {
+    background: radial-gradient(circle at 30% 20%, #ffffff, #00b894);
+    box-shadow: 0 4px 0 #006a4e;
+}
+.option-card.wrong .option-label {
+    background: #ffecec;
+    border-color: #d63031;
+    box-shadow: 0 8px 22px rgba(214,48,49,0.4);
+    animation: shake 0.35s ease-in-out;
+}
+.option-card.wrong .option-letter {
+    background: radial-gradient(circle at 30% 20%, #ffffff, #ff7675);
+    box-shadow: 0 4px 0 #d63031;
+}
+
 /* ===== INPUT TEKS ===== */
 
 #textAnswerWrapper {
     margin-top: 18px;
     display: none; /* default, hanya untuk soalan jenis text */
+    flex-direction: column;
+    align-items: center;
 }
 
 #textAnswerWrapper label {
     font-size: 0.9rem;
     font-weight: 600;
+    align-self: flex-start;
+    margin-left: 15%;
 }
 
 #textAnswer {
@@ -190,11 +223,21 @@ body::before {
     outline: none;
 }
 
+/* state betul / salah untuk input teks */
+#textAnswerWrapper.betul #textAnswer {
+    border-color: #00b894;
+    box-shadow: 0 0 0 2px rgba(0,184,148,0.3);
+}
+#textAnswerWrapper.salah #textAnswer {
+    border-color: #d63031;
+    background: #ffecec;
+}
+
 /* ===== BUTANG HANTAR & FEEDBACK ===== */
 
 #submitBtn {
-    display: inline-block;
-    margin-top: 18px;
+    display: block;
+    margin: 18px auto 0;
     background: #fdcb6e;
     color: #d35400;
     font-family: 'Fredoka One';
@@ -213,6 +256,10 @@ body::before {
     transform: translateY(4px);
     box-shadow: none;
 }
+#submitBtn:disabled {
+    opacity: 0.7;
+    cursor: default;
+}
 
 #feedback {
     font-weight: 700;
@@ -221,9 +268,12 @@ body::before {
     font-size: 1.05rem;
     color: #0984e3;
 }
-
 #feedback.salah {
     color: #d63031;
+}
+
+#feedback.feedback-anim {
+    animation: feedbackPop 0.35s ease-out;
 }
 
 /* ===== KAD RESULT ===== */
@@ -263,7 +313,8 @@ body::before {
 .badge-wrapper {
     margin: 20px 0 10px;
     display: none;          /* default disembunyikan, JS yang kawal */
-    text-align: center;
+    justify-content: center;
+    align-items: center;
 }
 
 .badge-wrapper img,
@@ -274,31 +325,62 @@ body::before {
     animation: badgePulse 2s infinite ease-in-out;
 }
 
-/* link navigasi */
-#repeatWrapper a,
-#nextLevelWrapper a,
-#result-section > p a {
-    display: inline-block;
+/* BUTANG RESULT */
+
+/* butang utama pergi level seterusnya */
+.next-level-wrapper {
+    margin-top: 14px;
+}
+
+.btn-next-level {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 11px 30px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #00C9A7, #00E6A0);
+    color: #ffffff;
+    font-weight: 700;
+    border: none;
+    text-decoration: none;
+    box-shadow: 0 14px 30px rgba(0, 201, 167, 0.55);
+    letter-spacing: 0.03em;
+    cursor: pointer;
+}
+.btn-next-level:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 16px 34px rgba(0, 201, 167, 0.7);
+}
+.btn-next-level:active {
+    transform: translateY(2px);
+    box-shadow: 0 10px 24px rgba(0, 201, 167, 0.55);
+}
+
+/* butang sekunder (ulang, kembali dashboard, kembali peta) */
+.result-links {
+    margin-top: 12px;
+}
+
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin: 8px 6px;
     text-decoration: none;
-    background: #00cec9;
-    color: #ffffff;
-    padding: 9px 18px;
+    background: #ffffff;
+    color: #00C9A7;
+    padding: 8px 20px;
     border-radius: 14px;
+    border: 2px solid #00C9A7;
     font-family: 'Fredoka One';
     font-size: 0.9rem;
-    box-shadow: 0 4px 0 #009393;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.06);
     transition: 0.15s;
 }
-#repeatWrapper a:hover,
-#nextLevelWrapper a:hover,
-#result-section > p a:hover {
-    background: #55efc4;
-    color: #006266;
+.btn-secondary:hover {
+    background: #e8fffa;
 }
-#repeatWrapper a:active,
-#nextLevelWrapper a:active,
-#result-section > p a:active {
+.btn-secondary:active {
     transform: translateY(3px);
     box-shadow: none;
 }
@@ -307,6 +389,30 @@ body::before {
 @keyframes badgePulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.08); }
+}
+
+@keyframes correctPop {
+    0% { transform: scale(1); }
+    60% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+@keyframes feedbackPop {
+    0% { transform: translateY(4px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* untuk wrapper salah pada input teks */
+#textAnswerWrapper.shake {
+    animation: shake 0.35s ease-in-out;
 }
 
 /* ===== RESPONSIVE ===== */
@@ -326,5 +432,10 @@ body::before {
 
     #textAnswer {
         width: 100%;
+    }
+
+    #textAnswerWrapper label {
+        margin-left: 0;
+        align-self: flex-start;
     }
 }

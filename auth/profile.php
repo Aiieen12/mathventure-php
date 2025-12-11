@@ -68,7 +68,7 @@ $levelDibuka    = '3 / 15';
             <span class="icon">👤</span>
             <span>Profil</span>
         </a>
-        <a href="logout.php" class="nav-item logout">
+        <a href="index.php" class="nav-item logout">
             <span class="icon">🚪</span>
             <span>Log Keluar</span>
         </a>
@@ -77,7 +77,7 @@ $levelDibuka    = '3 / 15';
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="<?php echo htmlspecialchars($avatar); ?>" alt="Avatar">
+                <img src="../asset/images/avatar.png" alt="Avatar">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level Dino</div>
@@ -122,7 +122,7 @@ $levelDibuka    = '3 / 15';
         <!-- Kad ringkasan profil -->
         <article class="profile-card">
             <div class="profile-avatar">
-                <img src="<?php echo htmlspecialchars($avatar); ?>" alt="Avatar Pelajar">
+                <img src="../asset/images/avatar.png" alt="Avatar">
             </div>
             <h2><?php echo htmlspecialchars($nama); ?></h2>
             <p class="profile-username">@<?php echo htmlspecialchars($nama); ?></p>

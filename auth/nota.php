@@ -62,7 +62,7 @@ $nama = $_SESSION['username'] ?? 'Pelajar';
             <span class="icon">👤</span>
             <span>Profil</span>
         </a>
-        <a href="logout.php" class="nav-item logout">
+        <a href="index.php" class="nav-item logout">
             <span class="icon">🚪</span>
             <span>Log Keluar</span>
         </a>
@@ -72,7 +72,7 @@ $nama = $_SESSION['username'] ?? 'Pelajar';
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/avatar-default.png" alt="Avatar">
+                <img src="../asset/images/avatar.png" alt="Avatar">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level Dino</div>

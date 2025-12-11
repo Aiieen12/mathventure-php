@@ -42,7 +42,7 @@ if (file_exists($soalanFile)) {
 
 $totalSoalan = count($currentQuestions);
 
-// Sediakan laluan gambar badge ikut Tahun & Level
+// Laluan gambar badge ikut Tahun & Level
 // Contoh: auth/badges/T4L1.png
 $badgePath = "badges/T{$tahun}L{$level}.png";
 
@@ -57,30 +57,33 @@ $bodyClass = 'tahun-' . $tahun;
 
     <!-- CSS layout umum + gaya khas game-play -->
     <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/game-play.css">
+    <!-- ?v=3 paksa browser ambil CSS baru -->
+    <link rel="stylesheet" href="../asset/css/game-play.css?v=3">
 </head>
 <body class="<?php echo htmlspecialchars($bodyClass); ?>">
 
 <?php if ($totalSoalan === 0): ?>
 
-    <div id="result-section">
+    <div id="result-section" class="card-center">
         <h2>Ops!</h2>
         <p>Soalan untuk Tahun <?php echo $tahun; ?> Level <?php echo $level; ?> belum disediakan.</p>
-        <p>
-            <a href="game-menu.php">← Kembali ke Peta / Menu Permainan</a>
-            <a href="dashboard-student.php">← Kembali ke Dashboard Pelajar</a>
+        <p class="result-links">
+            <a href="game-menu.php" class="btn-secondary">← Kembali ke Peta / Menu Permainan</a>
+            <a href="dashboard-student.php" class="btn-secondary">← Kembali ke Dashboard Pelajar</a>
         </p>
     </div>
 
 <?php else: ?>
 
     <!-- Bahagian Soalan -->
-    <div id="quiz-section">
-        <h1>Tahun <?php echo $tahun; ?> • Level <?php echo $level; ?></h1>
-        <p>Pelajar: <strong><?php echo htmlspecialchars($nama); ?></strong></p>
-        <p><strong>Soalan <span id="qNumber">1</span> daripada <?php echo $totalSoalan; ?></strong></p>
+    <div id="quiz-section" class="card-center">
+        <div class="quiz-header">
+            <h1>Tahun <?php echo $tahun; ?> • Level <?php echo $level; ?></h1>
+            <p>Pelajar: <strong><?php echo htmlspecialchars($nama); ?></strong></p>
+            <p><strong>Soalan <span id="qNumber">1</span> daripada <?php echo $totalSoalan; ?></strong></p>
+        </div>
 
-        <p id="qText"></p>
+        <p id="qText" class="question-text"></p>
 
         <div id="qImageWrapper">
             <img id="qImage" src="" alt="Rajah soalan">
@@ -91,7 +94,7 @@ $bodyClass = 'tahun-' . $tahun;
 
         <!-- Jawapan teks / visual -->
         <div id="textAnswerWrapper">
-            <label for="textAnswer">Jawapan anda:</label><br>
+            <label for="textAnswer">Jawapan anda:</label>
             <input type="text" id="textAnswer">
         </div>
 
@@ -100,7 +103,7 @@ $bodyClass = 'tahun-' . $tahun;
     </div>
 
     <!-- Bahagian Keputusan Akhir -->
-    <div id="result-section" style="display:none;">
+    <div id="result-section" class="card-center" style="display:none;">
         <h2>TAHNIAH!</h2>
         <p>Anda telah menamatkan tahap ini.</p>
         <p>Markah: <strong><span id="finalScore"></span> / <?php echo $totalSoalan; ?></strong></p>
@@ -122,22 +125,24 @@ $bodyClass = 'tahun-' . $tahun;
 
         <!-- BUTANG ULANG PERMAINAN (dipaparkan bila markah tidak penuh) -->
         <p id="repeatWrapper" style="display:none;">
-            <a id="repeatLink" href="#">↻ Ulang Permainan Level Ini</a>
+            <a id="repeatLink" href="#" class="btn-secondary">↻ Ulang Permainan Level Ini</a>
         </p>
 
         <!-- Butang ke Level Seterusnya (hanya jika markah penuh & level masih ada) -->
-        <p id="nextLevelWrapper" style="display:none;">
-            <a id="nextLevelLink" href="#">Pergi ke Level Seterusnya →</a>
+        <p id="nextLevelWrapper" class="next-level-wrapper" style="display:none;">
+            <a id="nextLevelLink" href="#" class="btn-next-level">Pergi ke Level Seterusnya →</a>
         </p>
 
         <!-- Pautan balik -->
-        <p>
-            <a href="dashboard-student.php">← Kembali ke Dashboard Pelajar</a>
-            <a href="game-menu.php">← Kembali ke Peta / Menu Permainan</a>
+        <p class="result-links">
+            <a href="dashboard-student.php" class="btn-secondary">← Kembali ke Dashboard Pelajar</a>
+            <a href="game-menu.php" class="btn-secondary">← Kembali ke Peta / Menu Permainan</a>
         </p>
     </div>
 
     <script>
+        console.log('game-play JS loaded');
+
         // Data daripada PHP ke JavaScript
         const tahun       = <?php echo $tahun; ?>;
         const level       = <?php echo $level; ?>;
@@ -175,21 +180,52 @@ $bodyClass = 'tahun-' . $tahun;
             return str.toString().trim().toLowerCase();
         }
 
+        // tukar nilai q.correct (nombor / huruf) → index 0,1,2,3
+        function getCorrectIndex(correct) {
+            if (typeof correct === 'number') return correct;
+
+            if (typeof correct === 'string') {
+                const c = correct.trim().toUpperCase();
+                // 'A'→0, 'B'→1, 'C'→2, ...
+                const code = c.charCodeAt(0) - 65;
+                if (code >= 0 && code <= 25) return code;
+            }
+
+            return 0; // fallback
+        }
+
+        // Reset state visual MCQ
+        function clearMcqState() {
+            const cards = document.querySelectorAll('.option-card');
+            cards.forEach(card => {
+                card.classList.remove('correct', 'wrong');
+                const radio = card.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.disabled = false;
+                    radio.checked  = false;
+                }
+            });
+        }
+
         // Papar soalan semasa
         function showQuestion() {
             const q = questions[currentIndex];
 
             qNumberEl.textContent = currentIndex + 1;
             qTextEl.textContent   = q.text || '';
+
             feedbackEl.textContent = '';
-            feedbackEl.classList.remove('salah');
+            feedbackEl.classList.remove('salah', 'feedback-anim');
 
             // Reset paparan
             qImageWrapperEl.style.display = 'none';
             qImageEl.src = '';
             mcqOptionsEl.innerHTML = '';
             textAnswerWrapper.style.display = 'none';
+            textAnswerWrapper.classList.remove('betul', 'salah', 'shake');
             textAnswerInput.value = '';
+
+            submitBtn.disabled = false;
 
             // Gambar (visual)
             if ((q.type === 'visual' || q.type === 'mcq-visual') && q.image) {
@@ -253,13 +289,38 @@ $bodyClass = 'tahun-' . $tahun;
         // Papar input teks
         function renderText(q) {
             mcqOptionsEl.innerHTML = '';
-            textAnswerWrapper.style.display = 'block';
+            textAnswerWrapper.style.display = 'flex';
+        }
+
+        // Highlight MCQ betul / salah
+        function markMcqState(correctIndex, jawapanIndex) {
+            const cards = document.querySelectorAll('.option-card');
+
+            cards.forEach((card, idx) => {
+                const radio = card.querySelector('input[type="radio"]');
+                if (radio) {
+                    radio.disabled = true;
+                }
+                card.classList.remove('correct', 'wrong');
+
+                if (idx === correctIndex) {
+                    card.classList.add('correct'); // jawapan betul (hijau + pop)
+                }
+
+                if (idx === jawapanIndex && jawapanIndex !== correctIndex) {
+                    card.classList.add('wrong');   // jawapan yang dipilih tapi salah
+                }
+            });
         }
 
         // Semak jawapan
         function checkAnswer() {
             const q = questions[currentIndex];
             let betul = false;
+
+            // reset kelas visual
+            feedbackEl.classList.remove('salah', 'feedback-anim');
+            textAnswerWrapper.classList.remove('betul', 'salah', 'shake');
 
             if (q.type === 'mcq' || q.type === 'mcq-visual') {
                 const selected = document.querySelector('input[name="mcq"]:checked');
@@ -268,7 +329,11 @@ $bodyClass = 'tahun-' . $tahun;
                     return;
                 }
                 const jawapanIndex = parseInt(selected.value, 10);
-                betul = (jawapanIndex === q.correct);
+
+                const correctIndex = getCorrectIndex(q.correct);
+                betul = (jawapanIndex === correctIndex);
+
+                markMcqState(correctIndex, jawapanIndex);
 
             } else {
                 let userAns = textAnswerInput.value;
@@ -286,8 +351,15 @@ $bodyClass = 'tahun-' . $tahun;
                 betul = possibleAnswers.some(function(ans) {
                     return normalise(ans) === userNorm;
                 });
+
+                if (betul) {
+                    textAnswerWrapper.classList.add('betul');
+                } else {
+                    textAnswerWrapper.classList.add('salah', 'shake');
+                }
             }
 
+            // Papar feedback + animasi
             if (betul) {
                 score++;
                 feedbackEl.classList.remove('salah');
@@ -296,12 +368,19 @@ $bodyClass = 'tahun-' . $tahun;
                 feedbackEl.classList.add('salah');
                 feedbackEl.textContent = 'Jawapan kurang tepat. Cuba lagi!';
             }
+            void feedbackEl.offsetWidth; // reset animation
+            feedbackEl.classList.add('feedback-anim');
+
+            submitBtn.disabled = true;
 
             currentIndex++;
             if (currentIndex < totalSoalan) {
-                setTimeout(showQuestion, 800);
+                setTimeout(function () {
+                    clearMcqState();
+                    showQuestion();
+                }, 900);
             } else {
-                setTimeout(tamatLevel, 800);
+                setTimeout(tamatLevel, 900);
             }
         }
 
@@ -337,7 +416,7 @@ $bodyClass = 'tahun-' . $tahun;
                 msgTakLayakEl.style.display = 'none';
 
                 // Tunjuk badge di tengah
-                badgeWrapperEl.style.display = 'block';
+                badgeWrapperEl.style.display = 'flex';
                 badgeImgEl.style.display     = 'block';
 
                 // Ada level seterusnya?
@@ -360,7 +439,7 @@ $bodyClass = 'tahun-' . $tahun;
 
                 nextLevelWrapperEl.style.display = 'none';
 
-                // Sorok badge dan kotaknya terus
+                // Sorok badge
                 badgeWrapperEl.style.display = 'none';
                 badgeImgEl.style.display     = 'none';
 
