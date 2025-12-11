@@ -1,0 +1,207 @@
+/* teacher-profile.css */
+/* Styling cerah untuk halaman profil guru */
+
+.profile-page {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Tajuk atas */
+.profile-top-header {
+    margin-bottom: 4px;
+}
+
+.profile-top-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: #2C3A47;
+}
+
+.profile-top-header p {
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: #636e72;
+}
+
+/* Kad profil utama */
+.profile-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #ecf0f1;
+    box-shadow: 0 16px 30px rgba(0, 0, 0, 0.06);
+    padding: 18px 20px 20px;
+}
+
+/* Header kad: avatar + nama */
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.profile-avatar {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.avatar-frame {
+    width: 86px;
+    height: 86px;
+    border-radius: 50%;
+    padding: 4px;
+    background: linear-gradient(135deg, #55E6C1, #74b9ff);
+    box-shadow: 0 12px 26px rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.avatar-frame img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #ffffff;
+    object-fit: cover;
+}
+
+.edit-avatar-btn {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: none;
+    background: #ffffff;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #2C3A47;
+    transition: transform 0.12s ease, box-shadow 0.16s ease;
+}
+
+.edit-avatar-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.2);
+}
+
+.profile-name {
+    margin: 6px 0 2px;
+    font-size: 1.25rem;
+    color: #2C3A47;
+}
+
+.profile-role {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+/* Form profil */
+.profile-form {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    color: #636e72;
+    font-weight: 600;
+}
+
+.form-group input {
+    border-radius: 12px;
+    border: 1px solid #dfe6e9;
+    padding: 8px 10px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    color: #2C3A47;
+    background: #ffffff;
+    transition: border-color 0.16s ease, box-shadow 0.16s ease, background 0.16s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #55E6C1;
+    box-shadow: 0 0 0 2px rgba(85, 230, 193, 0.35);
+    background: #f9fffd;
+}
+
+/* Input readonly (Subjek) */
+#subject[readonly] {
+    background: #f7f7f7;
+    color: #7f8c8d;
+}
+
+/* Row kata laluan */
+.form-row-password .form-group input {
+    font-family: inherit;
+}
+
+/* Butang simpan */
+.profile-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.btn-save-profile {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 22px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #55E6C1, #00C9A7);
+    color: #0b3c34;
+    box-shadow: 0 16px 32px rgba(0, 201, 167, 0.45);
+    transition: transform 0.12s ease, box-shadow 0.16s ease;
+}
+
+.btn-save-profile i {
+    font-size: 0.95rem;
+}
+
+.btn-save-profile:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 20px 38px rgba(0, 201, 167, 0.6);
+}
+
+.btn-save-profile:active {
+    transform: translateY(2px);
+    box-shadow: 0 12px 26px rgba(0, 201, 167, 0.5);
+}
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+    .profile-card {
+        padding: 16px 14px 18px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,201 +1,180 @@
 <?php
-// auth/dashboard-teacher.php
 session_start();
 require_once '../config.php';
 
-// Cek User Login sebagai GURU
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'guru') {
-    $_SESSION['error'] = 'Sila log masuk sebagai guru untuk akses halaman ini.';
+// Pastikan role guru (kalau ada guna sistem role)
+if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'guru') {
+    $_SESSION['error'] = 'Sila log masuk sebagai guru.';
     header('Location: ../index.php');
     exit;
 }
 
-// Data Guru
-$namaGuru = $_SESSION['username'] ?? 'Cikgu Aisyah';
-$subjek   = "Matematik";
+$page = 'dashboard'; // untuk highlight menu di sidebar
 
-/*
- * Data Placeholder (Ganti dengan database nanti)
- * Untuk Guru, kita ganti:
- * - Nyawa -> Peratus Kehadiran Murid Hari Ini
- * - Mata  -> Jumlah Murid
- */
-$peratusKehadiran = 92; // Contoh: 92% murid hadir
-$jumlahMurid      = 35; // Contoh: 35 murid dalam kelas
+$guruNama  = $_SESSION['username'] ?? 'cikguDemo';
 
-// Status ringkas untuk dipaparkan di kad bawah
-$statusKehadiran = "2 murid tidak hadir hari ini (Ali, Muthu).";
-$statusMarkah    = "Data markah Ujian 1 telah dikemaskini.";
-$statusProfil    = "Profil guru lengkap.";
+// Mock data – nanti boleh ganti dengan data sebenar dari DB
+$kelasUtama       = '4 Dinamik';
+$jumlahMurid      = 35;
+$peratusHadirHari = 92;
+$ujianTerkini     = 'Ujian 1 – Nombor Bulat';
 
+// Masa sekarang untuk chip di atas
+$masaNow = date('h:i A');
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Guru | Mathventure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- CSS global: background + sidebar + main-content -->
+    <link rel="stylesheet" href="../asset/css/teacher-shell.css?v=1">
+    <!-- CSS khas untuk page dashboard guru -->
+    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=1">
 </head>
-<body>
+<body class="teacher-mode">
 
-<div class="game-bg"></div>
+<div class="teacher-layout">
+    <?php include 'sidebar-teacher.php'; ?>
 
-<button class="floating-menu-btn" onclick="toggleSidebar()">☰</button>
+    <main class="main-content teacher-dashboard">
 
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-header">
-        <div>
-            <div class="logo-text">Mathventure</div>
-            <small class="badge-role">Teacher Mode</small>
-        </div>
-        <button class="close-btn" onclick="toggleSidebar()">✕</button>
-    </div>
-
-    <nav class="side-nav">
-        <a href="dashboard-teacher.php" class="nav-item active">
-            <span class="icon">🏠</span> <span>Dashboard</span>
-        </a>
-        
-        <a href="teacher-student_attendant.php" class="nav-item">
-            <span class="icon">📅</span> <span>Kehadiran</span>
-        </a>
-        
-        <a href="teacher-student_marks.php" class="nav-item">
-            <span class="icon">📊</span> <span>Markah Pelajar</span>
-        </a>
-        
-        <a href="teacher-profile.php" class="nav-item">
-            <span class="icon">👤</span> <span>Profil Guru</span>
-        </a>
-        
-        <a href="logout.php" class="nav-item logout">
-            <span class="icon">🚪</span> <span>Log Keluar</span>
-        </a>
-    </nav>
-
-    <div class="sidebar-footer">
-        <div class="player-card">
-            <div class="avatar-frame">
-                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Avatar">
+        <!-- Bar atas: welcome + masa -->
+        <header class="teacher-topbar">
+            <div class="welcome-pill">
+                <span>Selamat kembali, <strong><?php echo htmlspecialchars($guruNama); ?></strong>!</span>
+                <span class="welcome-sub">Siap sedia untuk mengajar hari ini? 🍎</span>
             </div>
-            <div class="player-info">
-                <div class="lvl-badge">Guru Kelas</div>
-                <div><strong><?php echo htmlspecialchars($namaGuru); ?></strong></div>
-                <div class="xp-track">
-                    <div class="xp-fill" style="width: 75%;"></div>
-                </div>
-                <small style="font-size:0.6rem; color:#888;">Sesi Pengajaran 75%</small>
+            <div class="time-chip">
+                <i class="fa-regular fa-clock"></i>
+                <span><?php echo htmlspecialchars($masaNow); ?></span>
             </div>
-        </div>
-    </div>
-</aside>
+        </header>
 
-<main class="main-content">
-    <div class="top-bar">
-        <div class="welcome-badge">
-            Selamat Kembali, <span class="highlight"><?php echo htmlspecialchars($namaGuru); ?></span>! Siap sedia untuk mengajar? 🍎
-        </div>
-        <div class="game-clock" id="gameClock">--:--</div>
-    </div>
-
-    <section class="hero-section">
-        <div class="hero-card">
+        <!-- Hero panel -->
+        <section class="hero-panel">
             <div class="hero-text">
                 <h1>Panel Kawalan Guru</h1>
-                <p>
-                    Pantau prestasi murid, rekod kehadiran, dan uruskan markah dalam satu paparan mudah.
-                </p>
-            </div>
-            <div class="hero-dino-small">
-                <img src="https://cdn-icons-png.flaticon.com/512/3429/3429149.png" alt="Teacher Icon">
-            </div>
-        </div>
-
-        <div class="hud-stats">
-            <div class="stat-box yellow">
-                <div class="stat-icon">📈</div>
-                <div class="stat-info">
-                    <small>KEHADIRAN HARINI</small>
-                    <strong><?php echo $peratusKehadiran; ?>%</strong>
-                    <div class="stat-desc">Purata kehadiran kelas 4 Dinamik.</div>
+                <p>Pantau kehadiran, markah dan perkembangan murid anda dalam satu paparan yang ringkas.</p>
+                <div class="hero-meta">
+                    <span class="hero-chip">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                        Kelas utama: <?php echo htmlspecialchars($kelasUtama); ?>
+                    </span>
+                    <span class="hero-chip secondary">
+                        <i class="fa-solid fa-users"></i>
+                        <?php echo $jumlahMurid; ?> murid aktif
+                    </span>
                 </div>
             </div>
-
-            <div class="stat-box blue">
-                <div class="stat-icon">👨‍🎓</div>
-                <div class="stat-info">
-                    <small>JUMLAH MURID</small>
-                    <strong><?php echo $jumlahMurid; ?></strong>
-                    <div class="stat-desc">Bilangan total pelajar aktif.</div>
-                </div>
+            <div class="hero-illustration">
+                📚
             </div>
-        </div>
-    </section>
+        </section>
 
-    <section class="quick-links">
-        
-        <article class="quick-card q-map" onclick="location.href='teacher-attendance.php'">
-            <div class="quick-header">
-                <div class="quick-icon">📅</div>
-                <div>
-                    <h3>Kehadiran Pelajar</h3>
-                    <span class="quick-sub">Rekod kehadiran harian</span>
+        <!-- Ringkasan statistik kecil -->
+        <section class="summary-row">
+            <article class="summary-card">
+                <div class="summary-icon green">
+                    <i class="fa-solid fa-user-check"></i>
                 </div>
-            </div>
-            <p class="quick-progress">
-                <?php echo htmlspecialchars($statusKehadiran); ?>
-            </p>
-            <button class="quick-btn">Buka Kehadiran</button>
-        </article>
-
-        <article class="quick-card q-note" onclick="location.href='teacher-marks.php'">
-            <div class="quick-header">
-                <div class="quick-icon">📊</div>
-                <div>
-                    <h3>Markah & Prestasi</h3>
-                    <span class="quick-sub">Analisis markah ujian</span>
+                <div class="summary-body">
+                    <div class="summary-label">Kehadiran Hari Ini</div>
+                    <div class="summary-value"><?php echo $peratusHadirHari; ?>%</div>
+                    <div class="summary-note">Purata kehadiran kelas <?php echo htmlspecialchars($kelasUtama); ?>.</div>
                 </div>
-            </div>
-            <p class="quick-progress">
-                <?php echo htmlspecialchars($statusMarkah); ?>
-            </p>
-            <button class="quick-btn">Lihat Markah</button>
-        </article>
+            </article>
 
-        <article class="quick-card q-badge" onclick="location.href='teacher-profile.php'">
-            <div class="quick-header">
-                <div class="quick-icon">⚙️</div>
-                <div>
-                    <h3>Tetapan Profil</h3>
-                    <span class="quick-sub">Info diri & kelas</span>
+            <article class="summary-card">
+                <div class="summary-icon blue">
+                    <i class="fa-solid fa-medal"></i>
                 </div>
-            </div>
-            <p class="quick-progress">
-                <?php echo htmlspecialchars($statusProfil); ?>
-            </p>
-            <button class="quick-btn">Kemaskini Profil</button>
-        </article>
+                <div class="summary-body">
+                    <div class="summary-label">Tugasan Terkini</div>
+                    <div class="summary-value small"><?php echo htmlspecialchars($ujianTerkini); ?></div>
+                    <div class="summary-note">Markah telah dikemaskini dalam sistem.</div>
+                </div>
+            </article>
 
-    </section>
-</main>
+            <article class="summary-card">
+                <div class="summary-icon orange">
+                    <i class="fa-solid fa-bell"></i>
+                </div>
+                <div class="summary-body">
+                    <div class="summary-label">Peringatan</div>
+                    <div class="summary-note">Pastikan kehadiran minggu ini direkod sepenuhnya.</div>
+                </div>
+            </article>
+        </section>
 
-<script>
-function toggleSidebar() {
-    document.getElementById('sidebar').classList.toggle('active');
-}
+        <!-- Card fungsi utama -->
+        <section class="feature-grid">
 
-function updateClock() {
-    const el = document.getElementById('gameClock');
-    const now = new Date();
-    el.textContent = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit' });
-}
-setInterval(updateClock, 1000);
-updateClock();
-</script>
+            <!-- Kehadiran -->
+            <article class="feature-card">
+                <div class="feature-header">
+                    <div>
+                        <h2>Kehadiran Pelajar</h2>
+                        <p>Rekod kehadiran harian dan kenal pasti murid yang tidak hadir.</p>
+                    </div>
+                    <span class="feature-tag">Hari ini</span>
+                </div>
+                <div class="feature-body">
+                    <p><strong>2 murid</strong> dilaporkan tidak hadir pagi ini.</p>
+                </div>
+                <div class="feature-footer">
+                    <a href="teacher-student_attendant.php" class="btn-outline">
+                        <i class="fa-regular fa-calendar-check"></i>
+                        Buka Kehadiran
+                    </a>
+                </div>
+            </article>
+
+            <!-- Markah & Prestasi -->
+            <article class="feature-card">
+                <div class="feature-header">
+                    <div>
+                        <h2>Markah &amp; Prestasi</h2>
+                        <p>Lihat pencapaian murid mengikut ujian, tahap dan topik.</p>
+                    </div>
+                    <span class="feature-tag tag-green">Dinamik</span>
+                </div>
+                <div class="feature-body">
+                    <p>Data markah <strong><?php echo htmlspecialchars($ujianTerkini); ?></strong> siap dikemaskini.</p>
+                </div>
+                <div class="feature-footer">
+                    <a href="teacher-marks.php" class="btn-solid">
+                        <i class="fa-solid fa-chart-column"></i>
+                        Lihat Markah
+                    </a>
+                </div>
+            </article>
+
+            <!-- Tetapan Profil -->
+            <article class="feature-card">
+                <div class="feature-header">
+                    <div>
+                        <h2>Tetapan Profil</h2>
+                        <p>Kemaskini maklumat diri, kelas yang diuruskan dan kata laluan.</p>
+                    </div>
+                </div>
+                <div class="feature-body">
+                    <p>Profil guru berada dalam status <strong>lengkap</strong>.</p>
+                </div>
+                <div class="feature-footer">
+                    <a href="teacher-profile.php" class="btn-outline">
+                        <i class="fa-regular fa-id-badge"></i>
+                        Kemaskini Profil
+                    </a>
+                </div>
+            </article>
+
+        </section>
+
+    </main>
+</div>
 
 </body>
 </html>
