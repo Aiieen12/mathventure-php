@@ -1,65 +1,72 @@
 <?php
-// sidebar-teacher.php
-if (!isset($_SESSION)) {
+// auth/sidebar-teacher.php
+
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-$guruNama = $_SESSION['username'] ?? 'cikguDemo';
-$guruInisial = strtoupper(substr($guruNama, 0, 1));
-$currentPage = $page ?? '';   // dari setiap file: $page = 'attendance' dsb.
+$namaPaparan  = isset($teacherName) ? $teacherName : ($_SESSION['username'] ?? 'Cikgu');
+$kelasPaparan = isset($teacherClass) ? $teacherClass : '-';
+$yearPaparan  = isset($teacherYear) ? $teacherYear : '-';
+$halaman      = $page ?? '';
 ?>
-<aside class="teacher-sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-logo">M</div>
-        <div class="brand-text">
-            <span class="brand-name">Mathventure</span>
-            <span class="brand-mode">Teacher Mode</span>
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-area">
+            <div class="logo-icon">🦖</div>
+            <div class="logo-text">Mathventure</div>
         </div>
     </div>
 
-    <nav class="sidebar-nav">
+    <div class="teacher-mini-card">
+        <div class="teacher-mini-avatar">
+            <i class="fa-solid fa-chalkboard-user"></i>
+        </div>
+        <div class="teacher-mini-info">
+            <div class="teacher-name">
+                <?php echo htmlspecialchars($namaPaparan); ?>
+            </div>
+            <div class="teacher-meta">
+                <span><i class="fa-solid fa-people-group"></i>
+                    <?php echo htmlspecialchars($kelasPaparan); ?>
+                </span>
+                <span><i class="fa-solid fa-calendar-days"></i>
+                    <?php echo htmlspecialchars($yearPaparan); ?>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="side-nav">
+        <div class="nav-label">Menu Guru</div>
+
         <a href="dashboard-teacher.php"
-           class="nav-link <?php echo ($currentPage === 'dashboard') ? 'active' : ''; ?>">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">Dashboard</span>
+           class="nav-item <?php echo $halaman === 'dashboard' ? 'active' : ''; ?>">
+            <span class="icon"><i class="fa-solid fa-house"></i></span>
+            <span>Dashboard</span>
         </a>
 
-        <a href="teacher-student_attendant.php"
-           class="nav-link <?php echo ($currentPage === 'attendance') ? 'active' : ''; ?>">
-            <span class="nav-icon">🗓️</span>
-            <span class="nav-label">Kehadiran</span>
+        <a href="teacher-attendance.php"
+           class="nav-item <?php echo $halaman === 'attendance' ? 'active' : ''; ?>">
+            <span class="icon"><i class="fa-solid fa-user-check"></i></span>
+            <span>Kehadiran Pelajar</span>
         </a>
 
-        <a href="teacher-student_marks.php"
-           class="nav-link <?php echo ($currentPage === 'marks') ? 'active' : ''; ?>">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">Markah Pelajar</span>
-        </a>
-
-        <a href="teacher-badges.php"
-           class="nav-link <?php echo ($currentPage === 'badges') ? 'active' : ''; ?>">
-            <span class="nav-icon">🏅</span>
-            <span class="nav-label">Badges Pelajar</span>
+        <a href="teacher-marks.php"
+           class="nav-item <?php echo $halaman === 'marks' ? 'active' : ''; ?>">
+            <span class="icon"><i class="fa-solid fa-chart-column"></i></span>
+            <span>Markah Pelajar</span>
         </a>
 
         <a href="teacher-profile.php"
-           class="nav-link <?php echo ($currentPage === 'profile') ? 'active' : ''; ?>">
-            <span class="nav-icon">👤</span>
-            <span class="nav-label">Profil Guru</span>
+           class="nav-item <?php echo $halaman === 'profile' ? 'active' : ''; ?>">
+            <span class="icon"><i class="fa-solid fa-id-card"></i></span>
+            <span>Profil Guru</span>
         </a>
-    </nav>
 
-    <div class="sidebar-footer">
-        <div class="teacher-mini">
-            <div class="avatar-circle"><?php echo $guruInisial; ?></div>
-            <div class="teacher-mini-text">
-                <span class="teacher-name"><?php echo htmlspecialchars($guruNama); ?></span>
-                <span class="teacher-role">Guru Kelas</span>
-            </div>
-        </div>
-
-        <a href="../logout.php" class="btn-logout">
-            Log Keluar
+        <a href="auth/index.php" class="nav-item logout">
+            <span class="icon"><i class="fa-solid fa-right-from-bracket"></i></span>
+            <span>Log Keluar</span>
         </a>
     </div>
 </aside>

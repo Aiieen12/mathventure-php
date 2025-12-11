@@ -1,236 +1,313 @@
 <?php
-session_start();
+// auth/dashboard-teacher.php
 require_once '../config.php';
-require_once 'dummy-data.php';
 
-// Pastikan role guru (kalau ada guna sistem role)
-if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'guru') {
-    $_SESSION['error'] = 'Sila log masuk sebagai guru.';
-    header('Location: ../index.php');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Pastikan user sudah login & role = guru
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'guru') {
+    $_SESSION['error'] = 'Sila log masuk sebagai guru untuk akses halaman ini.';
+    header('Location: index.php');
     exit;
 }
 
-$page     = 'dashboard'; // untuk highlight menu di sidebar
-$guruNama = $_SESSION['username'] ?? 'cikguDemo';
+$user_id = (int) $_SESSION['user_id'];
 
-// Kiraan ringkasan dari data dummy
-$jumlahMurid       = count($students);
-$muridHadirHari    = 0;
-$jumlahLevel       = 0;
-$muridSiapUjian    = 0;
-$muridBelumMainMggu = 0;
-$badgesMinggu      = 0;
+// =================== DATA GURU SEBENAR ===================
 
-foreach ($students as $s) {
-    if (!empty($s['hadir_hari_ini'])) {
-        $muridHadirHari++;
-    }
-    $jumlahLevel += $s['purata_level'] ?? 0;
+$teacherName  = $_SESSION['username'] ?? 'Guru';
+$teacherClass = '4 Dinamik'; // fallback jika dalam DB kosong
+$teacherYear  = 'Tahun 4';
 
-    if (isset($s['markah_ujian1'])) {
-        $muridSiapUjian++;
-    }
+$stmt = $conn->prepare("SELECT * FROM teacher WHERE id_user = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+if ($row = $result->fetch_assoc()) {
+    $fname = $row['firstname'] ?? '';
+    $lname = $row['lastname'] ?? '';
+    $full  = trim($fname . ' ' . $lname);
 
-    if (($s['purata_level'] ?? 0) < 1) {
-        $muridBelumMainMggu++;
+    if ($full !== '') {
+        $teacherName = $full;
     }
 
-    $badgesMinggu += $s['badges_minggu'] ?? 0;
+    if (!empty($row['class'])) {
+        $teacherClass = $row['class'];
+    }
+
+    if (!empty($row['year'])) {
+        $teacherYear = $row['year'];
+    }
 }
+$stmt->close();
 
-$peratusHadirHari = $jumlahMurid > 0 ? round(($muridHadirHari / $jumlahMurid) * 100) : 0;
-$muridTidakHadir  = $jumlahMurid - $muridHadirHari;
-$purataLevel      = $jumlahMurid > 0 ? round($jumlahLevel / $jumlahMurid, 1) : 0;
+// Untuk sapaan "cikguDemo" (ambil nama pertama sahaja)
+$firstNameOnly = $teacherName;
+if (strpos($teacherName, ' ') !== false) {
+    $parts = explode(' ', $teacherName);
+    $firstNameOnly = $parts[0];
+}
+$sapaanGuru = 'cikgu' . $firstNameOnly; // contoh: cikguDemo / cikguAin
 
-$ujianTerkini = 'Ujian 1 – Nombor Bulat';
+// =================== DUMMY DATA PANEL ===================
 
-// Masa sekarang untuk chip di atas
-$masaNow = date('h:i A');
+$dummyAttendancePercent = 92;            // 92%
+$dummyActiveStudents    = 35;            // 35 murid aktif
+$dummyAbsentStudents    = 2;             // 2 murid tak hadir
+$dummyLatestTestName    = 'Ujian 1 – Nombor Bulat';
+$dummyLatestTestInfo    = 'Markah telah dikemaskini dalam sistem.';
+$dummyReminderText      = 'Pastikan kehadiran minggu ini direkod sepenuhnya.';
+$dummyAttendanceNote    = 'Purata kehadiran kelas ' . $teacherClass . '.';
+
+// Masa sekarang (untuk jam di penjuru)
+date_default_timezone_set('Asia/Kuala_Lumpur');
+$currentTime = date('h:i A');
+
+// Page key untuk highlight menu
+$page = 'dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Guru | Mathventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- CSS global: background + sidebar + main-content -->
-    <link rel="stylesheet" href="../asset/css/teacher-shell.css?v=1">
-    <!-- CSS khas untuk page dashboard guru -->
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=1">
+    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
 </head>
-<body class="teacher-mode">
+<body>
 
 <div class="teacher-layout">
-    <?php include 'sidebar-teacher.php'; ?>
 
-    <main class="main-content teacher-dashboard">
-
-        <!-- Bar atas: welcome + masa -->
-        <header class="teacher-topbar">
-            <div class="welcome-pill">
-                <span>Selamat kembali, <strong><?php echo htmlspecialchars($guruNama); ?></strong>!</span>
-                <span class="welcome-sub">Siap sedia untuk mengajar murid hari ini? 🍎</span>
-            </div>
-            <div class="time-chip">
-                <i class="fa-regular fa-clock"></i>
-                <span><?php echo htmlspecialchars($masaNow); ?></span>
-            </div>
-        </header>
-
-        <!-- Hero panel -->
-        <section class="hero-panel">
-            <div class="hero-text">
-                <h1>Panel Kawalan Guru</h1>
-                <p>Pantau kehadiran, markah kuiz dan kemajuan permainan Mathventure murid dalam satu paparan ringkas.</p>
-                <div class="hero-meta">
-                    <span class="hero-chip">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                        Kelas utama: <?php echo htmlspecialchars($kelasUtama); ?>
-                    </span>
-                    <span class="hero-chip secondary">
-                        <i class="fa-solid fa-users"></i>
-                        <?php echo $jumlahMurid; ?> murid berdaftar
-                    </span>
-                    <span class="hero-chip secondary">
-                        <i class="fa-solid fa-gamepad"></i>
-                        Purata level: <?php echo number_format($purataLevel, 1); ?> / 5
-                    </span>
-                    <span class="hero-chip secondary">
-                        <i class="fa-solid fa-award"></i>
-                        <?php echo $badgesMinggu; ?> lencana baharu minggu ini
-                    </span>
+    <!-- ================= SIDEBAR ================= -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="brand">
+                <div class="brand-avatar">M</div>
+                <div class="brand-text">
+                    <h1>Mathventure</h1>
+                    <span>Teacher Mode</span>
                 </div>
             </div>
-            <div class="hero-illustration">
-                🎮
-            </div>
-        </section>
 
-        <!-- Ringkasan statistik kecil -->
-        <section class="summary-row">
-            <!-- Kehadiran Hari Ini -->
-            <article class="summary-card">
-                <div class="summary-icon green">
-                    <i class="fa-solid fa-user-check"></i>
-                </div>
-                <div class="summary-body">
-                    <div class="summary-label">Kehadiran Hari Ini</div>
-                    <div class="summary-value"><?php echo $peratusHadirHari; ?>%</div>
-                    <div class="summary-note">
-                        <?php echo $muridHadirHari; ?> daripada <?php echo $jumlahMurid; ?> murid hadir.<br>
-                        <?php echo $muridTidakHadir; ?> murid tidak hadir pagi ini.
-                    </div>
-                </div>
-            </article>
-
-            <!-- Kemajuan Level Mathventure -->
-            <article class="summary-card">
-                <div class="summary-icon blue">
-                    <i class="fa-solid fa-medal"></i>
-                </div>
-                <div class="summary-body">
-                    <div class="summary-label">Kemajuan Level</div>
-                    <div class="summary-value small">
-                        Purata Level <?php echo number_format($purataLevel, 1); ?> / 5
-                    </div>
-                    <div class="summary-note">
-                        <?php echo $muridSiapUjian; ?> murid telah menyiapkan <?php echo htmlspecialchars($ujianTerkini); ?>.
-                    </div>
-                </div>
-            </article>
-
-            <!-- Peringatan Murid -->
-            <article class="summary-card">
-                <div class="summary-icon orange">
-                    <i class="fa-solid fa-bell"></i>
-                </div>
-                <div class="summary-body">
-                    <div class="summary-label">Peringatan Murid</div>
-                    <div class="summary-note">
-                        <?php echo $muridBelumMainMggu; ?> murid belum bermain Mathventure minggu ini.<br>
-                        Galakkan mereka cuba sekurang-kurangnya 1 level sebelum Jumaat.
-                    </div>
-                </div>
-            </article>
-        </section>
-
-        <!-- Card fungsi utama -->
-        <section class="feature-grid">
-
-            <!-- Kehadiran -->
-            <article class="feature-card">
-                <div class="feature-header">
-                    <div>
-                        <h2>Kehadiran Pelajar</h2>
-                        <p>Rekod kehadiran harian murid dan kenal pasti yang kerap tidak hadir atau lewat.</p>
-                    </div>
-                    <span class="feature-tag">Hari ini</span>
-                </div>
-                <div class="feature-body">
-                    <p>
-                        Hadir: <strong><?php echo $muridHadirHari; ?> murid</strong><br>
-                        Tidak hadir: <strong><?php echo $muridTidakHadir; ?> murid</strong>
-                    </p>
-                </div>
-                <div class="feature-footer">
-                    <!-- link ke page kehadiran; default = Anis -->
-                    <a href="teacher-student_attendant.php?id=anis21" class="btn-outline">
-                        <i class="fa-regular fa-calendar-check"></i>
-                        Buka Kehadiran
+            <div>
+                <div class="nav-group-label">Menu</div>
+                <nav class="side-nav">
+                    <a href="dashboard-teacher.php"
+                       class="nav-item <?php echo $page === 'dashboard' ? 'active' : ''; ?>">
+                        <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+                        <div class="nav-label">Dashboard</div>
                     </a>
-                </div>
-            </article>
 
-            <!-- Markah & Prestasi -->
-            <article class="feature-card">
-                <div class="feature-header">
-                    <div>
-                        <h2>Markah &amp; Prestasi</h2>
-                        <p>Lihat pencapaian murid mengikut ujian, tahap dan topik Mathventure.</p>
-                    </div>
-                    <span class="feature-tag tag-green">Dinamik</span>
-                </div>
-                <div class="feature-body">
-                    <p>
-                        Data markah <strong><?php echo htmlspecialchars($ujianTerkini); ?></strong> siap dikemaskini.<br>
-                        <strong><?php echo $muridSiapUjian; ?> murid</strong> telah menyiapkan ujian ini.
-                    </p>
-                </div>
-                <div class="feature-footer">
-                    <!-- link ke page markah; default = Anis -->
-                    <a href="teacher-marks.php?id=anis21" class="btn-solid">
-                        <i class="fa-solid fa-chart-column"></i>
-                        Lihat Markah
+                    <a href="teacher-attendance.php"
+                       class="nav-item <?php echo $page === 'attendance' ? 'active' : ''; ?>">
+                        <div class="nav-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                        <div class="nav-label">Kehadiran</div>
                     </a>
-                </div>
-            </article>
 
-            <!-- Pencapaian Murid -->
-            <article class="feature-card">
-                <div class="feature-header">
-                    <div>
-                        <h2>Pencapaian Murid</h2>
-                        <p>Lihat lencana dan level Mathventure yang berjaya dibuka oleh murid.</p>
+                    <a href="teacher-marks.php"
+                       class="nav-item <?php echo $page === 'marks' ? 'active' : ''; ?>">
+                        <div class="nav-icon"><i class="fa-solid fa-chart-column"></i></div>
+                        <div class="nav-label">Markah Pelajar</div>
+                    </a>
+
+                    <a href="teacher-profile.php"
+                       class="nav-item <?php echo $page === 'profile' ? 'active' : ''; ?>">
+                        <div class="nav-icon"><i class="fa-solid fa-id-badge"></i></div>
+                        <div class="nav-label">Profil Guru</div>
+                    </a>
+                </nav>
+            </div>
+        </div>
+
+        <div class="sidebar-bottom">
+            <div class="teacher-mini">
+                <div class="teacher-mini-avatar">
+                    <?php echo strtoupper(substr($firstNameOnly, 0, 1)); ?>
+                </div>
+                <div class="teacher-mini-info">
+                    <div class="teacher-mini-name"><?php echo htmlspecialchars($teacherName); ?></div>
+                    <div class="teacher-mini-role">
+                        Guru Kelas · <?php echo htmlspecialchars($teacherClass); ?>
                     </div>
                 </div>
-                <div class="feature-body">
-                    <p>
-                        Minggu ini, <strong><?php echo $badgesMinggu; ?> lencana baharu</strong> telah dibuka oleh murid anda.
-                    </p>
-                </div>
-                <div class="feature-footer">
-                    <!-- guna versi guru supaya tak kacau badges pelajar -->
-                    <a href="teacher-badges.php?id=anis21" class="btn-outline">
-                        <i class="fa-solid fa-trophy"></i>
-                        Lihat Pencapaian
-                    </a>
-                </div>
-            </article>
+            </div>
 
-        </section>
+            <form action="../logout.php" method="post">
+                <button type="submit" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
+                </button>
+            </form>
+        </div>
+    </aside>
 
+    <!-- ================= MAIN CONTENT ================= -->
+    <main class="main-content">
+        <div class="dashboard-shell">
+
+            <!-- Hero greeting -->
+            <div class="hero-row">
+                <div>
+                    <div class="hero-text-top">
+                        Selamat kembali, <span><?php echo htmlspecialchars($sapaanGuru); ?>!</span>
+                    </div>
+                    <div class="hero-text-main">
+                        Siap sedia untuk mengajar hari ini? 🍎
+                    </div>
+                </div>
+                <div>
+                    <div class="hero-clock">
+                        <i class="fa-solid fa-clock"></i>
+                        <span><?php echo $currentTime; ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Kawalan Guru (hijau) -->
+            <section class="panel-guru">
+                <div class="panel-text">
+                    <div class="panel-title">Panel Kawalan Guru</div>
+                    <div class="panel-desc">
+                        Pantau kehadiran, markah dan perkembangan murid anda dalam satu paparan yang ringkas.
+                    </div>
+
+                    <div class="panel-tags">
+                        <div class="tag-pill">
+                            <i class="fa-solid fa-people-group"></i>
+                            <span>Kelas utama: <?php echo htmlspecialchars($teacherClass); ?></span>
+                        </div>
+                        <div class="tag-pill">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            <span>3 murid aktif</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-icon-box">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+            </section>
+
+            <!-- Row 1: Kehadiran, Tugasan, Peringatan -->
+            <section class="cards-grid">
+                <!-- Kad KPI kehadiran -->
+                <article class="card-kpi">
+                    <div class="card-kpi-header">
+                        <span class="card-kpi-label">KEHADIRAN HARI INI</span>
+                        <span class="card-kpi-chip">Hari ini</span>
+                    </div>
+                    <div class="card-kpi-main">
+                        <div class="card-kpi-value"><?php echo $dummyAttendancePercent; ?>%</div>
+                        <div class="card-kpi-sub">
+                            <?php echo htmlspecialchars($dummyAttendanceNote); ?>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tugasan terkini -->
+                <article class="card-simple">
+                    <div class="card-simple-title">
+                        <span>🏅</span>
+                        <span>TUGASAN TERKINI</span>
+                        <span class="badge-soft">Dinamik</span>
+                    </div>
+                    <div class="card-simple-body">
+                        <strong><?php echo htmlspecialchars($dummyLatestTestName); ?></strong><br>
+                        <?php echo htmlspecialchars($dummyLatestTestInfo); ?>
+                    </div>
+                </article>
+
+                <!-- Peringatan -->
+                <article class="card-simple">
+                    <div class="card-simple-title">
+                        <span>🔔</span>
+                        <span>PERINGATAN</span>
+                    </div>
+                    <div class="card-simple-body">
+                        <?php echo htmlspecialchars($dummyReminderText); ?>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Row 2: Tindakan pantas -->
+            <section class="cards-grid">
+                <!-- Kehadiran pelajar -->
+                <article class="card-action">
+                    <div class="card-action-header">
+                        <div class="card-action-icon">
+                            <i class="fa-solid fa-user-check"></i>
+                        </div>
+                        <div>
+                            <div class="card-action-title">Kehadiran Pelajar</div>
+                            <div class="card-action-desc">
+                                Rekod kehadiran harian dan kenal pasti murid yang tidak hadir.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action-desc" style="font-size:12px;color:#7f8c8d;">
+                        <?php echo $dummyAbsentStudents; ?> murid dilaporkan tidak hadir pagi ini.
+                    </div>
+                    <div class="card-action-footer">
+                        <a href="teacher-attendance.php" class="btn-outline">
+                            <i class="fa-solid fa-calendar-check"></i> Buka Kehadiran
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Markah & prestasi -->
+                <article class="card-action">
+                    <div class="card-action-header">
+                        <div class="card-action-icon">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <div>
+                            <div class="card-action-title">Markah &amp; Prestasi</div>
+                            <div class="card-action-desc">
+                                Lihat pencapaian murid mengikut ujian, tahap dan topik.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action-desc" style="font-size:12px;color:#7f8c8d;">
+                        Data markah <strong><?php echo htmlspecialchars($dummyLatestTestName); ?></strong> siap dikemaskini.
+                    </div>
+                    <div class="card-action-footer">
+                        <a href="teacher-marks.php" class="btn-primary">
+                            <i class="fa-solid fa-chart-column"></i> Lihat Markah
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Tetapan profil -->
+                <article class="card-action">
+                    <div class="card-action-header">
+                        <div class="card-action-icon">
+                            <i class="fa-solid fa-id-badge"></i>
+                        </div>
+                        <div>
+                            <div class="card-action-title">Tetapan Profil</div>
+                            <div class="card-action-desc">
+                                Kemas kini maklumat diri, kelas yang diuruskan dan kata laluan.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-action-desc" style="font-size:12px;color:#7f8c8d;">
+                        Profil guru berada dalam status <strong>lengkap</strong>.
+                    </div>
+                    <div class="card-action-footer">
+                        <a href="teacher-profile.php" class="btn-outline">
+                            <i class="fa-solid fa-pen-to-square"></i> Kemaskini Profil
+                        </a>
+                    </div>
+                </article>
+            </section>
+
+        </div>
     </main>
+
 </div>
 
 </body>
