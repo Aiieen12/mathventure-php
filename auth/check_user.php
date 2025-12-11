@@ -14,7 +14,7 @@ if (!isset($_GET['u']) || trim($_GET['u']) == "") {
 
 $username = trim($_GET['u']);
 
-$stmt = $conn->prepare("SELECT user_level FROM users WHERE username = ?");
+$stmt = $conn->prepare("SELECT role FROM users WHERE username = ?");
 $stmt->bind_param("s", $username);
 $stmt->execute();
 $stmt->store_result();
@@ -23,10 +23,11 @@ $stmt->bind_result($level);
 if ($stmt->num_rows > 0) {
     $stmt->fetch();
 
-    // label text untuk dipaparkan
+    // label text untuk UI
     $label = match($level) {
         "guru" => "Guru 👨‍🏫",
         "pelajar" => "Pelajar 👧🧒",
+        "admin" => "Admin 🔧",
         default => ucfirst($level)
     };
 

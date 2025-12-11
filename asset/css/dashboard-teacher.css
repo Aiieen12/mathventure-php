@@ -1,0 +1,285 @@
+/* ============================================================
+   Mathventure – Dashboard Guru (Cinematic Upgrade Edition)
+   Style: Premium, Magical, 3D Lit, Soft Glow, Glassmorphism
+   ============================================================ */
+
+:root {
+    --primary: #34e89e;
+    --primary-dark: #0f9b74;
+    --accent-yellow: #f7d774;
+    --accent-blue: #76c7ff;
+    --text-dark: #1e2b33;
+    --sidebar-width: 290px;
+    --radius: 22px;
+
+    --glass-bg: rgba(255,255,255,0.32);
+    --glass-border: rgba(255,255,255,0.4);
+    --glass-blur: blur(18px);
+
+    --shadow-soft: 0 12px 25px rgba(0,0,0,0.1);
+    --shadow-strong: 0 25px 60px rgba(0,0,0,0.25);
+}
+
+* {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    font-family: 'Nunito', sans-serif;
+}
+
+body {
+    background-image: url('../images/bgdino.png');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+}
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+.sidebar {
+    width: var(--sidebar-width);
+    height: 95vh;
+    margin: 2.5vh 0 2.5vh 2.5vh;
+
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+
+    border-radius: var(--radius);
+    padding: 22px;
+
+    display: flex;
+    flex-direction: column;
+
+    box-shadow: var(--shadow-soft);
+    position: fixed;
+    z-index: 1000;
+    transition: 0.3s ease;
+}
+
+.sidebar-header {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-text {
+    font-size: 1.7rem;
+    font-weight: 800;
+    color: var(--primary-dark);
+    text-shadow: 0 0 10px rgba(52,232,158,0.5);
+}
+.badge-role {
+    background: linear-gradient(90deg, #f9e381, #f7d25c);
+    padding: 4px 10px;
+    border-radius: 12px;
+    color: #3b2900;
+    font-size: 0.78rem;
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #e3f7ef;
+    padding: 14px;
+    border-radius: 14px;
+    margin-bottom: 6px;
+    font-weight: 700;
+
+    display: flex;
+    gap: 15px;
+    align-items: center;
+
+    transition: 0.3s;
+    background: rgba(255,255,255,0.04);
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255,255,255,0.16);
+    transform: translateX(6px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+.nav-item .icon { width: 26px; text-align: center; font-size: 1.3rem; }
+
+.nav-item.logout {
+    margin-top: auto;
+    background: rgba(255,0,0,0.07);
+    color: #ff4b4b;
+}
+.nav-item.logout:hover {
+    background: #ff4b4b;
+    color: white;
+}
+
+/* =============================================
+   PROFILE CARD (sidebar bawah)
+   ============================================= */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.3);
+}
+.player-card {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+.avatar-frame {
+    width: 55px; height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid var(--primary);
+    box-shadow: 0 0 15px rgba(52,232,158,0.5);
+}
+.avatar-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+.xp-track {
+    background: rgba(255,255,255,0.2);
+    height: 7px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.xp-fill {
+    background: var(--accent-blue);
+    height: 100%;
+    width: 75%;
+    animation: xpglow 3s infinite ease-in-out;
+}
+@keyframes xpglow {
+    0% { box-shadow: 0 0 6px #76c7ff; }
+    50% { box-shadow: 0 0 14px #76c7ff; }
+    100% { box-shadow: 0 0 6px #76c7ff; }
+}
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main-content {
+    flex: 1;
+    margin-left: calc(var(--sidebar-width) + 50px);
+    padding: 35px;
+}
+
+/* TOP BAR */
+.top-bar {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+
+    padding: 18px 25px;
+    border-radius: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 25px;
+}
+
+.game-clock {
+    font-weight: bold;
+    background: #000;
+    color: #00ff6a;
+    padding: 6px 15px;
+    border-radius: 6px;
+    font-family: monospace;
+    box-shadow: 0 0 10px #00ff6a;
+}
+
+/* ============================================================
+   HERO SECTION
+   ============================================================ */
+.hero-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 22px;
+    margin-bottom: 30px;
+}
+
+.hero-card {
+    background: linear-gradient(135deg, #34e89e, #0f9b74);
+    padding: 35px;
+    border-radius: var(--radius);
+    color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    box-shadow: 0 20px 45px rgba(0,0,0,0.25);
+    animation: floatCard 5s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+    0%,100% { transform: translateY(0); }
+    50%     { transform: translateY(-6px); }
+}
+
+.hero-dino-small img {
+    width: 120px;
+    filter: drop-shadow(0 5px 15px rgba(0,0,0,0.25));
+}
+
+/* HUD STAT BOX */
+.stat-box {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+
+    padding: 20px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+/* Quick Links Cards */
+.quick-card {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+
+    padding: 25px;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+
+    transition: 0.35s;
+}
+.quick-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: var(--shadow-strong);
+}
+
+.quick-btn {
+    padding: 11px;
+    width: 100%;
+    border-radius: 12px;
+    border: none;
+    background: var(--primary-dark);
+    color: white;
+    font-weight: 700;
+    transition: 0.3s;
+}
+.quick-card:hover .quick-btn {
+    background: white;
+    color: var(--primary-dark);
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-110%); }
+    .sidebar.active { transform: translateX(0); }
+
+    .main-content { margin-left: 0; padding: 15px; }
+    .hero-section { grid-template-columns: 1fr; }
+}
