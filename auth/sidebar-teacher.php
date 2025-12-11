@@ -36,6 +36,12 @@ $currentPage = $page ?? '';   // dari setiap file: $page = 'attendance' dsb.
             <span class="nav-label">Markah Pelajar</span>
         </a>
 
+        <a href="teacher-badges.php"
+           class="nav-link <?php echo ($currentPage === 'badges') ? 'active' : ''; ?>">
+            <span class="nav-icon">🏅</span>
+            <span class="nav-label">Badges Pelajar</span>
+        </a>
+
         <a href="teacher-profile.php"
            class="nav-link <?php echo ($currentPage === 'profile') ? 'active' : ''; ?>">
             <span class="nav-icon">👤</span>

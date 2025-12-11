@@ -67,13 +67,26 @@ body,
     color: #e67e22;
 }
 
-/* Kad putih untuk table */
+/* Kad putih */
 .attendance-card {
     background: rgba(255,255,255,0.96);
     border-radius: var(--card-radius);
     padding: 18px 20px 22px;
     box-shadow: var(--shadow-soft);
     border: 1px solid #f1f2f6;
+    margin-bottom: 16px;
+}
+
+/* Tajuk kecil dalam card */
+.attendance-card h3 {
+    margin: 0 0 6px;
+    font-size: 1.1rem;
+    color: var(--text-main);
+}
+
+.attendance-card p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
 }
 
 /* Table */
@@ -82,6 +95,7 @@ body,
     border-collapse: collapse;
     font-size: 0.92rem;
     color: var(--text-main);
+    margin-top: 8px;
 }
 
 .attendance-table thead tr {
@@ -114,6 +128,16 @@ body,
     background: #f0fbf7;
 }
 
+/* Link dalam table */
+.attendance-table a {
+    color: #0984e3;
+    text-decoration: none;
+    font-weight: 600;
+}
+.attendance-table a:hover {
+    text-decoration: underline;
+}
+
 /* Info murid */
 .student-info {
     display: flex;
@@ -137,12 +161,14 @@ body,
 
 .student-name {
     font-weight: 600;
+    font-size: 0.95rem;
 }
 
 /* Badge kelas */
 .badge-class {
     display: inline-flex;
     align-items: center;
+    gap: 6px;
     padding: 4px 10px;
     border-radius: 999px;
     background: rgba(85, 230, 193, 0.12);
@@ -151,7 +177,7 @@ body,
     font-size: 0.8rem;
 }
 
-/* Toggle kehadiran (H / TH) */
+/* Toggle kehadiran (H / TH) – kalau guna kemudian */
 .attendance-toggle {
     display: inline-flex;
     align-items: center;
@@ -192,7 +218,7 @@ body,
     color: #7f2700;
 }
 
-/* Butang simpan */
+/* Butang simpan (kalau ada form nanti) */
 .attendance-actions {
     margin-top: 18px;
     display: flex;
@@ -227,6 +253,35 @@ body,
 .btn-save-attendance:active {
     transform: translateY(2px);
     box-shadow: 0 10px 24px rgba(255, 154, 60, 0.45);
+}
+
+/* Link group bawah card pertama */
+.attendance-link-group {
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.attendance-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ecf9ff;
+    color: #0c2461;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.attendance-link i {
+    font-size: 0.9rem;
+}
+
+.attendance-link:hover {
+    background: #d6f0ff;
 }
 
 /* ===== RESPONSIVE ===== */

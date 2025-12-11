@@ -9,7 +9,7 @@ if (!isset($_SESSION['user_id']) || ($_SESSION['role'] ?? '') !== 'guru') {
     exit;
 }
 
-$page     = 'marks';
+$page     = 'badges';
 $guruNama = $_SESSION['username'] ?? 'cikguDemo';
 
 $selectedId = $_GET['id'] ?? 'anis21';
@@ -19,7 +19,7 @@ $pelajar    = getStudentById($selectedId, $students);
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Markah Pelajar | Mathventure</title>
+    <title>Pencapaian & Lencana | Mathventure</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../asset/css/teacher-shell.css?v=1">
     <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=1">
@@ -33,47 +33,53 @@ $pelajar    = getStudentById($selectedId, $students);
 
         <header class="teacher-topbar">
             <div class="welcome-pill">
-                <span>Markah kuiz & permainan murid</span>
-                <span class="welcome-sub">Data contoh untuk paparan inovasi, bukan markah sebenar.</span>
+                <span>Pencapaian & lencana permainan Mathventure</span>
+                <span class="welcome-sub">Paparan demo untuk inovasi, bukan rekod sebenar.</span>
             </div>
         </header>
 
         <section class="feature-grid">
 
-            <!-- Kad markah murid terpilih -->
+            <!-- Kad pencapaian murid -->
             <article class="feature-card">
                 <div class="feature-header">
                     <div>
                         <h2><?php echo htmlspecialchars($pelajar['nama']); ?> (<?php echo htmlspecialchars($pelajar['id']); ?>)</h2>
                         <p>Kelas: <?php echo htmlspecialchars($pelajar['kelas']); ?></p>
                     </div>
-                    <span class="feature-tag tag-green">Markah</span>
+                    <span class="feature-tag">Lencana</span>
                 </div>
                 <div class="feature-body">
                     <p>
-                        Ujian 1 – Nombor Bulat: <strong><?php echo $pelajar['markah_ujian1']; ?>%</strong><br>
-                        Ujian 2 – Operasi Asas: <strong><?php echo $pelajar['markah_ujian2']; ?>%</strong><br>
-                        Purata level Mathventure: <strong><?php echo $pelajar['purata_level']; ?> / 5</strong>
+                        Jumlah lencana terkumpul: <strong><?php echo $pelajar['jumlah_badge']; ?></strong><br>
+                        Lencana dibuka minggu ini: <strong><?php echo $pelajar['badges_minggu']; ?></strong><br>
+                        Purata level: <strong><?php echo $pelajar['purata_level']; ?> / 5</strong>
                     </p>
+                    <p>Contoh nama lencana:</p>
+                    <ul>
+                        <li>🌟 Semakin Hebat! – capai Level 3</li>
+                        <li>➕➖ Pakar Tambah & Tolak! – skor ≥ 80% Ujian 1</li>
+                        <li>🎯 Fokus Hebat! – hadir penuh minggu ini</li>
+                    </ul>
                 </div>
                 <div class="feature-footer">
                     <a href="teacher-student_attendant.php?id=<?php echo urlencode($pelajar['id']); ?>" class="btn-outline">
                         <i class="fa-regular fa-calendar-check"></i>
                         Lihat kehadiran murid ini
                     </a>
-                    <a href="teacher-badges.php?id=<?php echo urlencode($pelajar['id']); ?>" class="btn-outline">
-                        <i class="fa-solid fa-trophy"></i>
-                        Lihat lencana murid ini
+                    <a href="teacher-marks.php?id=<?php echo urlencode($pelajar['id']); ?>" class="btn-outline">
+                        <i class="fa-solid fa-chart-column"></i>
+                        Lihat markah murid ini
                     </a>
                 </div>
             </article>
 
-            <!-- Jadual ringkas semua markah -->
+            <!-- Ringkasan badge seluruh kelas -->
             <article class="feature-card">
                 <div class="feature-header">
                     <div>
-                        <h2>Markah Kelas <?php echo htmlspecialchars($kelasUtama); ?></h2>
-                        <p>Klik nama murid untuk lihat markah terperinci.</p>
+                        <h2>Lencana Kelas <?php echo htmlspecialchars($kelasUtama); ?></h2>
+                        <p>Ringkasan pencapaian Mathventure bagi semua murid.</p>
                     </div>
                 </div>
                 <div class="feature-body">
@@ -82,8 +88,7 @@ $pelajar    = getStudentById($selectedId, $students);
                         <tr>
                             <th>Nama</th>
                             <th>ID</th>
-                            <th>Ujian 1</th>
-                            <th>Ujian 2</th>
+                            <th>Jumlah Lencana</th>
                             <th>Level</th>
                         </tr>
                         </thead>
@@ -91,13 +96,12 @@ $pelajar    = getStudentById($selectedId, $students);
                         <?php foreach ($students as $s): ?>
                             <tr>
                                 <td>
-                                    <a href="teacher-marks.php?id=<?php echo urlencode($s['id']); ?>">
+                                    <a href="teacher-badges.php?id=<?php echo urlencode($s['id']); ?>">
                                         <?php echo htmlspecialchars($s['nama']); ?>
                                     </a>
                                 </td>
                                 <td><?php echo htmlspecialchars($s['id']); ?></td>
-                                <td><?php echo $s['markah_ujian1']; ?>%</td>
-                                <td><?php echo $s['markah_ujian2']; ?>%</td>
+                                <td><?php echo $s['jumlah_badge']; ?></td>
                                 <td><?php echo $s['purata_level']; ?>/5</td>
                             </tr>
                         <?php endforeach; ?>
