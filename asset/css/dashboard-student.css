@@ -1,262 +1,446 @@
-/* dashboard-student.css */
-/* Gaya tambahan untuk halaman dashboard-student.php sahaja */
+/* ===============================
+   DASHBOARD STUDENT – GEMPAK MODE
+   =============================== */
 
-/* ===========================
-   HERO SECTION ATAS
-   =========================== */
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;800&display=swap');
 
-.hero-section { 
-    display: flex; 
-    gap: 25px; 
-    flex-wrap: wrap; 
-    margin-bottom: 40px; 
+:root {
+    --neon: #00fff0;
+    --purple: #6c5ce7;
+    --pink: #fd79a8;
+    --dark: #0f172a;
+    --glass: rgba(255,255,255,0.18);
 }
 
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background:
+        radial-gradient(circle at top, #1e293b, #020617);
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+/* ===============================
+   HERO SECTION
+   =============================== */
+
+.hero-section {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+/* HERO CARD */
 .hero-card {
     flex: 2;
-    background: linear-gradient(120deg, #81ecec, #00cec9);
-    border-radius: 30px;
-    padding: 30px 35px;
+    background: linear-gradient(135deg, #00fff0, #6c5ce7);
+    border-radius: 35px;
+    padding: 40px;
     position: relative;
-    color: white;
     overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0, 206, 201, 0.4);
-    border: 4px solid rgba(255,255,255,0.3);
+    box-shadow:
+        0 0 30px rgba(0,255,240,0.6),
+        0 0 60px rgba(108,92,231,0.5);
+    animation: glow 4s infinite alternate;
 }
 
-/* Corak background Hero */
+@keyframes glow {
+    from {
+        box-shadow: 0 0 25px rgba(0,255,240,0.5);
+    }
+    to {
+        box-shadow: 0 0 70px rgba(253,121,168,0.8);
+    }
+}
+
 .hero-card::before {
-    content: ''; 
-    position: absolute; 
-    top: -50px; 
-    left: -50px;
-    width: 200px; 
-    height: 200px; 
-    background: rgba(255,255,255,0.2);
-    border-radius: 50%;
-}
-.hero-card::after {
-    content: ''; 
-    position: absolute; 
-    bottom: -30px; 
-    right: 15%;
-    width: 150px; 
-    height: 150px; 
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255,255,255,0.08),
+            rgba(255,255,255,0.08) 10px,
+            transparent 10px,
+            transparent 20px
+        );
+    opacity: 0.4;
 }
 
-.hero-text { 
-    max-width: 60%; 
-    position: relative; 
-    z-index: 1; 
+.hero-text {
+    max-width: 60%;
+    position: relative;
+    z-index: 2;
 }
 
 .hero-text h1 {
-    font-size: 2.5rem; 
-    margin-bottom: 10px; 
-    text-shadow: 0 4px 0 rgba(0,0,0,0.1); 
-}
-.hero-text p {
-    font-size: 1.1rem; 
-    margin-bottom: 10px; 
-    opacity: 0.95; 
+    font-family: 'Fredoka One';
+    font-size: 3rem;
+    text-shadow: 0 0 12px rgba(255,255,255,0.6);
 }
 
-/* gambar dinosour kecil dalam kotak hero */
+.hero-text p {
+    margin-top: 10px;
+    font-size: 1.2rem;
+    opacity: 0.95;
+}
+
+/* DINO */
 .hero-dino-small {
     position: absolute;
-    right: 10px;
-    bottom: 0;
-    z-index: 1;
+    right: 20px;
+    bottom: -10px;
+    z-index: 2;
 }
+
 .hero-dino-small img {
-    width: 260px;
-    max-width: 40vw;
-    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.25));
+    width: 300px;
+    animation: jump 2.5s infinite;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.5));
 }
 
-/* ===========================
-   STAT BOX KANAN (NYAWA & MATA)
-   =========================== */
+@keyframes jump {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-25px) rotate(-3deg); }
+}
 
-.hud-stats { 
-    flex: 0.8; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    min-width: 220px; 
+/* ===============================
+   HUD STATS (NYAWA / MATA)
+   =============================== */
+
+.hud-stats {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
 }
 
 .stat-box {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 15px 20px; 
-    border-radius: 18px;
-    display: flex; 
-    align-items: center; 
+    background: var(--glass);
+    backdrop-filter: blur(14px);
+    border-radius: 22px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
     gap: 15px;
-    box-shadow: 0 8px 0 rgba(0,0,0,0.05);
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    border: 2px solid white;
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: 0.3s;
 }
 
-.stat-box:hover { 
-    transform: scale(1.05) rotate(-2deg); 
+.stat-box:hover {
+    transform: translateX(10px) scale(1.08);
 }
-
-.stat-box.red .stat-icon { background: #ff7675; }
-.stat-box.yellow .stat-icon { background: #ffeaa7; }
-.stat-box.blue .stat-icon { background: #74b9ff; }
 
 .stat-icon {
-    width: 50px; 
-    height: 50px; 
-    border-radius: 12px;
-    display: flex; 
-    justify-content: center; 
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    font-size: 24px; 
+    font-size: 26px;
     color: white;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+    animation: pulse 2s infinite;
 }
 
-.stat-info small { 
-    color: #b2bec3; 
-    font-weight: 800; 
-    font-size: 0.7rem; 
-    letter-spacing: 1px; 
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
 }
-.stat-info strong { 
-    color: #2d3436; 
-    font-size: 1.4rem; 
-    font-family: 'Fredoka One'; 
+
+.stat-box.red .stat-icon {
+    background: #ff4757;
+    box-shadow: 0 0 20px #ff4757;
+}
+
+.stat-box.yellow .stat-icon {
+    background: #ffa502;
+    box-shadow: 0 0 20px #ffa502;
+}
+
+.stat-box.blue .stat-icon {
+    background: #1e90ff;
+    box-shadow: 0 0 20px #1e90ff;
+}
+
+.stat-info strong {
+    font-family: 'Fredoka One';
+    font-size: 1.6rem;
+}
+
+.stat-info small {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
 }
 
 .stat-desc {
     font-size: 0.75rem;
-    color: #636e72;
-    margin-top: 4px;
+    opacity: 0.85;
 }
 
-/* ===========================
-   QUICK LINKS (3 KOLUM BAWAH)
-   =========================== */
+/* ===============================
+   QUICK LINKS
+   =============================== */
 
 .quick-links {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 20px;
+    gap: 30px;
 }
 
 .quick-card {
-    background: rgba(255,255,255,0.96);
-    border-radius: 22px;
-    padding: 18px 20px 20px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.06);
-    border: 2px solid rgba(255,255,255,0.9);
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    background: linear-gradient(160deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05));
+    backdrop-filter: blur(16px);
+    border-radius: 28px;
+    padding: 25px;
+    position: relative;
+    overflow: hidden;
+    transition: 0.4s;
+    border: 1px solid rgba(255,255,255,0.25);
 }
 
 .quick-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 14px 28px rgba(0,0,0,0.1);
+    transform: translateY(-18px) rotate(1deg);
+    box-shadow: 0 40px 60px rgba(0,0,0,0.6);
 }
 
+.quick-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+    opacity: 0;
+}
+
+.quick-card:hover::after {
+    opacity: 1;
+}
+
+/* HEADER */
 .quick-header {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
 }
 
 .quick-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 14px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    font-size: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 22px;
-    color: #fff;
-    box-shadow: 0 4px 0 rgba(0,0,0,0.08);
+    color: white;
 }
 
-/* warna ikon ikut jenis kad */
-.q-map   .quick-icon { background: #00cec9; }
-.q-note  .quick-icon { background: #fdcb6e; }
-.q-badge .quick-icon { background: #a29bfe; }
+.q-map .quick-icon {
+    background: #00fff0;
+    box-shadow: 0 0 20px #00fff0;
+}
+
+.q-note .quick-icon {
+    background: #fdcb6e;
+    box-shadow: 0 0 20px #fdcb6e;
+}
+
+.q-badge .quick-icon {
+    background: #a29bfe;
+    box-shadow: 0 0 20px #a29bfe;
+}
 
 .quick-header h3 {
-    font-size: 1.1rem;
-    margin-bottom: 2px;
+    font-size: 1.2rem;
+    font-weight: 800;
 }
 
 .quick-sub {
     font-size: 0.8rem;
-    color: #95a5a6;
+    opacity: 0.7;
 }
 
 .quick-progress {
-    font-size: 0.9rem;
-    color: #2d3436;
-    min-height: 38px;
+    margin-top: 10px;
+    font-size: 0.95rem;
 }
 
+/* BUTTON */
 .quick-btn {
-    align-self: flex-start;
-    margin-top: 4px;
-    padding: 8px 16px;
-    border-radius: 12px;
+    margin-top: 12px;
+    padding: 10px 22px;
+    border-radius: 16px;
     border: none;
     font-family: 'Fredoka One';
-    font-size: 0.9rem;
     cursor: pointer;
-    box-shadow: 0 3px 0 rgba(0,0,0,0.12);
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-
-/* warna butang ikut jenis kad */
-.q-map .quick-btn {
-    background: #00cec9;
-    color: #003f3f;
-}
-.q-note .quick-btn {
-    background: #fdcb6e;
-    color: #8e4d00;
-}
-.q-badge .quick-btn {
-    background: #a29bfe;
-    color: #2d2275;
+    background: linear-gradient(135deg, #00fff0, #fd79a8);
+    color: #020617;
+    box-shadow: 0 8px 0 rgba(0,0,0,0.4);
 }
 
 .quick-btn:active {
-    transform: translateY(3px);
+    transform: translateY(6px);
     box-shadow: none;
 }
 
-/* ===========================
+/* ===============================
    RESPONSIVE
-   =========================== */
+   =============================== */
 
 @media (max-width: 900px) {
-    .hero-section { 
-        flex-direction: column; 
+    .hero-section {
+        flex-direction: column;
     }
 
-    .hero-text { 
-        max-width: 100%; 
+    .hero-text {
+        max-width: 100%;
     }
 
     .hero-dino-small {
         position: static;
-        margin-top: 10px;
         text-align: center;
     }
 
-    .hero-dino-small img { 
-        width: 200px; 
+    .hero-dino-small img {
+        width: 220px;
     }
 }
+
+/* =====================================
+   DASHBOARD ULTRA ENHANCEMENT PATCH
+   (PASTE PALING BAWAH)
+   ===================================== */
+
+/* SMOOTHER GLOBAL ANIMATION */
+* {
+    transition: all 0.25s ease;
+}
+
+/* HERO CARD – EXTRA DEPTH */
+.hero-card {
+    transform-style: preserve-3d;
+}
+
+.hero-card:hover {
+    transform: scale(1.02) rotateX(2deg) rotateY(-2deg);
+}
+
+/* HERO TEXT NAIK */
+.hero-text h1 {
+    letter-spacing: 1px;
+}
+
+.hero-text p {
+    text-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+/* DINO FLOATING LEBIH NATURAL */
+.hero-dino-small img {
+    animation: jump 2.5s infinite ease-in-out;
+}
+
+/* HUD STATS – GAME HUD FEEL */
+.stat-box {
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-box::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.35),
+        transparent
+    );
+    opacity: 0;
+}
+
+.stat-box:hover::after {
+    opacity: 1;
+}
+
+/* STAT NUMBER LEBIH POWER */
+.stat-info strong {
+    text-shadow: 0 0 15px currentColor;
+}
+
+/* QUICK CARD – FLOATING GAME CARD */
+.quick-card {
+    transform-style: preserve-3d;
+}
+
+.quick-card:hover {
+    transform: translateY(-20px) rotateX(6deg) rotateZ(1deg);
+}
+
+/* QUICK HEADER TEXT */
+.quick-header h3 {
+    text-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* PROGRESS TEXT */
+.quick-progress {
+    opacity: 0.85;
+}
+
+/* BUTTON – GAME BUTTON PRESS */
+.quick-btn {
+    position: relative;
+}
+
+.quick-btn::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: rgba(255,255,255,0.25);
+    opacity: 0;
+}
+
+.quick-btn:hover::after {
+    opacity: 1;
+}
+
+/* SCROLLBAR – CUSTOM GAME STYLE */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #020617;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #00fff0, #fd79a8);
+    border-radius: 10px;
+}
+
+/* SECTION FADE IN */
+.hero-section,
+.hud-stats,
+.quick-links {
+    animation: fadeUp 0.8s ease both;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
