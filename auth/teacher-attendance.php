@@ -1,256 +1,130 @@
 <?php
-// auth/teacher-attendance.php
 require_once '../config.php';
-require_once 'dummy-data.php'; // <-- guna data dummy
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Pastikan user sudah login & role = guru
-if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'guru') {
-    $_SESSION['error'] = 'Sila log masuk sebagai guru untuk akses halaman ini.';
-    header('Location: index.php');
+// Pastikan hanya guru boleh akses
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'guru') {
+    header('Location: ../index.php');
     exit;
 }
 
-$user_id = (int) $_SESSION['user_id'];
+$id_guru = $_SESSION['user_id'];
 
-// =================== DATA GURU (ringkas) ===================
+// 1. Ambil data guru untuk tahu kelas mana dia ajar
+$stmtG = $conn->prepare("SELECT * FROM teacher WHERE id_user = ?");
+$stmtG->bind_param("i", $id_guru);
+$stmtG->execute();
+$teacher = $stmtG->get_result()->fetch_assoc();
 
-$teacherName  = $_SESSION['username'] ?? 'Guru';
-$teacherClass = $kelasUtama ?? '4 Dinamik'; // datang dari dummy-data.php
-$teacherYear  = 'Tahun 4';                  // boleh tukar ikut citarasa
-
-// Nama pertama untuk avatar
-$firstNameOnly = $teacherName;
-if (strpos($teacherName, ' ') !== false) {
-    $parts = explode(' ', $teacherName);
-    $firstNameOnly = $parts[0];
+if (!$teacher) {
+    die("<div style='padding:50px; text-align:center; font-family:sans-serif;'>
+            <h2>Akses Ditolak</h2>
+            <p>ID Guru ($id_guru) tidak ditemui dalam jadual 'teacher'. Sila pastikan profil guru telah didaftarkan.</p>
+            <a href='dashboard-teacher.php'>Kembali</a>
+         </div>");
 }
 
-// =================== SENARAI MURID DARI DUMMY ===================
+$myClass = $teacher['class'];
 
-$studentsList = array_values($students); // $students dari dummy-data.php
+// 2. LOGIK AUTOMATIK: Pastikan semua user yang role='pelajar' ada dalam jadual 'student'
+// Ini penting supaya cikgu tak perlu tambah murid manual.
+$conn->query("INSERT IGNORE INTO student (id_user, firstname, lastname, class, level, current_xp, coins, lives)
+              SELECT id_user, username, '', '$myClass', 1, 0, 0, 5 
+              FROM users 
+              WHERE role = 'pelajar'");
 
-$totalStudents = count($studentsList);
-$hadirHariIni  = 0;
-
-foreach ($studentsList as $stu) {
-    if (!empty($stu['hadir_hari_ini'])) {
-        $hadirHariIni++;
-    }
-}
-
-$absent               = $totalStudents - $hadirHariIni;
-$attendancePercentDay = $totalStudents > 0 ? round(($hadirHariIni / $totalStudents) * 100) : 0;
-
-date_default_timezone_set('Asia/Kuala_Lumpur');
-$currentTime = date('h:i A');
-$currentDate = date('d/m/Y');
-
-// untuk highlight menu
-$page = 'attendance';
+// 3. Ambil senarai pelajar yang kelasnya sepadan dengan guru
+// Menggunakan TRIM untuk elakkan ralat "hidden space"
+$sqlS = "SELECT s.*, u.username 
+         FROM student s
+         JOIN users u ON s.id_user = u.id_user
+         WHERE TRIM(s.class) = TRIM(?) 
+         ORDER BY s.firstname ASC";
+         
+$stmtS = $conn->prepare($sqlS);
+$stmtS->bind_param("s", $myClass);
+$stmtS->execute();
+$studentsList = $stmtS->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Kehadiran Pelajar | Mathventure</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
+    <style>
+        .teacher-layout { font-family: 'Nunito', sans-serif; background: #f4f7f6; min-height: 100vh; padding: 20px; }
+        .main-content { max-width: 900px; margin: 0 auto; }
+        .hero-text-main { color: #2c3e50; margin-bottom: 25px; }
+        .table-card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .nice-table { width: 100%; border-collapse: collapse; }
+        .nice-table th { text-align: left; padding: 15px; border-bottom: 2px solid #eee; color: #7f8c8d; }
+        .nice-table td { padding: 15px; border-bottom: 1px solid #f9f9f9; }
+        .btn-primary { transition: 0.3s; }
+        .btn-primary:hover { background: #27ae60 !important; transform: translateY(-2px); }
+        .radio-group { display: flex; gap: 20px; }
+        .radio-label { cursor: pointer; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+    </style>
 </head>
 <body>
 
 <div class="teacher-layout">
-
-    <!-- ================= SIDEBAR (santai) ================= -->
-    <aside class="sidebar">
-        <div class="sidebar-top">
-            <div class="brand">
-                <div class="brand-avatar">M</div>
-                <div class="brand-text">
-                    <h1>Mathventure</h1>
-                    <span>Teacher Mode</span>
-                </div>
-            </div>
-
-            <div>
-                <div class="nav-group-label">Menu</div>
-                <nav class="side-nav">
-                    <a href="dashboard-teacher.php"
-                       class="nav-item <?php echo $page === 'dashboard' ? 'active' : ''; ?>">
-                        <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
-                        <div class="nav-label">Dashboard</div>
-                    </a>
-
-                    <a href="teacher-attendance.php"
-                       class="nav-item <?php echo $page === 'attendance' ? 'active' : ''; ?>">
-                        <div class="nav-icon"><i class="fa-solid fa-calendar-check"></i></div>
-                        <div class="nav-label">Kehadiran</div>
-                    </a>
-
-                    <a href="teacher-marks.php"
-                       class="nav-item <?php echo $page === 'marks' ? 'active' : ''; ?>">
-                        <div class="nav-icon"><i class="fa-solid fa-chart-column"></i></div>
-                        <div class="nav-label">Markah Pelajar</div>
-                    </a>
-
-                    <a href="teacher-profile.php"
-                       class="nav-item <?php echo $page === 'profile' ? 'active' : ''; ?>">
-                        <div class="nav-icon"><i class="fa-solid fa-id-badge"></i></div>
-                        <div class="nav-label">Profil Guru</div>
-                    </a>
-                </nav>
-            </div>
-        </div>
-
-        <div class="sidebar-bottom">
-            <div class="teacher-mini">
-                <div class="teacher-mini-avatar">
-                    <?php echo strtoupper(substr($firstNameOnly, 0, 1)); ?>
-                </div>
-                <div class="teacher-mini-info">
-                    <div class="teacher-mini-name"><?php echo htmlspecialchars($teacherName); ?></div>
-                    <div class="teacher-mini-role">
-                        Guru Kelas · <?php echo htmlspecialchars($teacherClass); ?>
-                    </div>
-                </div>
-            </div>
-
-            <form action="../logout.php" method="post">
-                <button type="submit" class="btn-logout">
-                    <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
-                </button>
-            </form>
-        </div>
-    </aside>
-
-    <!-- ================= MAIN CONTENT ================= -->
     <main class="main-content">
-        <div class="dashboard-shell">
-
-            <!-- Hero atas -->
-            <div class="hero-row">
-                <div>
-                    <div class="hero-text-top">
-                        Kehadiran untuk <span><?php echo htmlspecialchars($teacherClass); ?></span>
-                    </div>
-                    <div class="hero-text-main">
-                        Tandakan kehadiran murid hari ini ✅
-                    </div>
-                    <div style="font-size:13px;color:#7f8c8d;margin-top:4px;">
-                        Tarikh: <strong><?php echo $currentDate; ?></strong>
-                    </div>
-                </div>
-                <div>
-                    <div class="hero-clock">
-                        <i class="fa-solid fa-clock"></i>
-                        <span><?php echo $currentTime; ?></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Panel ringkasan kehadiran (guna dummy) -->
-            <section class="panel-guru" style="margin-top:10px;">
-                <div class="panel-text">
-                    <div class="panel-title">Ringkasan Kehadiran Hari Ini</div>
-
-                    <div class="panel-tags">
-                        <div class="tag-pill">
-                            <i class="fa-solid fa-users"></i>
-                            <span>Kelas: <?php echo htmlspecialchars($teacherClass); ?></span>
-                        </div>
-                        <div class="tag-pill">
-                            <i class="fa-solid fa-percent"></i>
-                            <span><?php echo $attendancePercentDay; ?>% hadir</span>
-                        </div>
-                        <div class="tag-pill">
-                            <i class="fa-solid fa-user-xmark"></i>
-                            <span><?php echo $absent; ?> murid tidak hadir</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-icon-box">
-                    <i class="fa-solid fa-calendar-check"></i>
-                </div>
-            </section>
-
-            <!-- Jadual kehadiran -->
-            <section class="table-card">
-                <div class="table-header">
-                    <h3>Senarai Murid Kelas <?php echo htmlspecialchars($teacherClass); ?></h3>
-                    <small>
-                        Pilih H (Hadir) atau TH (Tidak Hadir) untuk setiap murid.
-                    </small>
-                </div>
-
-                <?php if (empty($studentsList)): ?>
-                    <div class="empty-state">
-                        Belum ada murid dalam <code>$students</code> di <strong>dummy-data.php</strong>.
-                    </div>
-                <?php else: ?>
-                    <!-- Hanya UI: tidak simpan ke DB -->
-                    <form method="post" action="#">
-                        <div class="table-wrapper">
-                            <table class="nice-table">
-                                <thead>
-                                <tr>
-                                    <th>Nama Murid</th>
-                                    <th>Kelas</th>
-                                    <th>Kehadiran Hari Ini</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php foreach ($studentsList as $s): ?>
-                                    <?php
-                                    $isHadir = !empty($s['hadir_hari_ini']);
-                                    ?>
-                                    <tr>
-                                        <td><?php echo htmlspecialchars($s['nama']); ?></td>
-                                        <td><?php echo htmlspecialchars($s['kelas']); ?></td>
-                                        <td>
-                                            <label style="font-size:13px;margin-right:10px;">
-                                                <input type="radio"
-                                                       name="attendance[<?php echo htmlspecialchars($s['id']); ?>]"
-                                                       value="H"
-                                                    <?php echo $isHadir ? 'checked' : ''; ?>>
-                                                H (Hadir)
-                                            </label>
-                                            <label style="font-size:13px;">
-                                                <input type="radio"
-                                                       name="attendance[<?php echo htmlspecialchars($s['id']); ?>]"
-                                                       value="TH"
-                                                    <?php echo !$isHadir ? 'checked' : ''; ?>>
-                                                TH (Tidak Hadir)
-                                            </label>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="form-actions" style="margin-top:12px;">
-                            <button type="button" class="btn-primary">
-                                <i class="fa-solid fa-floppy-disk"></i>
-                                Simpan Kehadiran
-                            </button>
-                            <button type="reset" class="btn-outline">
-                                <i class="fa-solid fa-rotate-left"></i>
-                                Set Semula
-                            </button>
-                        </div>
-                    </form>
+        <h2 class="hero-text-main">
+            <i class="fa-solid fa-clipboard-user"></i> Tanda Kehadiran Kelas: <?php echo htmlspecialchars($myClass); ?>
+        </h2>
+        
+        <section class="table-card">
+            <form action="process-attendance.php" method="POST">
+                <table class="nice-table">
+                    <thead>
+                        <tr>
+                            <th>Nama Murid</th>
+                            <th>Tanda Kehadiran (Hari Ini)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($studentsList->num_rows > 0): ?>
+                            <?php while($s = $studentsList->fetch_assoc()): 
+                                // Jika firstname kosong, guna username dari table users
+                                $displayName = !empty($s['firstname']) ? $s['firstname'] . ' ' . $s['lastname'] : $s['username'];
+                            ?>
+                            <tr>
+                                <td><strong><?php echo htmlspecialchars($displayName); ?></strong></td>
+                                <td>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="attendance[<?php echo $s['id_user']; ?>]" value="H" checked> 
+                                            <span style="color: #2ecc71;">Hadir</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="attendance[<?php echo $s['id_user']; ?>]" value="TH"> 
+                                            <span style="color: #e74c3c;">Tidak Hadir</span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="2" style="padding:50px; text-align:center;">
+                                    <img src="https://cdn-icons-png.flaticon.com/512/7486/7486744.png" width="80" style="opacity: 0.3;">
+                                    <p style="color:#999; margin-top:15px;">Tiada murid ditemui dalam kelas <strong><?php echo htmlspecialchars($myClass); ?></strong>.</p>
+                                    <small>Pastikan murid telah mendaftar dan memilih kelas yang betul.</small>
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+                
+                <?php if ($studentsList->num_rows > 0): ?>
+                    <button type="submit" class="btn-primary" style="margin-top:30px; background:#2ecc71; color:white; border:none; padding:15px 35px; border-radius:10px; cursor:pointer; font-weight:800; font-size: 16px; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);">
+                        <i class="fa-solid fa-check-double"></i> SIMPAN KEHADIRAN
+                    </button>
                 <?php endif; ?>
-            </section>
-
-        </div>
+            </form>
+        </section>
     </main>
-
 </div>
 
 </body>

@@ -1,29 +1,47 @@
 <?php
 require_once '../config.php';
 
+// Pastikan session bermula
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Semak akses pelajar
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
     $_SESSION['error'] = 'Sila log masuk sebagai pelajar untuk akses halaman ini.';
     header('Location: ../index.php');
     exit;
 }
 
+$userId = (int)$_SESSION['user_id'];
 $nama = $_SESSION['username'] ?? 'Pelajar Dino';
 
-// sementara – nanti ganti dengan data DB
+// Ambil semua level progres dari DB
+$sqlUser = "SELECT level_t4, level_t5, level_t6 FROM student WHERE id_user = ?";
+$stmtUser = $conn->prepare($sqlUser);
+$stmtUser->bind_param("i", $userId);
+$stmtUser->execute();
+$resUser = $stmtUser->get_result();
+$userData = $resUser->fetch_assoc();
+
 $maxLevelPerYear = 5;
+
+// Sekarang kita setkan level unik untuk setiap tahun
 $unlocked = [
-    4 => 1,
-    5 => 1,
-    6 => 1
+    4 => (int)($userData['level_t4'] ?? 1),
+    5 => (int)($userData['level_t5'] ?? 1),
+    6 => (int)($userData['level_t6'] ?? 1)
 ];
 ?>
 <!DOCTYPE html>
 <html lang="ms">
 <head>
     <meta charset="UTF-8">
-    <title>Peta Pengembaraan</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathventure | Peta Pengembaraan</title>
     <link rel="stylesheet" href="../asset/css/student-layout.css">
     <link rel="stylesheet" href="../asset/css/game-menu.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
@@ -56,7 +74,7 @@ $unlocked = [
         <a href="profile.php" class="nav-item">
             <span class="icon">👤</span> <span>Profil</span>
         </a>
-        <a href="index.php" class="nav-item logout">
+        <a href="../logout.php" class="nav-item logout">
             <span class="icon">🚪</span> <span>Log Keluar</span>
         </a>
     </nav>
@@ -67,10 +85,10 @@ $unlocked = [
                 <img src="../asset/images/avatar.png" alt="Avatar">
             </div>
             <div class="player-info">
-                <div class="lvl-badge">Level Dino</div>
+                <div class="lvl-badge">Explorer</div>
                 <div><strong><?php echo htmlspecialchars($nama); ?></strong></div>
                 <div class="xp-track">
-                    <div class="xp-fill" style="width: 30%;"></div>
+                    <div class="xp-fill" style="width: 50%;"></div>
                 </div>
             </div>
         </div>
@@ -80,8 +98,7 @@ $unlocked = [
 <main class="main-content">
     <div class="top-bar">
         <div class="welcome-badge">
-            Ini adalah <span class="highlight">Peta Pengembaraan</span>,
-            <?php echo htmlspecialchars($nama); ?>! Pilih tahun untuk mula bermain. 🌈
+            Sedia untuk mengembara, <span class="highlight"><?php echo htmlspecialchars($nama); ?></span>? 🌈
         </div>
         <div class="game-clock" id="gameClock">--:--</div>
     </div>
@@ -89,77 +106,42 @@ $unlocked = [
     <section class="adventure-map">
         <h2 class="map-title">Pilih Pengembaraan Matematik</h2>
         <p class="map-subtitle">
-            Mulakan dari <strong>Level 1</strong>, buka laluan baharu dan kumpul lencana kegemilangan!
+            Selesaikan <strong>skor penuh (3/3)</strong> untuk membuka laluan baharu!
         </p>
 
-        <!-- TAHUN 4 -->
+        <?php 
+        $years = [4, 5, 6];
+        foreach ($years as $yr): 
+        ?>
         <div class="map-row">
-            <div class="year-flag year-4">
-                <span class="year-label">Tahun 4</span>
+            <div class="year-flag year-<?php echo $yr; ?>">
+                <span class="year-label">Tahun <?php echo $yr; ?></span>
             </div>
             <div class="level-path">
                 <?php for ($lvl = 1; $lvl <= $maxLevelPerYear; $lvl++):
-                    $isUnlocked = $lvl <= $unlocked[4];
-                    $isCurrent  = $lvl == $unlocked[4];
+                    // LOGIK UTAMA:
+                    // 1. Level terbuka jika ia kurang atau sama dengan currentMaxLevel dari DB
+                    $isUnlocked = $lvl <= $unlocked[$yr];
+                    // 2. Tandakan level terkini yang perlu diselesaikan
+                    $isCurrent  = $lvl == $unlocked[$yr];
                 ?>
                     <button
                         class="level-node <?php echo $isUnlocked ? 'unlocked' : 'locked'; ?> <?php echo $isCurrent ? 'current' : ''; ?>"
-                        <?php if (!$isUnlocked) echo 'disabled'; ?>
-                        onclick="location.href='game-play.php?tahun=4&level=<?php echo $lvl; ?>'">
+                        <?php echo !$isUnlocked ? 'disabled' : ''; ?>
+                        onclick="location.href='game-play.php?tahun=<?php echo $yr; ?>&level=<?php echo $lvl; ?>'">
                         <span class="lvl-text">L<?php echo $lvl; ?></span>
-                        <span class="lvl-tag"><?php echo $lvl == 1 ? 'Main' : 'Stage '.$lvl; ?></span>
-                        <span class="lock-icon">🔒</span>
+                        <span class="lvl-tag"><?php echo $lvl == 1 ? 'Mula' : 'Tahap '.$lvl; ?></span>
+                        <?php if (!$isUnlocked): ?>
+                            <span class="lock-icon"><i class="fas fa-lock"></i></span>
+                        <?php endif; ?>
                     </button>
                 <?php endfor; ?>
             </div>
         </div>
-
-        <!-- TAHUN 5 -->
-        <div class="map-row">
-            <div class="year-flag year-5">
-                <span class="year-label">Tahun 5</span>
-            </div>
-            <div class="level-path">
-                <?php for ($lvl = 1; $lvl <= $maxLevelPerYear; $lvl++):
-                    $isUnlocked = $lvl <= $unlocked[5];
-                    $isCurrent  = $lvl == $unlocked[5];
-                ?>
-                    <button
-                        class="level-node <?php echo $isUnlocked ? 'unlocked' : 'locked'; ?> <?php echo $isCurrent ? 'current' : ''; ?>"
-                        <?php if (!$isUnlocked) echo 'disabled'; ?>
-                        onclick="location.href='game-play.php?tahun=5&level=<?php echo $lvl; ?>'">
-                        <span class="lvl-text">L<?php echo $lvl; ?></span>
-                        <span class="lvl-tag"><?php echo $lvl == 1 ? 'Main' : 'Stage '.$lvl; ?></span>
-                        <span class="lock-icon">🔒</span>
-                    </button>
-                <?php endfor; ?>
-            </div>
-        </div>
-
-        <!-- TAHUN 6 -->
-        <div class="map-row">
-            <div class="year-flag year-6">
-                <span class="year-label">Tahun 6</span>
-            </div>
-            <div class="level-path">
-                <?php for ($lvl = 1; $lvl <= $maxLevelPerYear; $lvl++):
-                    $isUnlocked = $lvl <= $unlocked[6];
-                    $isCurrent  = $lvl == $unlocked[6];
-                ?>
-                    <button
-                        class="level-node <?php echo $isUnlocked ? 'unlocked' : 'locked'; ?> <?php echo $isCurrent ? 'current' : ''; ?>"
-                        <?php if (!$isUnlocked) echo 'disabled'; ?>
-                        onclick="location.href='game-play.php?tahun=6&level=<?php echo $lvl; ?>'">
-                        <span class="lvl-text">L<?php echo $lvl; ?></span>
-                        <span class="lvl-tag"><?php echo $lvl == 1 ? 'Main' : 'Stage '.$lvl; ?></span>
-                        <span class="lock-icon">🔒</span>
-                    </button>
-                <?php endfor; ?>
-            </div>
-        </div>
+        <?php endforeach; ?>
 
         <p class="map-hint">
-            Tip: Jawab semua <strong>3/3 soalan</strong> dalam satu level untuk membuka level seterusnya! 🏆
+            <i class="fas fa-info-circle"></i> Tip: Level seterusnya akan terbuka secara automatik setelah anda berjaya mendapat markah penuh.
         </p>
     </section>
 </main>
