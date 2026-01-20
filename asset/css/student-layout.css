@@ -1,5 +1,4 @@
 /* student-layout.css */
-/* CSS asas untuk semua page pelajar (dashboard, game-menu, dll) */
 
 /* --- VARS & IMPORT FONT --- */
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
@@ -30,7 +29,7 @@ body {
 ::-webkit-scrollbar-thumb { background: #81ecec; border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: #00cec9; }
 
-/* --- BACKGROUND ANIMATED --- */
+/* --- BACKGROUND --- */
 .game-bg {
     position: fixed;
     inset: 0;
@@ -38,14 +37,13 @@ body {
     z-index: -2;
 }
 
-/* Lapisan Kabus/Corak Overlay */
 .game-bg::before {
     content: ''; position: absolute; inset: 0;
     background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2), rgba(162, 222, 208, 0.5));
     z-index: -1;
 }
 
-/* --- SIDEBAR GLASSMORPHISM --- */
+/* --- SIDEBAR --- */
 .sidebar {
     position: fixed;
     top: 20px; left: 20px; bottom: 20px;
@@ -113,41 +111,40 @@ body {
     box-shadow: 0 4px 15px rgba(85, 230, 193, 0.3);
 }
 
-.nav-item .icon { font-size: 1.2rem; filter: drop-shadow(0 2px 0 rgba(0,0,0,0.1)); }
-
 .nav-item.logout { margin-top: auto; color: #ff7675; }
 .nav-item.logout:hover { background: #ffeaa7; border-color: #ff7675; }
 
-/* Player Profile Card */
+/* --- PLAYER CARD --- */
 .sidebar-footer { margin-top: 10px; }
+
 .player-card {
     background: linear-gradient(135deg, #fff, #f0fdf4);
-    padding: 15px;
+    padding: 12px;
     border-radius: 20px;
     border: 2px solid #b8e994;
     display: flex; align-items: center; gap: 12px;
     position: relative;
-    overflow: hidden;
-}
-
-.player-card::after {
-    content:''; position: absolute; top: -50%; right: -50%;
-    width: 100px; height: 100px; background: rgba(184, 233, 148, 0.3);
-    border-radius: 50%;
 }
 
 .avatar-frame {
     width: 55px; height: 55px;
     border-radius: 50%;
     border: 3px solid #78e08f;
-    padding: 2px; background: white;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background: white;
+    overflow: hidden;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
 }
-.avatar-frame img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 
-.player-info { flex: 1; z-index: 2; }
+.avatar-frame img { 
+    width: 100%; height: 100%; 
+    object-fit: cover; 
+}
+
+.player-info { flex: 1; z-index: 2; min-width: 0; }
+
 .lvl-badge {
-    font-family: 'Fredoka One'; font-size: 12px;
+    font-family: 'Fredoka One'; font-size: 11px;
     background: #fab1a0; color: white;
     padding: 2px 8px; border-radius: 10px;
     display: inline-block; margin-bottom: 4px;
@@ -155,24 +152,16 @@ body {
 }
 
 .xp-track {
-    height: 12px; background: #dfe6e9; border-radius: 20px;
-    overflow: hidden; border: 2px solid white;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+    height: 10px; background: #dfe6e9; border-radius: 20px;
+    overflow: hidden; border: 1px solid white;
+    margin-top: 4px;
 }
 
-/* Animasi Belang pada XP Bar */
 .xp-fill {
     height: 100%;
-    background: repeating-linear-gradient(
-        45deg,
-        #00b894,
-        #00b894 10px,
-        #55efc4 10px,
-        #55efc4 20px
-    );
-    background-size: 200% 200%;
+    background: repeating-linear-gradient(45deg, #00b894, #00b894 10px, #55efc4 10px, #55efc4 20px);
+    background-size: 40px 40px;
     animation: moveStripe 2s linear infinite;
-    border-radius: 20px;
     transition: width 0.5s ease;
 }
 
@@ -184,7 +173,6 @@ body {
     min-height: 100vh;
 }
 
-/* Top Header */
 .top-bar {
     display: flex; justify-content: space-between; align-items: center;
     margin-bottom: 30px;
@@ -195,10 +183,10 @@ body {
     padding: 12px 25px;
     border-radius: 50px;
     font-size: 1.1rem;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
     border: 2px solid white;
     color: #636e72;
 }
+
 .highlight { font-family: 'Fredoka One'; color: #0984e3; }
 
 .game-clock {
@@ -206,41 +194,46 @@ body {
     font-family: 'Fredoka One'; padding: 8px 16px;
     border-radius: 12px;
     border-bottom: 4px solid #000;
-    letter-spacing: 1px;
 }
 
-/* ===========================
-   BUTANG + ANIMASI GLOBAL
-   =========================== */
+/* ==========================================
+   BUTANG PANGKAH & TOGGLE (YANG HILANG)
+   ========================================== */
 
-/* Butang Terapung (mobile menu) */
+/* Butang Terapung (☰) */
 .floating-menu-btn {
     position: fixed; top: 20px; left: 20px;
     width: 55px; height: 55px;
     background: white; color: #00b894;
     border: none; border-radius: 16px;
     font-size: 24px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    z-index: 900; cursor: pointer; display: none;
+    z-index: 900; cursor: pointer;
+    display: none; /* Hanya muncul bila sidebar collapsed atau skrin kecil */
     transition: 0.3s;
 }
-.floating-menu-btn.visible { display: block; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 
+/* Munculkan butang bila sidebar ada class collapsed */
+.sidebar.collapsed ~ .floating-menu-btn,
+.floating-menu-btn.visible { 
+    display: block; 
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+}
+
+/* Butang Pangkah (✕) */
 .close-btn {
     background: #ff7675; color: white;
     border: none; width: 32px; height: 32px;
     border-radius: 8px; cursor: pointer;
+    font-weight: bold;
+    display: flex; align-items: center; justify-content: center;
+    transition: 0.2s;
 }
+.close-btn:hover { background: #d63031; transform: scale(1.1); }
 
-/* ANIMATION KEYFRAMES */
+/* --- ANIMATIONS --- */
 @keyframes moveStripe {
     0% { background-position: 0 0; }
-    100% { background-position: 40px 40px; }
-}
-
-@keyframes wobble {
-    0%, 100% { transform: rotate(0deg); }
-    25% { transform: rotate(-10deg); }
-    75% { transform: rotate(10deg); }
+    100% { background-position: 40px 0; }
 }
 
 @keyframes popIn {
@@ -249,129 +242,16 @@ body {
     100% { transform: scale(1); }
 }
 
+@keyframes wobble {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-10deg); }
+    75% { transform: rotate(10deg); }
+}
+
 /* RESPONSIVE */
 @media (max-width: 900px) {
     .sidebar { left: -300px; }
     .sidebar.collapsed { transform: none; left: 20px; }
-    
     .main-content { margin-left: 0; padding: 20px; }
+    .floating-menu-btn { display: block; }
 }
-
-/* --- TAMBAHAN UNTUK EDIT PROFILE MODAL (GLOBAL) --- */
-
-/* Butang Edit Kecil pada Sidebar */
-.edit-profile-btn {
-    position: absolute;
-    top: 5px; right: 5px;
-    background: white; border: none;
-    width: 24px; height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 12px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    transition: 0.2s;
-    z-index: 10;
-}
-.edit-profile-btn:hover { transform: scale(1.1); background: #ffeaa7; }
-
-/* Modal Background (Gelap) */
-.modal-overlay {
-    position: fixed; inset: 0;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
-    z-index: 2000;
-    display: flex; justify-content: center; align-items: center;
-    opacity: 0; pointer-events: none;
-    transition: 0.3s;
-}
-.modal-overlay.active { opacity: 1; pointer-events: all; }
-
-/* Kotak Modal */
-.modal-box {
-    background: #fff;
-    width: 90%; max-width: 500px;
-    border-radius: 25px;
-    padding: 30px;
-    border: 5px solid #55E6C1;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    transform: scale(0.8); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.modal-overlay.active .modal-box { transform: scale(1); }
-
-.modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.modal-header h2 { font-family: 'Fredoka One'; color: #2d3436; }
-.close-modal { background: #ff7675; border: none; color: white; width: 30px; height: 30px; border-radius: 8px; font-weight: bold; cursor: pointer; }
-
-/* Grid Pilihan Avatar */
-.avatar-selection-area { margin-bottom: 20px; text-align: center; }
-.label { font-weight: bold; margin-bottom: 10px; display: block; color: #636e72; }
-.avatar-grid { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-
-/* Radio Button Tersembunyi tapi Gambar Boleh Klik */
-.avatar-option { cursor: pointer; position: relative; transition: 0.2s; }
-.avatar-option input { display: none; }
-.avatar-option img {
-    width: 60px; height: 60px;
-    border-radius: 50%;
-    border: 3px solid #dfe6e9;
-    padding: 3px;
-    background: #f1f2f6;
-    transition: 0.2s;
-}
-
-/* Bila Dipilih */
-.avatar-option input:checked + img {
-    border-color: #55E6C1;
-    background: #e0fbf6;
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(85, 230, 193, 0.4);
-}
-.avatar-option:hover img { transform: translateY(-3px); }
-
-/* Form Inputs */
-.form-group { margin-bottom: 15px; text-align: left; }
-.form-group label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: bold;
-    color: #2d3436;
-    margin-bottom: 5px;
-}
-.form-group input, .form-group textarea {
-    width: 100%; padding: 12px;
-    border: 2px solid #dfe6e9;
-    border-radius: 12px;
-    font-family: 'Varela Round';
-    font-size: 1rem;
-    transition: 0.2s;
-}
-.form-group input:focus, .form-group textarea:focus {
-    border-color: #55E6C1; outline: none; background: #f0fdf4;
-}
-
-/* Save Button */
-.save-btn {
-    width: 100%; padding: 15px;
-    background: #55E6C1; color: #006266;
-    border: none; border-radius: 15px;
-    font-family: 'Fredoka One'; font-size: 1.2rem;
-    cursor: pointer; margin-top: 10px;
-    box-shadow: 0 5px 0 #2bc4a1;
-    transition: 0.1s;
-}
-.save-btn:active { transform: translateY(5px); box-shadow: none; }
-
-/* Notify Box */
-.notify {
-    padding: 15px; margin-bottom: 20px; border-radius: 15px;
-    font-weight: bold; text-align: center;
-}
-.notify.success { background: #dff9fb; color: #00b894; border: 2px solid #00b894; }
-
-/* =====================================
-   BACKGROUND KHAS – GAME PLAY TAHUN 4
-   ===================================== */
-.bg-year4 .game-bg {
-    background: url('../images/bg2.jpg') center bottom/cover no-repeat;
-}
-

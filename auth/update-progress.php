@@ -1,13 +1,7 @@
 <?php
-// auth/update-progress.php
 require_once '../config.php';
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-// Pastikan session bermula untuk membaca data user
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Pastikan user sudah login dan mempunyai role pelajar
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
     http_response_code(401); 
     exit('NOT_AUTH');
@@ -18,51 +12,40 @@ $tahun  = (int)($_POST['tahun'] ?? 0);
 $level  = (int)($_POST['level'] ?? 0);
 $score  = (int)($_POST['score'] ?? 0);
 $total  = (int)($_POST['total'] ?? 0);
-// Topik boleh dihantar dari game, jika tiada, kita set default berdasarkan tahun/level
 $topic_name = $_POST['topic'] ?? "Tahun $tahun - Level $level";
 
-if ($tahun <= 0 || $level <= 0) {
-    exit('BAD_REQUEST');
-}
+if ($tahun <= 0 || $level <= 0) { exit('BAD_REQUEST'); }
 
-// --- 1. SIMPAN MARKAH KE JADUAL student_scores (Untuk paparan Guru) ---
+// 1. Simpan Markah
 $sqlScore = "INSERT INTO student_scores (id_user, topic_name, score, total_questions) VALUES (?, ?, ?, ?)";
 $stmtScore = $conn->prepare($sqlScore);
 $stmtScore->bind_param("isii", $userId, $topic_name, $score, $total);
 $stmtScore->execute();
 
-// --- 2. TAMBAH XP DAN COINS (Untuk Profil Murid) ---
+// 2. Kemaskini XP & Coins
 $xp_gain = $score * 10;
 $coin_gain = $score * 2;
+$conn->query("UPDATE student SET current_xp = current_xp + $xp_gain, coins = coins + $coin_gain WHERE id_user = $userId");
 
-$sqlLevel = "UPDATE student SET 
-        current_xp = current_xp + ?, 
-        coins = coins + ? 
-        WHERE id_user = ?";
-$stmtLevel = $conn->prepare($sqlLevel);
-$stmtLevel->bind_param("iii", $xp_gain, $coin_gain, $userId);
-$stmtLevel->execute();
-
-
-// --- 3. LOGIK BUKA LEVEL SETERUSNYA ---
+// 3. Logik Buka Level & Lencana
 if ($score === $total && $total > 0) {
-    // Tentukan kolom mana nak dikemaskini
-    $kolomLevel = "level_t" . $tahun; // Hasilnya: level_t4, level_t5, atau level_t6
-
-    // Ambil level semasa bagi tahun tersebut
+    $kolomLevel = "level_t" . $tahun;
     $res = $conn->query("SELECT $kolomLevel FROM student WHERE id_user = $userId");
-    if ($row = $res->fetch_assoc()) {
-        $currentMaxLevel = (int)$row[$kolomLevel];
-        
-        // Hanya naikkan level jika murid main level tertinggi yang dia ada untuk TAHUN TERSEBUT
-        if ($level == $currentMaxLevel) {
-            $nextLevel = $currentMaxLevel + 1;
-            $updateLevel = $conn->prepare("UPDATE student SET $kolomLevel = ? WHERE id_user = ?");
-            $updateLevel->bind_param("ii", $nextLevel, $userId);
-            $updateLevel->execute();
-        }
+    $row = $res->fetch_assoc();
+    $currentMaxLevel = (int)$row[$kolomLevel];
+
+    if ($level == $currentMaxLevel) {
+        $nextLevel = $currentMaxLevel + 1;
+        $conn->query("UPDATE student SET $kolomLevel = $nextLevel WHERE id_user = $userId");
+    }
+
+    // AUTO-UNLOCK BADGE
+    $badge_name = "Wira T$tahun L$level";
+    $checkBadge = $conn->query("SELECT id_badge_win FROM student_badges WHERE id_user = $userId AND badge_name = '$badge_name'");
+    if ($checkBadge->num_rows == 0) {
+        $stmtB = $conn->prepare("INSERT INTO student_badges (id_user, badge_name, tahun, level) VALUES (?, ?, ?, ?)");
+        $stmtB->bind_param("isii", $userId, $badge_name, $tahun, $level);
+        $stmtB->execute();
     }
 }
-
-// Respon balik ke game
 echo 'OK';

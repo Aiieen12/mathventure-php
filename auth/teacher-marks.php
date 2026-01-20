@@ -1,9 +1,6 @@
 <?php
 require_once '../config.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'guru') {
     header('Location: ../index.php'); exit;
@@ -17,16 +14,19 @@ $stmtG->bind_param("i", $id_guru);
 $stmtG->execute();
 $teacher = $stmtG->get_result()->fetch_assoc();
 
-// Langkah keselamatan: Jika data guru belum wujud dalam table teacher
 if (!$teacher) {
     die("Profil guru tidak ditemui. Sila kemaskini profil anda terlebih dahulu.");
 }
 
 $myClass = $teacher['class'];
 
-// 2. Ambil senarai pelajar & prestasi mereka
-// Kita sertakan sekali pengiraan ringkas (opsional) jika anda ada jadual markah
-$sqlS = "SELECT * FROM student WHERE class = ? ORDER BY current_xp DESC";
+// 2. Ambil senarai pelajar mengikut penapisan kelas
+// Disusun mengikut XP Tertinggi (Ranking)
+$sqlS = "SELECT s.*, u.username 
+         FROM student s
+         JOIN users u ON s.id_user = u.id_user
+         WHERE TRIM(s.class) = TRIM(?) 
+         ORDER BY s.current_xp DESC";
 $stmtS = $conn->prepare($sqlS);
 $stmtS->bind_param("s", $myClass);
 $stmtS->execute();
@@ -34,7 +34,7 @@ $studentsList = $stmtS->get_result();
 
 date_default_timezone_set('Asia/Kuala_Lumpur');
 $currentTime = date('h:i A');
-$page = 'marks'; // Untuk highlight menu
+$page = 'marks'; 
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -48,12 +48,12 @@ $page = 'marks'; // Untuk highlight menu
     <style>
         .table-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-top: 20px; overflow-x: auto; }
         .nice-table { width: 100%; border-collapse: collapse; text-align: left; }
-        .nice-table th { padding: 12px 15px; border-bottom: 2px solid #f0f0f0; color: #7f8c8d; font-size: 13px; text-transform: uppercase; }
-        .nice-table td { padding: 15px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; }
-        .rank-badge { background: #f1c40f; color: white; padding: 2px 8px; border-radius: 5px; font-weight: bold; font-size: 12px; }
+        .nice-table th { padding: 12px 15px; border-bottom: 2px solid #f0f0f0; color: #7f8c8d; font-size: 11px; text-transform: uppercase; }
+        .nice-table td { padding: 15px; border-bottom: 1px solid #f9f9f9; vertical-align: middle; font-size: 14px; }
+        .rank-badge { background: #f1c40f; color: white; padding: 4px 10px; border-radius: 8px; font-weight: 800; font-size: 13px; }
         .status-pill { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
-        .xp-text { color: #2ecc71; font-weight: bold; }
-        .coin-text { color: #f39c12; font-weight: bold; }
+        .xp-text { color: #2ecc71; font-weight: 800; }
+        .lvl-box { font-size: 12px; color: #34495e; background: #ebf5fb; padding: 2px 6px; border-radius: 4px; margin-right: 2px; }
     </style>
 </head>
 <body>
@@ -77,8 +77,9 @@ $page = 'marks'; // Untuk highlight menu
         </div>
         <div class="sidebar-bottom">
             <div class="teacher-mini">
+                <div class="teacher-mini-avatar"><?php echo strtoupper(substr($teacher['firstname'] ?? 'G', 0, 1)); ?></div>
                 <div class="teacher-mini-info">
-                    <div class="teacher-mini-name"><?php echo htmlspecialchars($teacher['firstname']); ?></div>
+                    <div class="teacher-mini-name"><?php echo htmlspecialchars($teacher['firstname'] . ' ' . $teacher['lastname']); ?></div>
                     <div class="teacher-mini-role">Kelas: <?php echo htmlspecialchars($myClass); ?></div>
                 </div>
             </div>
@@ -97,13 +98,16 @@ $page = 'marks'; // Untuk highlight menu
 
         <section class="cards-grid">
             <article class="card-simple">
-                <div class="card-simple-title"><span>🏆</span> JUARA KELAS</div>
-                <div class="card-simple-body">
+                <div class="card-simple-title"><span>🏆</span> JUARA KELAS (XP TERTINGGI)</div>
+                <div class="card-simple-body" style="font-size: 24px; font-weight: 800; color: #2c3e50;">
                     <?php 
-                        // Ambil murid teratas untuk paparan motivasi
-                        $studentsList->data_seek(0);
-                        $topStudent = $studentsList->fetch_assoc();
-                        echo $topStudent ? htmlspecialchars($topStudent['firstname']) : 'Tiada data';
+                        $firstRow = $studentsList->fetch_assoc();
+                        if ($firstRow) {
+                            echo htmlspecialchars($firstRow['firstname'] ?: $firstRow['username']);
+                            $studentsList->data_seek(0); // Reset balik untuk table
+                        } else {
+                            echo "Tiada Data";
+                        }
                     ?>
                 </div>
             </article>
@@ -113,31 +117,35 @@ $page = 'marks'; // Untuk highlight menu
             <table class="nice-table">
                 <thead>
                     <tr>
-                        <th>Kedudukan</th>
+                        <th>Ranking</th>
                         <th>Nama Murid</th>
-                        <th>Level</th>
+                        <th>Progress (T4 | T5 | T6)</th>
                         <th>XP Terkumpul</th>
                         <th>Coins ⭐</th>
-                        <th>Nyawa ❤️</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php 
                     $rank = 1;
-                    $studentsList->data_seek(0); // Reset pointer
                     while($s = $studentsList->fetch_assoc()): 
+                        $displayName = !empty($s['firstname']) ? $s['firstname'] . ' ' . $s['lastname'] : $s['username'];
                     ?>
                     <tr>
                         <td><span class="rank-badge">#<?php echo $rank++; ?></span></td>
-                        <td><strong><?php echo htmlspecialchars($s['firstname'] . ' ' . $s['lastname']); ?></strong></td>
-                        <td>Level <?php echo $s['level']; ?></td>
-                        <td><span class="xp-text"><?php echo number_format($s['current_xp']); ?> XP</span></td>
-                        <td><span class="coin-text"><?php echo $s['coins']; ?></span></td>
-                        <td><?php echo $s['lives']; ?>/5</td>
+                        <td><strong><?php echo htmlspecialchars($displayName); ?></strong></td>
                         <td>
-                            <?php if($s['current_xp'] > 1000): ?>
+                            <span class="lvl-box">Lvl <?php echo $s['level_t4']; ?></span>
+                            <span class="lvl-box">Lvl <?php echo $s['level_t5']; ?></span>
+                            <span class="lvl-box">Lvl <?php echo $s['level_t6']; ?></span>
+                        </td>
+                        <td><span class="xp-text"><?php echo number_format($s['current_xp']); ?> XP</span></td>
+                        <td><span style="color:#f39c12; font-weight:bold;"><?php echo $s['coins']; ?></span></td>
+                        <td>
+                            <?php if($s['current_xp'] >= 1000): ?>
                                 <span class="status-pill" style="background:#e8f8f5; color:#1abc9c;">Cemerlang</span>
+                            <?php elseif($s['current_xp'] >= 500): ?>
+                                <span class="status-pill" style="background:#ebf5fb; color:#3498db;">Gigih</span>
                             <?php else: ?>
                                 <span class="status-pill" style="background:#fef5e7; color:#f39c12;">Aktif</span>
                             <?php endif; ?>
@@ -146,7 +154,7 @@ $page = 'marks'; // Untuk highlight menu
                     <?php endwhile; ?>
 
                     <?php if($studentsList->num_rows == 0): ?>
-                        <tr><td colspan="7" style="text-align:center; padding:30px;">Tiada murid berdaftar dalam kelas ini.</td></tr>
+                        <tr><td colspan="6" style="text-align:center; padding:50px; color:#95a5a6;">Tiada murid berdaftar dalam kelas ini.</td></tr>
                     <?php endif; ?>
                 </tbody>
             </table>
