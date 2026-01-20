@@ -1,11 +1,10 @@
-/* modul-belajar.css */
+/* nota.css */
 /* Gaya khas untuk halaman Nota Matematik (Nota Untuk Kamu)
    Layout ini menggunakan sidebar & background dari student-layout.css */
 
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
 
 /* HERO PENGENALAN */
-
 .note-hero {
     margin-bottom: 22px;
     padding: 18px 22px;
@@ -27,46 +26,14 @@
     color: #2d3436;
 }
 
-/* WRAPPER UTAMA (ikut wireframe: panel kiri + kanan) */
-
+/* WRAPPER UTAMA (optional, kalau suatu hari nak panel kiri) */
 .note-wrapper {
     display: grid;
     grid-template-columns: 260px minmax(0, 1fr);
     gap: 20px;
 }
 
-/* PANEL KIRI */
-
-.note-sidebar {
-    background: rgba(255,255,255,0.92);
-    border-radius: 24px;
-    padding: 16px 14px 18px;
-    border: 3px solid rgba(255,255,255,0.95);
-    box-shadow: 0 12px 26px rgba(0,0,0,0.08);
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-}
-
-/* kotak logo */
-
-.note-logo-box {
-    height: 80px;
-    border-radius: 16px;
-    border: 2px dashed #b2bec3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #f5f6fa;
-}
-
-.note-logo-text {
-    font-size: 0.9rem;
-    color: #636e72;
-}
-
 /* title NOTA */
-
 .note-sidebar-title {
     font-family: 'Fredoka One';
     font-size: 0.95rem;
@@ -79,7 +46,6 @@
 }
 
 /* senarai nota */
-
 .note-list {
     list-style: none;
     margin: 0;
@@ -109,7 +75,6 @@
 }
 
 /* PANEL KANAN */
-
 .note-main {
     background: rgba(255,255,255,0.94);
     border-radius: 24px;
@@ -118,8 +83,7 @@
     box-shadow: 0 14px 30px rgba(0,0,0,0.08);
 }
 
-/* header "NOTA UNTUK KAMU" di dalam panel kanan */
-
+/* header "NOTA UNTUK KAMU" */
 .note-main-header {
     padding: 10px 14px;
     border-radius: 16px;
@@ -137,7 +101,6 @@
 }
 
 /* GRID KAD DARJAH */
-
 .note-card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -145,7 +108,6 @@
 }
 
 /* kad satu darjah */
-
 .note-card {
     background: #ffffff;
     border-radius: 20px;
@@ -156,14 +118,11 @@
     flex-direction: column;
 }
 
-/* banner biru seperti wireframe (ruang gambar awal) */
-
+/* banner */
 .note-card-banner {
     height: 130px;
     background: #1e6f91;
 }
-
-/* boleh beza warna ikut darjah kalau mahu */
 
 .note-card-banner.banner-4 {
     background: linear-gradient(135deg, #74b9ff, #0984e3);
@@ -176,7 +135,6 @@
 }
 
 /* isi kad */
-
 .note-card-body {
     padding: 12px 14px 14px;
     display: flex;
@@ -197,8 +155,7 @@
     margin: 0 0 6px;
 }
 
-/* butang pada kad */
-
+/* butang kad */
 .note-btn {
     margin-top: 4px;
     align-self: flex-start;
@@ -211,6 +168,8 @@
     text-decoration: none;
     box-shadow: 0 4px 0 #009393;
     transition: 0.15s;
+    border: none;
+    cursor: pointer;
 }
 
 .note-btn:hover {
@@ -223,18 +182,16 @@
     box-shadow: none;
 }
 
-/* RESPONSIVE */
 
+/* RESPONSIVE */
 @media (max-width: 900px) {
     .note-wrapper {
         grid-template-columns: 1fr;
-    }
-
-    .note-sidebar {
-        order: 2;
     }
 
     .note-main {
         order: 1;
     }
 }
+
+
