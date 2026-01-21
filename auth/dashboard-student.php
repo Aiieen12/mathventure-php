@@ -7,7 +7,29 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
     exit;
 }
 
-$id_user = $_SESSION['user_id'];
+$id_user = (int)$_SESSION['user_id'];
+
+// ==========================================================
+// FIX: UPDATE STATUS & KEHADIRAN (CARA PALING SELAMAT)
+// ==========================================================
+// 1. Update status aktif
+$conn->query("UPDATE users SET last_activity = NOW() WHERE id_user = $id_user");
+
+// 2. Semak kehadiran tanpa sebut nama kolum ID (Guna COUNT)
+$checkAtt = $conn->prepare("SELECT COUNT(*) as wujud FROM attendance WHERE id_user = ? AND date_recorded = CURDATE()");
+$checkAtt->bind_param("i", $id_user);
+$checkAtt->execute();
+$resCheck = $checkAtt->get_result()->fetch_assoc();
+
+if ($resCheck['wujud'] == 0) {
+    // Jika belum ada rekod hari ini (0), baru masukkan
+    $insAtt = $conn->prepare("INSERT INTO attendance (id_user, status, date_recorded) VALUES (?, 'H', CURDATE())");
+    $insAtt->bind_param("i", $id_user);
+    $insAtt->execute();
+    $insAtt->close();
+}
+$checkAtt->close();
+// ==========================================================
 
 // AMBIL DATA REAL DARI DATABASE
 $stmt = $conn->prepare("SELECT s.*, u.username FROM student s JOIN users u ON s.id_user = u.id_user WHERE s.id_user = ?");
@@ -20,13 +42,13 @@ $stmt->close();
 $nama        = $data['firstname'] . ' ' . $data['lastname'];
 $nyawaMaks   = 5;
 $nyawaBaki   = $data['lives'];
-$jumlahMata  = $data['coins']; // Menggunakan coins sebagai mata
+$jumlahMata  = $data['coins']; 
 $currentXp   = $data['current_xp'];
-$maxXp       = $data['max_xp'];
+$maxXp       = $data['max_xp'] ?: 100;
 
-// Progress ringkasan
 $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Level " . ($data['level'] ?? '1');
 ?>
+
 <!DOCTYPE html>
 <html lang="ms">
 <head>
@@ -38,6 +60,7 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
 <body>
 <div class="game-bg"></div>
 <button class="floating-menu-btn visible" onclick="toggleSidebar()">☰</button>
+
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <div>
@@ -46,14 +69,17 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
         </div>
         <button class="close-btn" onclick="toggleSidebar()">✕</button>
     </div>
+    
     <nav class="side-nav">
         <a href="dashboard-student.php" class="nav-item active">🏠 <span>Dashboard</span></a>
         <a href="game-menu.php" class="nav-item">🗺️ <span>Peta Permainan</span></a>
         <a href="nota.php" class="nav-item">📚 <span>Nota Matematik</span></a>
         <a href="badges.php" class="nav-item">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
+        
         <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
+
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
@@ -61,7 +87,7 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $data['level']; ?></div>
-                <div><strong><?php echo htmlspecialchars($nama); ?></strong></div>
+                <strong><?php echo htmlspecialchars($nama); ?></strong>
                 <div class="xp-track">
                     <div class="xp-fill" style="width: <?php echo ($currentXp/$maxXp)*100; ?>%;"></div>
                 </div>
@@ -98,7 +124,7 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
             <div class="stat-box blue">
                 <div class="stat-icon">⭐</div>
                 <div class="stat-info">
-                    <small>COINS TERKUMPUL</small>
+                    <small>COINS</small>
                     <strong><?php echo $jumlahMata; ?></strong>
                 </div>
             </div>
@@ -118,7 +144,10 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
 </main>
 
 <script>
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+function toggleSidebar() { 
+    const sb = document.getElementById('sidebar');
+    sb.classList.toggle('collapsed'); 
+}
 function updateClock() {
     const el = document.getElementById('gameClock');
     const now = new Date();

@@ -1,208 +1,229 @@
-/* teacher-marks.css */
-/* Styling cerah & kemas untuk halaman markah guru */
+/* =================================================
+   TEACHER MARKS – FINAL FIXED & PREMIUM
+   ================================================= */
 
-.marks-page {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+/* ===============================
+   TAJUK
+   =============================== */
+.content-header {
+    margin-bottom: 48px;
 }
 
-/* Header seksyen */
-.marks-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 4px;
-}
-
-.marks-header h2 {
+.main-title {
+    font-size: 28px;
+    font-weight: 900;
+    color: #0f172a;
+    line-height: 1.4;
     margin: 0;
-    font-size: 1.35rem;
-    color: #2C3A47;
 }
 
-.marks-header p {
-    margin: 4px 0 0;
-    font-size: 0.9rem;
-    color: #636e72;
-}
-
-.marks-meta {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.chip-count {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 7px 14px;
-    border-radius: 999px;
-    background: #ffffff;
-    border: 1px solid #ecf0f1;
-    box-shadow: 0 8px 18px rgba(0,0,0,0.06);
-    font-size: 0.85rem;
-    color: #2C3A47;
-}
-
-.chip-count i {
-    color: #0984e3;
-}
-
-/* Layout dua kolum: carta + jadual */
-.marks-layout {
+/* ===============================
+   STATS (TOP PLAYER + CHART)
+   =============================== */
+.stats-container {
     display: grid;
-    grid-template-columns: minmax(260px, 1.2fr) minmax(260px, 1.3fr);
-    gap: 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px; /* ⬅️ ASINGKAN DENGAN JADUAL */
 }
 
-/* Kad asas */
+/* ===============================
+   GLOBAL CARD STYLE
+   =============================== */
+.champion-card,
 .chart-card,
 .table-card {
     background: #ffffff;
     border-radius: 22px;
-    border: 1px solid #ecf0f1;
-    box-shadow: 0 14px 28px rgba(0,0,0,0.06);
-    padding: 14px 16px 16px;
+    box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+    position: relative;
+    overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.champion-card:hover,
+.chart-card:hover,
+.table-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 22px 55px rgba(0,0,0,0.12);
+}
+
+/* ===============================
+   TOP PLAYER CARD
+   =============================== */
+.champion-card {
+    background: linear-gradient(135deg, #ff9f43, #ff6b6b);
+    color: #fff;
+    min-height: 230px;
+
+    padding: 28px;
+    padding-bottom: 40px;
+
+    display: flex;
+    align-items: flex-end;
+}
+
+.champ-info .tag {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1.2px;
+    opacity: .9;
+}
+
+.champ-info .name {
+    font-size: 30px;
+    font-weight: 900;
+    margin: 8px 0;
+}
+
+.champ-info .xp-badge {
+    background: rgba(255,255,255,.25);
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.trophy-bg {
+    position: absolute;
+    right: -30px;
+    bottom: -40px;
+    font-size: 150px;
+    opacity: .18;
+    transform: rotate(-15deg);
+}
+
+/* ===============================
+   CHART CARD
+   =============================== */
+.chart-card {
+    min-height: 230px;
+    padding: 28px;
+
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    justify-content: center;
 }
 
-.card-header h3 {
-    margin: 0;
-    font-size: 1.05rem;
-    color: #2C3A47;
+.chart-label {
+    font-size: 13px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: .7px;
+    color: #475569;
+    margin-bottom: 16px;
 }
 
-.card-header p {
-    margin: 2px 0 0;
-    font-size: 0.85rem;
-    color: #7f8c8d;
-}
-
-/* Carta doughnut */
-.chart-container {
+.canvas-wrapper {
+    flex: 1;
     position: relative;
-    width: 100%;
-    min-height: 220px;
-    margin-top: 4px;
 }
 
-.chart-legend-mini {
-    margin-top: 8px;
-    font-size: 0.82rem;
-    color: #636e72;
+/* ===============================
+   TABLE CARD (FIX TERSAMBUNG)
+   =============================== */
+.table-card {
+    margin-top: 0;        /* ⬅️ TIADA LAGI MELEKAT */
+    padding: 0;
 }
 
-.legend-dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    margin-right: 4px;
+/* Divider lembut antara section */
+.table-card::before {
+    content: "";
+    position: absolute;
+    top: -22px;
+    left: 40px;
+    right: 40px;
+    height: 1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(0,0,0,0.1),
+        transparent
+    );
 }
 
-.legend-dot.lulus {
-    background: #55E6C1;
-}
-
-.legend-dot.gagal {
-    background: #ff9f7b;
-}
-
-.legend-separator {
-    margin: 0 6px;
-    opacity: 0.5;
-}
-
-/* Jadual markah */
-.table-wrapper {
-    width: 100%;
-    overflow-x: auto;
-}
-
-.styled-table {
+/* ===============================
+   TABLE STYLE
+   =============================== */
+.marks-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.9rem;
-    color: #2C3A47;
 }
 
-.styled-table thead tr {
-    background: #f8f9fb;
+.marks-table thead {
+    background: #f8fafc;
 }
 
-.styled-table th,
-.styled-table td {
-    padding: 9px 10px;
-    text-align: left;
-}
-
-.styled-table th {
-    font-size: 0.78rem;
+.marks-table th {
+    padding: 16px 20px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #95a5a6;
-    border-bottom: 1px solid #ecf0f1;
+    letter-spacing: .8px;
+    color: #64748b;
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.styled-table tbody tr {
-    border-bottom: 1px solid #f1f2f6;
+.marks-table td {
+    padding: 20px;
+    font-size: 14px;
+    border-bottom: 1px solid #eef2f7;
 }
 
-.styled-table tbody tr:nth-child(even) {
-    background: #fafafa;
+.marks-table tbody tr {
+    transition: background .25s ease;
 }
 
-.styled-table tbody tr:hover {
-    background: #f0fbf7;
+.marks-table tbody tr:hover {
+    background: #f1f7ff;
 }
 
-/* Badge status */
-.badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3px 10px;
+/* ===============================
+   TABLE BADGES
+   =============================== */
+.rank {
+    background: linear-gradient(135deg, #facc15, #f59e0b);
+    color: #fff;
+    padding: 6px 14px;
     border-radius: 999px;
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-weight: 900;
+    font-size: 12px;
 }
 
-.badge.success {
-    background: rgba(85, 230, 193, 0.18);
-    color: #00a67a;
-    border: 1px solid rgba(43, 196, 161, 0.45);
+.xp-bold {
+    color: #22c55e;
+    font-weight: 900;
 }
 
-.badge.fail {
-    background: rgba(255, 137, 137, 0.15);
-    color: #c0392b;
-    border: 1px solid rgba(231, 76, 60, 0.45);
+.lvl-txt {
+    color: #3b82f6;
+    font-weight: 700;
+    font-size: 12px;
 }
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 960px) {
-    .marks-layout {
+.status {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 7px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* ===============================
+   RESPONSIVE
+   =============================== */
+@media (max-width: 900px) {
+    .stats-container {
         grid-template-columns: 1fr;
     }
-}
 
-@media (max-width: 768px) {
-    .marks-page {
-        gap: 12px;
+    .main-title {
+        font-size: 22px;
     }
 
-    .marks-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .chart-card,
-    .table-card {
-        padding: 12px 12px 14px;
+    .champion-card,
+    .chart-card {
+        min-height: 210px;
     }
 }
