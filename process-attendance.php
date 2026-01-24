@@ -1,10 +1,10 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 // 1. Kawalan Keselamatan: Pastikan hanya guru yang boleh proses
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'guru') {
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 

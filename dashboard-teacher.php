@@ -1,6 +1,6 @@
 <?php
 // auth/dashboard-teacher.php
-require_once '../config.php';
+require_once 'config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -9,7 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
 // 1. KESELAMATAN: Pastikan user sudah login & role = guru
 if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'guru') {
     $_SESSION['error'] = 'Sila log masuk sebagai guru untuk akses halaman ini.';
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -81,7 +81,7 @@ $page = 'dashboard';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
     <style>
         .alert-success {
             position: fixed; top: 20px; right: 20px; background: #2ecc71; color: white; 
@@ -137,7 +137,7 @@ $page = 'dashboard';
                     <div class="teacher-mini-role">Guru Kelas · <?php echo htmlspecialchars($teacherClass); ?></div>
                 </div>
             </div>
-            <form action="../logout.php" method="post">
+            <form action="logout.php" method="post">
                 <button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Log Keluar</button>
             </form>
         </div>

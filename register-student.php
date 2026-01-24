@@ -1,6 +1,6 @@
 <?php
 // register-student.php
-require_once '../config.php';
+require_once 'config.php';
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -10,15 +10,15 @@ require_once '../config.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- CSS umum + khas register -->
-    <link rel="stylesheet" href="../asset/css/auth-base.css">
-    <link rel="stylesheet" href="../asset/css/register.css">
+    <link rel="stylesheet" href="asset/css/auth-base.css">
+    <link rel="stylesheet" href="asset/css/register.css">
 </head>
 <body>
 
 <div class="reg-page-wrapper">
     <!-- butang sound + audio -->
     <button class="mute-btn" id="muteBtn">🔊</button>
-    <audio id="bgAudio" src="../asset/sounds/bg_sound.mp3" loop></audio>
+    <audio id="bgAudio" src="asset/sounds/bg_sound.mp3" loop></audio>
 
     <div class="reg-card-glass">
 

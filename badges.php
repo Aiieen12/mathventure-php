@@ -1,12 +1,12 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 // 1. Pastikan user sudah login & role = pelajar
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
     $_SESSION['error'] = 'Sila log masuk sebagai pelajar untuk akses halaman ini.';
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -41,8 +41,8 @@ $levelsPerYear = 5;
 <head>
     <meta charset="UTF-8">
     <title>Pencapaian Anda - Mathventure</title>
-    <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/badges.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+    <link rel="stylesheet" href="asset/css/badges.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -66,13 +66,13 @@ $levelsPerYear = 5;
         <a href="nota.php" class="nav-item">📚 <span>Nota Matematik</span></a>
         <a href="badges.php" class="nav-item active">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
-        <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
 
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/<?php echo !empty($data['avatar']) ? $data['avatar'] : 'avatar.png'; ?>" alt="Avatar">
+                <img src="asset/images/<?php echo !empty($data['avatar']) ? $data['avatar'] : 'avatar.png'; ?>" alt="Avatar">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $data['level'] ?? 1; ?></div>

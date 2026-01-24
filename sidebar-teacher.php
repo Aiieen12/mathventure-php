@@ -1,5 +1,5 @@
 <?php
-// auth/sidebar-teacher.php
+//sidebar-teacher.php
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -64,7 +64,7 @@ $halaman      = $page ?? '';
             <span>Profil Guru</span>
         </a>
 
-        <a href="auth/index.php" class="nav-item logout">
+        <a href="logout.php" class="nav-item logout">
             <span class="icon"><i class="fa-solid fa-right-from-bracket"></i></span>
             <span>Log Keluar</span>
         </a>

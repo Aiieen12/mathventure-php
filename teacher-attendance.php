@@ -1,9 +1,9 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'guru') {
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -63,7 +63,7 @@ $students = $stmtS->get_result();
     <title>Kehadiran | Mathventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/teacher-attendance.css">
+    <link rel="stylesheet" href="asset/css/teacher-attendance.css">
 </head>
 <body>
 

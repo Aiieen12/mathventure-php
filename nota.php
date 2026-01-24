@@ -1,8 +1,8 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -22,8 +22,8 @@ $nama = $data['firstname'] . ' ' . $data['lastname'];
 <head>
     <meta charset="UTF-8">
     <title>Nota Matematik - Mathventure</title>
-    <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/nota.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+    <link rel="stylesheet" href="asset/css/nota.css">
 
     <style>
         /* CSS MODAL YANG DIPERBAIKI */
@@ -107,13 +107,13 @@ $nama = $data['firstname'] . ' ' . $data['lastname'];
         <a href="nota.php" class="nav-item active">📘 <span>Nota Matematik</span></a>
         <a href="badges.php" class="nav-item">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
-        <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
 
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
+                <img src="asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $data['level']; ?></div>

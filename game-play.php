@@ -1,12 +1,12 @@
 <?php
 // auth/game-play.php
-require_once '../config.php';
+require_once 'config.php';
 
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 // Pastikan pelajar sudah login
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
-    header('Location: ../login.php');
+    header('Location: index.php');
     exit;
 }
 

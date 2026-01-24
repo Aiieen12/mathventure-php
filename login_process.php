@@ -1,7 +1,7 @@
 <?php
 // auth/login_process.php
 
-require_once '../config.php';
+require_once 'config.php';
 
 // Pastikan request datang dari form POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

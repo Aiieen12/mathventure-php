@@ -1,9 +1,9 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
     $_SESSION['error'] = 'Sila log masuk sebagai pelajar untuk akses halaman ini.';
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -54,8 +54,8 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Pelajar</title>
-    <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/dashboard-student.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+    <link rel="stylesheet" href="asset/css/dashboard-student.css">
 </head>
 <body>
 <div class="game-bg"></div>
@@ -77,13 +77,13 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
         <a href="badges.php" class="nav-item">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
         
-        <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
 
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>" alt="Avatar">
+                <img src="asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>" alt="Avatar">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $data['level']; ?></div>
@@ -109,7 +109,7 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
                 <p>Jawab soalan, buka level baharu dan kumpul lencana hebat bersama Dino.</p>
             </div>
             <div class="hero-dino-small">
-                <img src="../asset/images/dinasour2.png" alt="Dino comel">
+                <img src="asset/images/dinasour2.png" alt="Dino comel">
             </div>
         </div>
 

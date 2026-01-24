@@ -3,7 +3,7 @@
 // Fail ini untuk create user contoh dalam jadual `users`
 // Lepas berjaya, boleh padam / rename fail ini demi keselamatan.
 
-require_once '../config.php';
+require_once 'config.php';
 
 // =======================
 // 1. SET MAKLUMAT USER CONTOH

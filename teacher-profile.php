@@ -1,6 +1,6 @@
 <?php
 // auth/teacher-profile.php
-require_once '../config.php';
+require_once 'config.php';
 
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -59,7 +59,7 @@ $page = 'profile';
 
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="asset/css/dashboard-teacher.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
@@ -119,7 +119,7 @@ $page = 'profile';
                 </div>
             </div>
 
-            <form action="../logout.php" method="post">
+            <form action="logout.php" method="post">
                 <button type="submit" class="btn-logout">
                     <i class="fa-solid fa-right-from-bracket"></i> Log Keluar
                 </button>

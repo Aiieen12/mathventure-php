@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -8,8 +8,8 @@ require_once '../config.php';
     <title>Mathventure | Log Masuk</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../asset/css/auth-base.css">
-    <link rel="stylesheet" href="../asset/css/login-style.css?v=12345">
+    <link rel="stylesheet" href="asset/css/auth-base.css">
+    <link rel="stylesheet" href="asset/css/login-style.css?v=12345">
 
 
 </head>
@@ -17,7 +17,7 @@ require_once '../config.php';
 
 <div class="container">
     <button class="mute-btn" id="muteBtn">🔊</button>
-    <audio id="bgAudio" src="../asset/sounds/bg_sound.mp3" loop></audio>
+    <audio id="bgAudio" src="asset/sounds/bg_sound.mp3" loop></audio>
 
     <div class="login-box">
         <h2>Log Masuk</h2>
@@ -65,7 +65,7 @@ require_once '../config.php';
         <div class="signboard">
             Bersedia untuk meneroka matematik? ✨
         </div>
-        <img src="../asset/images/dino.png" class="dino-img" alt="">
+        <img src="asset/images/dino.png" class="dino-img" alt="">
     </div>
 </div>
 

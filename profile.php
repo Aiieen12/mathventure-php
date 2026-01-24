@@ -1,8 +1,8 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
-    header('Location: ../index.php');
+    header('Location: index.php');
     exit;
 }
 
@@ -26,8 +26,8 @@ $xpPercent = ($currentXp / $maxXp) * 100;
 <head>
     <meta charset="UTF-8">
     <title>Profil - Mathventure</title>
-    <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/profile.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+    <link rel="stylesheet" href="asset/css/profile.css">
 </head>
 <body>
 <div class="game-bg"></div>
@@ -44,12 +44,12 @@ $xpPercent = ($currentXp / $maxXp) * 100;
         <a href="nota.php" class="nav-item">📚 <span>Nota Matematik</span></a>
         <a href="badges.php" class="nav-item">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item active">👤 <span>Profil</span></a>
-        <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
+                <img src="asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $data['level']; ?></div>
@@ -71,7 +71,7 @@ $xpPercent = ($currentXp / $maxXp) * 100;
     <section class="profile-layout">
         <article class="profile-card">
             <div class="profile-avatar">
-                <img src="../asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
+                <img src="asset/images/<?php echo $data['avatar'] ?: 'avatar.png'; ?>">
             </div>
             <h2><?php echo htmlspecialchars($namaPenuh); ?></h2>
             <p>@<?php echo htmlspecialchars($username); ?></p>

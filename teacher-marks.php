@@ -1,9 +1,9 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'guru') {
-    header('Location: ../index.php'); exit;
+    header('Location: index.php'); exit;
 }
 
 $id_guru = $_SESSION['user_id'];
@@ -39,8 +39,8 @@ while($row = $result->fetch_assoc()) {
     <title>Analisis Prestasi | Mathventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="../asset/css/dashboard-teacher.css">
-    <link rel="stylesheet" href="../asset/css/teacher-marks.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="asset/css/dashboard-teacher.css">
+    <link rel="stylesheet" href="asset/css/teacher-marks.css?v=<?php echo time(); ?>">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -59,7 +59,7 @@ while($row = $result->fetch_assoc()) {
             </nav>
         </div>
         <div class="sidebar-bottom">
-            <form action="../logout.php" method="post"><button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button></form>
+            <form action="logout.php" method="post"><button type="submit" class="btn-logout"><i class="fa-solid fa-right-from-bracket"></i> Keluar</button></form>
         </div>
     </aside>
 

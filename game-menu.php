@@ -1,9 +1,9 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
-    header('Location: ../index.php'); exit;
+    header('Location: index.php'); exit;
 }
 
 $userId = (int)$_SESSION['user_id'];
@@ -24,8 +24,8 @@ $unlocked = [
 <head>
     <meta charset="UTF-8">
     <title>Mathventure | Peta Pengembaraan</title>
-    <link rel="stylesheet" href="../asset/css/student-layout.css">
-    <link rel="stylesheet" href="../asset/css/game-menu.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+    <link rel="stylesheet" href="asset/css/game-menu.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
 </head>
@@ -44,12 +44,12 @@ $unlocked = [
         <a href="nota.php" class="nav-item">📚 <span>Nota Matematik</span></a>
         <a href="badges.php" class="nav-item">🏅 <span>Pencapaian</span></a>
         <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
-        <a href="../logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
     </nav>
     <div class="sidebar-footer">
         <div class="player-card">
             <div class="avatar-frame">
-                <img src="../asset/images/<?php echo $profData['avatar'] ?: 'avatar.png'; ?>">
+                <img src="asset/images/<?php echo $profData['avatar'] ?: 'avatar.png'; ?>">
             </div>
             <div class="player-info">
                 <div class="lvl-badge">Level <?php echo $profData['level']; ?></div>

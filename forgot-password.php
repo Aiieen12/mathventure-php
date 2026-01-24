@@ -1,5 +1,5 @@
 <?php
-require_once '../config.php';
+require_once 'config.php';
 $msg = "";
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $upd = $conn->prepare("UPDATE users SET password = ? WHERE email = ?");
         $upd->bind_param("ss", $new_pass, $email);
         $upd->execute();
-        $msg = "Kata laluan berjaya ditukar! <a href='../index.php'>Log Masuk</a>";
+        $msg = "Kata laluan berjaya ditukar! <a href='index.php'>Log Masuk</a>";
     } else {
         $msg = "Emel tidak ditemui.";
     }
@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ?>
 <!DOCTYPE html>
 <html>
-<head><title>Forgot Password</title><link rel="stylesheet" href="../asset/css/style.css"></head>
+<head><title>Forgot Password</title><link rel="stylesheet" href="asset/css/style.css"></head>
 <body style="display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f2f5;">
     <form method="POST" style="background:white; padding:30px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
         <h2>Set Semula Kata Laluan</h2>
