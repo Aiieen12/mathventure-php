@@ -2,7 +2,7 @@
 require_once 'config.php';
 if (session_status() === PHP_SESSION_NONE) { session_start(); }
 
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['role']) || $_SESSION['role'] !== 'pelajar') {
     header('Location: index.php');
     exit;
 }
@@ -10,21 +10,37 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pelajar') {
 $id_user = (int)$_SESSION['user_id'];
 
 // Ambil data profil pelajar
-$stmt = $conn->prepare("SELECT s.*, u.username FROM student s JOIN users u ON s.id_user = u.id_user WHERE s.id_user = ?");
+$stmt = $conn->prepare("SELECT s.*, u.username 
+                        FROM student s 
+                        JOIN users u ON s.id_user = u.id_user 
+                        WHERE s.id_user = ?");
 $stmt->bind_param("i", $id_user);
 $stmt->execute();
 $data = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// Ambil rekod lencana (Hanya skor penuh 3/3 yang masuk ke sini mengikut process-quiz.php)
+// Ambil rekod lencana (Hanya skor penuh 3/3)
 $unlockedBadges = [];
 $resB = $conn->query("SELECT tahun, level FROM student_badges WHERE id_user = $id_user");
-while ($row = $resB->fetch_assoc()) {
-    $unlockedBadges[$row['tahun'] . '-' . $row['level']] = true;
+if ($resB) {
+    while ($row = $resB->fetch_assoc()) {
+        $unlockedBadges[$row['tahun'] . '-' . $row['level']] = true;
+    }
 }
 
-$years = [4, 5, 6];
+$years  = [4, 5, 6];
 $levels = [1, 2, 3, 4, 5];
+
+$nama = trim(($data['firstname'] ?? '') . ' ' . ($data['lastname'] ?? ''));
+$username = $data['username'] ?? 'Pelajar';
+
+$avatar = !empty($data['avatar']) ? $data['avatar'] : 'avatar.png';
+$levelUser = (int)($data['level'] ?? 1);
+
+$currentXp = (float)($data['current_xp'] ?? 0);
+$maxXp = (float)($data['max_xp'] ?? 100);
+$pct = $maxXp > 0 ? ($currentXp / $maxXp) * 100 : 0;
+$pct = max(0, min(100, $pct));
 ?>
 <!DOCTYPE html>
 <html lang="ms">
@@ -32,81 +48,122 @@ $levels = [1, 2, 3, 4, 5];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pencapaian Lencana - Mathventure</title>
+
+    <!-- Consistent layout -->
     <link rel="stylesheet" href="asset/css/badges.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
 </head>
 <body>
 
-<div class="app-container">
-    <aside class="sidebar-main">
-        <div class="sidebar-top">
-            <div class="brand-info">
-                <h2 class="brand-name">Mathventure</h2>
-                <span class="brand-sub">Student Mode</span>
-            </div>
-            <div class="close-box"><i class="fas fa-times"></i></div>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <a href="dashboard-student.php" class="nav-link"><i class="fas fa-home"></i> Dashboard</a>
-            <a href="game-menu.php" class="nav-link"><i class="fas fa-map"></i> Peta Permainan</a>
-            <a href="nota.php" class="nav-link"><i class="fas fa-book"></i> Nota Matematik</a>
-            <a href="badges.php" class="nav-link active"><i class="fas fa-award"></i> Pencapaian</a>
-            <a href="profile.php" class="nav-link"><i class="fas fa-user"></i> Profil</a>
-            <a href="logout.php" class="nav-link nav-logout"><i class="fas fa-sign-out-alt"></i> Log Keluar</a>
-        </nav>
+<div class="game-bg"></div>
+<button class="floating-menu-btn visible" onclick="toggleSidebar()">☰</button>
 
-        <div class="sidebar-profile">
-            <img src="asset/images/avatar.png" alt="Avatar">
-            <div class="profile-text">
-                <span class="badge-level">Level 1</span>
-                <p class="profile-name"><?php echo htmlspecialchars($data['username'] ?? 'anis21 nadirah'); ?></p>
+<!-- ✅ Sidebar ikut template page lain -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <div>
+            <div class="logo-text">Mathventure</div>
+            <small>Student Mode</small>
+        </div>
+        <button class="close-btn" onclick="toggleSidebar()">✕</button>
+    </div>
+
+    <nav class="side-nav">
+        <a href="dashboard-student.php" class="nav-item">🏠 <span>Dashboard</span></a>
+        <a href="game-menu.php" class="nav-item">🗺️ <span>Peta Permainan</span></a>
+        <a href="nota.php" class="nav-item">📚 <span>Nota Matematik</span></a>
+        <a href="badges.php" class="nav-item active">🏅 <span>Pencapaian</span></a>
+        <a href="profile.php" class="nav-item">👤 <span>Profil</span></a>
+        <a href="logout.php" class="nav-item logout">🚪 <span>Log Keluar</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="player-card">
+            <div class="avatar-frame">
+                <img src="asset/images/<?php echo htmlspecialchars($avatar); ?>" alt="avatar">
+            </div>
+            <div class="player-info">
+                <div class="lvl-badge">Level <?php echo $levelUser; ?></div>
+                <div><strong><?php echo htmlspecialchars($nama ?: $username); ?></strong></div>
+                <div class="xp-track">
+                    <div class="xp-fill" style="width: <?php echo $pct; ?>%;"></div>
+                </div>
             </div>
         </div>
-    </aside>
+    </div>
+</aside>
 
-    <main class="main-view">
-        <div class="header-content">
-            <div class="welcome-tag">Hai <strong><?php echo htmlspecialchars($data['username']); ?></strong>, ini koleksi lencana anda! 🎉</div>
-            <div class="title-area">
-                <h1>🏅 Pencapaian Lencana</h1>
-                <p>Kumpulkan semua lencana dengan menyelesaikan level di setiap tahun!</p>
-            </div>
+<main class="main-content">
+    <div class="top-bar">
+        <div class="welcome-badge">
+            Hai <span class="highlight"><?php echo htmlspecialchars($username); ?></span>, ini koleksi lencana anda! 🎉
+        </div>
+        <div class="game-clock" id="gameClock">--:--</div>
+    </div>
+
+    <section class="badges-page">
+        <div class="badges-hero">
+            <h1 class="badges-title">🏅 Pencapaian Lencana</h1>
+            <p class="badges-subtitle">Kumpulkan semua lencana dengan menyelesaikan level di setiap tahun!</p>
         </div>
 
-        <div class="content-scroll">
-            <?php foreach ($years as $tahun): ?>
+        <?php foreach ($years as $tahun): ?>
             <div class="year-block">
-                <h2 class="year-header">Tahun <?php echo $tahun; ?></h2>
-                <div class="badges-layout">
+                <div class="year-head">
+                    <h2 class="year-label">Tahun <?php echo $tahun; ?></h2>
+                    <span class="year-tip">
+                        Tip: Skor penuh <b>3/3</b> untuk buka lencana ✨
+                    </span>
+                </div>
+
+                <div class="badges-grid">
                     <?php foreach ($levels as $lvl): ?>
-                        <?php 
-                            $isUnlocked = isset($unlockedBadges["$tahun-$lvl"]);
-                            // Path folder badges di luar asset mengikut gambar anda
-                            $imageSource = "badges/T{$tahun}L{$lvl}.png"; 
+                        <?php
+                            $key = "$tahun-$lvl";
+                            $isUnlocked = isset($unlockedBadges[$key]);
+                            $imageSource = "badges/T{$tahun}L{$lvl}.png"; // folder badges/
                         ?>
-                        <div class="badge-item <?php echo $isUnlocked ? 'state-unlocked' : 'state-locked'; ?>">
-                            <div class="visual-wrapper">
+                        <div class="badge-card <?php echo $isUnlocked ? 'is-unlocked' : 'is-locked'; ?>">
+                            <div class="badge-visual">
                                 <?php if ($isUnlocked): ?>
-                                    <img src="<?php echo $imageSource; ?>" alt="Badge">
+                                    <img src="<?php echo htmlspecialchars($imageSource); ?>" alt="Badge Tahun <?php echo $tahun; ?> Level <?php echo $lvl; ?>">
+                                    <div class="badge-glow"></div>
                                 <?php else: ?>
-                                    <div class="lock-circle"><i class="fas fa-lock"></i></div>
+                                    <div class="badge-lock">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                    <div class="badge-glass"></div>
                                 <?php endif; ?>
                             </div>
-                            <div class="badge-detail">
-                                <h3>Level <?php echo $lvl; ?></h3>
-                                <span class="label-status">
+
+                            <div class="badge-info">
+                                <div class="badge-level">Level <?php echo $lvl; ?></div>
+                                <div class="badge-status <?php echo $isUnlocked ? 'open' : 'closed'; ?>">
                                     <?php echo $isUnlocked ? 'DIBUKA' : 'TERKUNCI'; ?>
-                                </span>
+                                </div>
                             </div>
                         </div>
                     <?php endforeach; ?>
                 </div>
             </div>
-            <?php endforeach; ?>
-        </div>
-    </main>
-</div>
+        <?php endforeach; ?>
+
+    </section>
+</main>
+
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function updateClock() {
+    const el = document.getElementById('gameClock');
+    const now = new Date();
+    el.textContent = now.toLocaleTimeString('ms-MY', { hour: '2-digit', minute: '2-digit', hour12: false });
+}
+setInterval(updateClock, 1000);
+updateClock();
+</script>
 
 </body>
 </html>

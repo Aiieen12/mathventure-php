@@ -1,105 +1,229 @@
-/* asset/css/badges.css */
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: url('../images/bgdino.png') no-repeat center center fixed;
-    background-size: cover;
-    height: 100vh;
+/* badges.css */
+
+/* ==============================
+   Wrapper / Container
+   ============================== */
+.badges-page{
+  margin-top: 10px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 30px;
+  padding: 22px 22px 26px;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+  border: 2px solid rgba(255,255,255,0.35);
+  backdrop-filter: blur(6px);
 }
 
-.app-container {
-    display: flex;
-    height: 100vh;
-    padding: 20px;
-    gap: 20px;
+/* Hero */
+.badges-hero{ margin-bottom: 14px; }
+
+.badges-title{
+  margin: 0 0 6px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.7rem;
+  color: #ffffff;
+  text-shadow: 0 3px 0 rgba(0,0,0,0.35);
+}
+.badges-subtitle{
+  margin: 0;
+  color: #111827;
+  font-size: 0.95rem;
 }
 
-/* SIDEBAR STYLING */
-.sidebar-main {
-    width: 280px;
-    background: rgba(255, 255, 255, 0.95);
-    border-radius: 30px;
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+/* ==============================
+   Year Section
+   ============================== */
+.year-block{
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 2px dashed rgba(255,255,255,0.25);
+}
+.year-head{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.year-label{
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: #ffffff;
+  text-shadow: 0 2px 0 rgba(0,0,0,0.25);
+}
+.year-tip{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  background: rgba(255,255,255,0.60);
+  border: 1px solid rgba(255,255,255,0.65);
 }
 
-.sidebar-top { display: flex; justify-content: space-between; margin-bottom: 40px; }
-.brand-name { color: #1abc9c; margin: 0; font-size: 22px; }
-.brand-sub { color: #95a5a6; font-size: 12px; }
-.close-box { background: #ff7675; color: #fff; padding: 5px 8px; border-radius: 5px; height: fit-content; }
-
-.sidebar-nav { flex: 1; }
-.nav-link {
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    color: #34495e;
-    text-decoration: none;
-    border-radius: 15px;
-    margin-bottom: 8px;
-    transition: 0.3s;
+/* ==============================
+   Grid
+   ============================== */
+.badges-grid{
+  display: grid;
+  grid-template-columns: repeat(5, minmax(140px, 1fr));
+  gap: 14px;
 }
 
-.nav-link i { margin-right: 15px; width: 20px; text-align: center; }
-.nav-link:hover, .nav-link.active {
-    background: #fff;
-    color: #1abc9c;
-    border: 2px solid #1abc9c;
+/* ==============================
+   Card
+   ============================== */
+.badge-card{
+  position: relative;
+  border-radius: 18px;
+  overflow: hidden;
+  border: 2px solid rgba(255,255,255,0.55);
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.22);
+  transform: translateY(0);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
+}
+.badge-card:hover{
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.28);
 }
 
-.nav-logout { color: #ff7675 !important; margin-top: 15px; }
-
-.sidebar-profile {
-    background: #f9fdfc;
-    border: 2px solid #e0f2f1;
-    border-radius: 20px;
-    padding: 12px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
+/* ==============================
+   Visual (FIX badge jadi besar)
+   ============================== */
+.badge-visual{
+  position: relative;
+  height: 140px;            /* ✅ stabil */
+  min-height: 140px;        /* ✅ stabil */
+  display: grid;
+  place-items: center;
+  background: rgba(255,255,255,0.18);
 }
 
-.sidebar-profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #1abc9c; }
-.badge-level { background: #ff7675; color: white; font-size: 9px; padding: 2px 8px; border-radius: 10px; }
-.profile-name { margin: 0; font-weight: bold; font-size: 14px; color: #2c3e50; }
+.badge-visual img{
+  width: 96px;              /* ✅ fixed size */
+  height: 96px;             /* ✅ fixed size */
+  max-width: 96px;
+  max-height: 96px;
+  object-fit: contain;
+  display: block;
 
-/* MAIN CONTENT */
-.main-view { flex: 1; display: flex; flex-direction: column; color: white; padding-top: 10px; }
-.welcome-tag { 
-    background: white; color: #333; padding: 10px 20px; 
-    border-radius: 20px; width: fit-content; margin-bottom: 20px; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 2;
+  animation: popIn .35s ease both;
 }
 
-.header-content h1 { font-size: 32px; margin: 0; text-shadow: 1px 1px 5px rgba(0,0,0,0.5); }
-.content-scroll { overflow-y: auto; flex: 1; padding-right: 15px; }
-
-.year-block { margin-top: 30px; }
-.year-header { border-left: 5px solid #3498db; padding-left: 15px; font-size: 24px; margin-bottom: 20px; }
-
-/* BADGES LAYOUT */
-.badges-layout { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; }
-
-.badge-item {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: 20px;
-    padding: 25px 15px;
-    text-align: center;
-    transition: 0.3s;
+/* Override global img rules dari student-layout (kalau ada img{width:100%}) */
+.badge-visual img{
+  width: 96px !important;
+  height: 96px !important;
+  max-width: 96px !important;
+  max-height: 96px !important;
 }
 
-.state-unlocked { background: #ffffff; border: 2px solid #f1c40f; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-.visual-wrapper { width: 85px; height: 85px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; }
-.visual-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+@keyframes popIn{
+  from{ transform: scale(.92); opacity: 0; }
+  to{ transform: scale(1); opacity: 1; }
+}
 
-.lock-circle { font-size: 30px; color: #f39c12; opacity: 0.8; }
-.badge-detail h3 { margin: 0; font-size: 17px; color: #2c3e50; }
-.state-locked h3 { color: rgba(255,255,255,0.7); }
+/* Info */
+.badge-info{
+  padding: 12px 12px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255,255,255,0.78);
+}
+.badge-level{
+  font-weight: 900;
+  color: #111827;
+}
+.badge-status{
+  font-size: .78rem;
+  font-weight: 900;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,0.10);
+}
+.badge-status.open{
+  background: rgba(34,197,94,0.16);
+  color: #065f46;
+  border-color: rgba(34,197,94,0.25);
+}
+.badge-status.closed{
+  background: rgba(148,163,184,0.22);
+  color: #334155;
+  border-color: rgba(148,163,184,0.30);
+}
 
-.label-status { font-size: 11px; font-weight: bold; margin-top: 8px; display: block; }
-.state-unlocked .label-status { color: #2ecc71; }
-.state-locked .label-status { color: rgba(255,255,255,0.6); }
+/* Locked */
+.badge-card.is-locked{
+  filter: saturate(0.95);
+}
+.badge-glass{
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.20);
+  backdrop-filter: blur(6px);
+  z-index: 1;
+}
+.badge-lock{
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  background: rgba(0,0,0,0.20);
+  border: 1px solid rgba(255,255,255,0.45);
+  color: #fff;
+  font-size: 20px;
+}
+
+/* Unlocked glow */
+.badge-card.is-unlocked{
+  border-color: rgba(255,255,255,0.75);
+}
+.badge-glow{
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(34,197,94,0.28), rgba(34,197,94,0.00) 60%);
+  filter: blur(2px);
+  animation: glowMove 2.2s ease-in-out infinite;
+  z-index: 1;
+}
+@keyframes glowMove{
+  0%,100%{ transform: translate(-20px, 10px); }
+  50%{ transform: translate(20px, -10px); }
+}
+
+/* ==============================
+   Responsive
+   ============================== */
+@media (max-width: 1100px){
+  .badges-grid{ grid-template-columns: repeat(4, minmax(140px, 1fr)); }
+}
+@media (max-width: 900px){
+  .year-head{ flex-direction: column; align-items: flex-start; }
+  .badges-grid{ grid-template-columns: repeat(3, minmax(130px, 1fr)); }
+}
+@media (max-width: 560px){
+  .badges-page{ padding: 16px 14px 18px; border-radius: 22px; }
+  .badges-title{ font-size: 1.45rem; }
+
+  .badges-grid{ grid-template-columns: repeat(2, minmax(130px, 1fr)); }
+  .badge-visual{ height: 130px; min-height: 130px; }
+
+  .badge-visual img{
+    width: 86px !important;
+    height: 86px !important;
+    max-width: 86px !important;
+    max-height: 86px !important;
+  }
+}

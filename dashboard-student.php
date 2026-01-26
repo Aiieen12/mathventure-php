@@ -54,8 +54,11 @@ $progressPeta = "Level semasa: Year " . ($data['year_level'] ?? '4') . " • Lev
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Pelajar</title>
-    <link rel="stylesheet" href="asset/css/student-layout.css">
     <link rel="stylesheet" href="asset/css/dashboard-student.css">
+    <link rel="stylesheet" href="asset/css/student-layout.css">
+
+
+
 </head>
 <body>
 <div class="game-bg"></div>

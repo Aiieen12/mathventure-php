@@ -79,6 +79,10 @@
 .year-5 { background: linear-gradient(135deg, #a29bfe, #74b9ff); box-shadow: 0 6px 0 rgba(70, 90, 190, 0.8); }
 .year-6 { background: linear-gradient(135deg, #55efc4, #00cec9); box-shadow: 0 6px 0 rgba(0, 148, 135, 0.8); }
 
+/* ===========================
+   LALUAN & NODE (FIX GARISAN)
+   =========================== */
+
 /* laluan level */
 .level-path {
     position: relative;
@@ -86,40 +90,58 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 18px;
+
+    /* variable untuk responsif (garisan ikut node) */
+    --nodeSize: 78px;
+    --padX: 18px;
+    --lineH: 6px;
+
+    padding: 12px var(--padX);
 }
 
-/* garisan laluan */
+/* garisan laluan (tepat tengah node & hujung ikut pusat node) */
 .level-path::before {
     content: '';
     position: absolute;
-    left: 10%;
-    right: 10%;
+
+    /* hujung garisan tepat pada pusat node pertama & terakhir */
+    left: calc(var(--padX) + (var(--nodeSize) / 2));
+    right: calc(var(--padX) + (var(--nodeSize) / 2));
+
     top: 50%;
-    height: 6px;
+    transform: translateY(-50%); /* ✅ FIX utama (tak lari) */
+
+    height: var(--lineH);
     border-radius: 999px;
     background: linear-gradient(90deg, rgba(255,255,255,0.45), rgba(255,255,255,0.1));
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.35);
+
     z-index: 0;
+    pointer-events: none;
 }
 
 /* node level */
 .level-node {
     position: relative;
     z-index: 1;
-    width: 78px;
-    height: 78px;
+
+    width: var(--nodeSize);
+    height: var(--nodeSize);
+
     border-radius: 50%;
     border: 3px solid rgba(255,255,255,0.9);
     background: rgba(255,255,255,0.9);
     box-shadow: 0 6px 10px rgba(0,0,0,0.25);
+
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     font-family: 'Fredoka One';
     font-size: 0.95rem;
     color: #2d3436;
+
     cursor: pointer;
     transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
 }
@@ -181,10 +203,13 @@
     margin-top: 10px;
     font-size: 0.85rem;
     color: #000000;
-
 }
 
-/* RESPONSIVE */
+/* ===========================
+   RESPONSIVE
+   =========================== */
+
+/* Tablet & bawah */
 @media (max-width: 900px) {
     .map-row {
         flex-direction: column;
@@ -193,22 +218,46 @@
 
     .year-flag {
         margin-bottom: 8px;
+        min-width: 160px;
     }
 
     .level-path {
         width: 100%;
         padding-inline: 5px;
-    }
 
-    .level-path::before {
-        left: 6%;
-        right: 6%;
+        /* kecilkan node, dan line ikut node */
+        --nodeSize: 64px;
+        --padX: 5px;
+        --lineH: 6px;
     }
 
     .level-node {
-        width: 64px;
-        height: 64px;
         font-size: 0.8rem;
+    }
+}
+
+/* Phone kecil */
+@media (max-width: 420px) {
+    .adventure-map{
+        padding: 18px 14px 18px;
+        border-radius: 22px;
+    }
+
+    .map-title{
+        font-size: 1.4rem;
+    }
+
+    .map-subtitle{
+        font-size: 0.9rem;
+    }
+
+    .level-path {
+        --nodeSize: 54px;
+        --lineH: 5px;
+    }
+
+    .level-node .lvl-tag{
+        font-size: 0.55rem;
     }
 }
 
