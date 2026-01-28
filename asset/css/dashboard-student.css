@@ -1,9 +1,4 @@
-/* =========================================================
-   DASHBOARD STUDENT – CLEAR TEXT + SOFT GLASS (FULL FILE)
-   File: asset/css/dashboard-student.css
-   ========================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round:wght@400;600;700;800&display=swap');
 
 :root{
   --title-font: "Fredoka One", cursive;
@@ -12,106 +7,168 @@
   --shadow: 0 10px 26px rgba(15,23,42,0.10);
   --shadow-hover: 0 18px 38px rgba(15,23,42,0.14);
 
-  --r-xl: 34px;
-  --r-lg: 26px;
-  --r-md: 18px;
+  --r-xl: 28px;
+  --r-lg: 22px;
+  --r-md: 16px;
 
   --ease: cubic-bezier(.2,.8,.2,1);
 }
 
-/* ikut theme student-layout.css (jangan kacau body bg) */
-body{
-  font-family: var(--body-font);
-}
-
-/* =========================================================
+/* =========================
    HERO SECTION
-   ========================================================= */
+   ========================= */
 .hero-section{
   display:flex;
-  gap: 22px;
+  gap: 16px;
   align-items: stretch;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
 }
 
-/* HERO CARD */
+/* HERO CARD: guna GRID supaya kemas & dino kanan */
 .hero-card{
   flex: 2;
-  position: relative;
-  overflow: hidden;
   border-radius: var(--r-xl);
-  padding: 32px 32px;
+  padding: 26px;
+  position: relative;
+  overflow:hidden;
   box-shadow: var(--shadow);
-  border: 1px solid rgba(255,255,255,0.28);
+  border: 1px solid rgba(255,255,255,0.24);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 
-  /* penting: overlay gelap di kiri + gradient, supaya text jelas */
-  background-image:
-    linear-gradient(90deg,
-      rgba(0,0,0,0.55) 0%,
-      rgba(0,0,0,0.28) 52%,
-      rgba(0,0,0,0.00) 78%
-    ),
-    linear-gradient(135deg, #37d9c7, #6c5ce7);
-  background-blend-mode: multiply;
-}
-
-/* pattern lembut (tak ganggu text) */
-.hero-card::before{
-  content:"";
-  position:absolute;
-  inset:0;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.16), transparent 46%),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.10), transparent 46%);
-  opacity: .65;
-  pointer-events:none;
-  z-index: 0;
-}
+    radial-gradient(circle at 12% 18%, rgba(255,255,255,0.26), transparent 48%),
+    radial-gradient(circle at 82% 40%, rgba(255,255,255,0.12), transparent 42%),
+    linear-gradient(135deg, rgba(0,184,148,0.92), rgba(108,92,231,0.88));
 
+  display:grid;
+  grid-template-columns: 1.25fr 0.75fr;  /* kiri besar, kanan dino */
+  gap: 18px;
+  align-items: center;
+
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease);
+}
 .hero-card:hover{
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
 }
 
+/* LEFT TEXT */
 .hero-text{
   position: relative;
   z-index: 2;
-  max-width: 62%;
+  min-width: 0;
 }
 
 .hero-text h1{
   font-family: var(--title-font);
-  font-size: 2.6rem;
-  line-height: 1.08;
-  color: #ffffff;
+  font-size: clamp(2.0rem, 2.4vw, 2.8rem);
+  line-height: 1.05;
+  color: #fff;
   letter-spacing: .3px;
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.55),
-    0 14px 26px rgba(0,0,0,0.60);
+  text-shadow: 0 14px 26px rgba(0,0,0,0.18);
 }
 
-.hero-text p{
+.hero-sub{
   margin-top: 10px;
-  font-size: 1.02rem;
-  font-weight: 700;
   color: rgba(255,255,255,0.95);
-  text-shadow: 0 10px 18px rgba(0,0,0,0.60);
+  font-weight: 800;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  text-shadow: 0 10px 18px rgba(0,0,0,0.14);
 }
 
-/* DINO */
-.hero-dino-small{
-  position:absolute;
-  right: 18px;
-  bottom: -10px;
+.hero-strong{
+  background: rgba(254,202,87,0.32);
+  border: 1px solid rgba(254,202,87,0.30);
+  padding: 2px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.hero-meta{
+  margin-top: 12px;
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.hero-pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.20);
+  border: 1px solid rgba(255,255,255,0.26);
+  color: #fff;
+  font-weight: 900;
+  font-size: .92rem;
+}
+
+/* BOX ARAHAN MEMBACA */
+.hero-readbox{
+  margin-top: 14px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.28);
+  box-shadow: 0 16px 28px rgba(0,0,0,0.10);
+}
+
+.read-title{
+  font-family: var(--title-font);
+  font-size: 1.08rem;
+  color: #fff;
+  text-shadow: 0 10px 18px rgba(0,0,0,0.16);
+  margin-bottom: 6px;
+}
+
+.read-desc{
+  color: rgba(255,255,255,0.95);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.read-desc b{
+  background: rgba(254,202,87,0.30);
+  border: 1px solid rgba(254,202,87,0.28);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.read-tip{
+  display:block;
+  margin-top: 6px;
+  font-size: .95rem;
+  opacity: .96;
+}
+
+.read-step{
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: rgba(0,0,0,0.14);
+  border: 1px dashed rgba(255,255,255,0.34);
+  color: rgba(255,255,255,0.96);
+  font-weight: 900;
+  font-size: .95rem;
+}
+
+/* RIGHT DINO */
+.hero-dino{
+  position: relative;
   z-index: 2;
+  display:flex;
+  justify-content: flex-end;  /* ✅ dino ke kanan */
+  align-items: flex-end;
 }
 
-.hero-dino-small img{
-  width: 235px;
-  filter: drop-shadow(0 16px 20px rgba(0,0,0,0.25));
-  animation: floaty 3s ease-in-out infinite;
+.hero-dino img{
+  width: min(320px, 26vw);
+  height: auto;
+  filter: drop-shadow(0 20px 22px rgba(0,0,0,0.22));
+  animation: floaty 2.8s ease-in-out infinite;
 }
 
 @keyframes floaty{
@@ -119,165 +176,164 @@ body{
   50%{ transform: translateY(-10px); }
 }
 
-/* =========================================================
-   HUD STATS (NYAWA / COINS)
-   ========================================================= */
+/* =========================
+   HUD STATS
+   ========================= */
 .hud-stats{
   flex: 1;
   display:flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
 .stat-box{
-  background: rgba(0,0,0,0.30); /* gelap sikit supaya text naik */
-  border: 1px solid rgba(255,255,255,0.32);
-  backdrop-filter: blur(12px);
-
   border-radius: 22px;
-  padding: 16px;
-
+  padding: 14px;
   display:flex;
   align-items:center;
-  gap: 14px;
+  gap: 12px;
 
-  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
-  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(17,24,39,0.08);
+  box-shadow: 0 10px 20px rgba(15,23,42,0.06);
+
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease);
 }
-
 .stat-box:hover{
   transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(15,23,42,0.14);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(0,184,148,0.22);
 }
 
 .stat-icon{
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size: 24px;
-  color: #fff;
+  font-size: 22px;
   flex-shrink: 0;
-  box-shadow: 0 14px 26px rgba(0,0,0,0.35);
+  box-shadow: 0 12px 22px rgba(0,0,0,0.10);
 }
 
-/* you guna: yellow & blue */
-.stat-box.yellow .stat-icon{
-  background: linear-gradient(135deg, #ff9f43, #feca57);
-  color: #2d1b00;
-}
-
-.stat-box.blue .stat-icon{
-  background: linear-gradient(135deg, #54a0ff, #48dbfb);
-  color: #fff;
-}
+.stat-life .stat-icon{ background: linear-gradient(135deg, #ff6b6b, #ff9f9f); }
+.stat-coin .stat-icon{ background: linear-gradient(135deg, #feca57, #ffeaa7); color:#2d1b00; }
+.stat-xp   .stat-icon{ background: linear-gradient(135deg, #54a0ff, #48dbfb); color:#fff; }
 
 .stat-info small{
   display:block;
   font-size: 0.72rem;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.88);
-  font-weight: 800;
-  text-shadow: 0 8px 14px rgba(0,0,0,0.55);
-  margin-bottom: 3px;
+  color: rgba(17,24,39,0.55);
+  font-weight: 900;
 }
-
 .stat-info strong{
   font-family: var(--title-font);
-  font-size: 1.55rem;
-  color: #ffffff;
-  text-shadow:
-    0 2px 0 rgba(0,0,0,0.55),
-    0 12px 20px rgba(0,0,0,0.60);
+  font-size: 1.45rem;
+  color: #111827;
 }
 
-/* =========================================================
-   QUICK LINKS (Peta + Nota)
-   ========================================================= */
+.stat-badge{
+  margin-left:auto;
+  background: rgba(0,184,148,0.12);
+  border: 1px solid rgba(0,184,148,0.18);
+  color: #0f766e;
+  font-weight: 900;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+/* =========================
+   QUICK LINKS
+   ========================= */
 .quick-links{
   display:grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap: 18px;
-  margin-top: 8px;
+  grid-template-columns: repeat(2, minmax(230px, 1fr));
+  gap: 14px;
 }
 
 .quick-card{
-  cursor: pointer;
-  user-select: none;
-
-  /* gelap sikit supaya text jelas atas background gambar */
-  background: rgba(0,0,0,0.18);
-  border: 1px solid rgba(255,255,255,0.26);
-  backdrop-filter: blur(12px);
-
+  cursor:pointer;
+  user-select:none;
   border-radius: 24px;
-  padding: 18px 20px;
+  padding: 16px;
   min-height: 88px;
 
-  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
-  position: relative;
-  overflow: hidden;
+  background: rgba(255,255,255,0.84);
+  border: 1px solid rgba(17,24,39,0.10);
+  box-shadow: 0 10px 20px rgba(15,23,42,0.06);
 
   display:flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
 
-  transition: transform .25s var(--ease), box-shadow .25s var(--ease);
+  transition: transform .18s var(--ease), box-shadow .18s var(--ease), border-color .18s var(--ease);
 }
-
 .quick-card:hover{
   transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(15,23,42,0.14);
+  box-shadow: var(--shadow-hover);
+  border-color: rgba(108,92,231,0.24);
 }
 
-.quick-card h3{
+.q-left .q-icon{
+  width: 52px; height: 52px;
+  border-radius: 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size: 22px;
+  box-shadow: 0 12px 22px rgba(0,0,0,0.10);
+}
+.q-map .q-icon{ background: rgba(0,184,148,0.16); border:1px solid rgba(0,184,148,0.25); }
+.q-note .q-icon{ background: rgba(254,202,87,0.18); border:1px solid rgba(254,202,87,0.25); }
+.q-badge .q-icon{ background: rgba(108,92,231,0.14); border:1px solid rgba(108,92,231,0.25); }
+.q-profile .q-icon{ background: rgba(84,160,255,0.14); border:1px solid rgba(84,160,255,0.25); }
+
+.q-mid h3{
   font-family: var(--title-font);
   font-size: 1.15rem;
-  letter-spacing: .25px;
-  color: #ffffff;
-  margin-bottom: 6px;
-  text-shadow: 0 12px 20px rgba(0,0,0,0.55);
+  color: #111827;
+  margin-bottom: 4px;
+}
+.q-mid p{
+  color: rgba(17,24,39,0.70);
+  font-weight: 800;
 }
 
-.quick-card p{
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.90);
-  text-shadow: 0 10px 18px rgba(0,0,0,0.55);
+.q-right{
+  margin-left:auto;
+  font-weight: 900;
+  opacity: .55;
 }
 
-/* accent kiri */
-.quick-card.q-map{
-  border-left: 6px solid rgba(0,184,148,0.85);
-}
-.quick-card.q-note{
-  border-left: 6px solid rgba(254,202,87,0.95);
-}
-
-/* =========================================================
+/* =========================
    RESPONSIVE
-   ========================================================= */
-@media (max-width: 1100px){
-  .hero-text{ max-width: 70%; }
-  .hero-dino-small img{ width: 210px; }
-}
-
+   ========================= */
 @media (max-width: 900px){
   .hero-section{ flex-direction: column; }
-  .hero-text{ max-width: 100%; }
-  .hero-dino-small{
-    position: static;
-    text-align:center;
-    margin-top: 10px;
+
+  .hero-card{
+    grid-template-columns: 1fr;
   }
-  .hero-dino-small img{ width: 190px; }
+
+  .hero-dino{
+    justify-content: center;
+    margin-top: 8px;
+  }
+
+  .hero-dino img{
+    width: 220px;
+  }
+
   .quick-links{ grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  .hero-dino-small img{ animation: none; }
+  .hero-dino img{ animation: none; }
   .hero-card, .stat-box, .quick-card{ transition: none; }
 }

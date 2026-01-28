@@ -1,341 +1,355 @@
-/* =========================================================
-   DASHBOARD STUDENT – SOFT GLASS (MATCH UI SCREENSHOT)
-   Replace penuh dashboard-student.css dengan ini
-   ========================================================= */
-
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Poppins:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Varela+Round:wght@400;600;700;800&display=swap');
 
 :root{
-  /* guna palette student-layout.css, tambah beberapa token dashboard */
-  --dash-title: #ffffff;
-  --dash-text: rgba(255,255,255,0.92);
-  --dash-muted: rgba(255,255,255,0.78);
+  --title: "Fredoka One", cursive;
+  --body: "Varela Round", system-ui, -apple-system, Segoe UI, Arial, sans-serif;
 
-  --glass-1: rgba(255,255,255,0.22);
-  --glass-2: rgba(255,255,255,0.14);
-  --glass-border: rgba(255,255,255,0.30);
+  --text: #111827;
+  --muted: #6b7280;
 
-  --shadow-soft: 0 10px 26px rgba(15,23,42,0.12);
-  --shadow-hover: 0 18px 38px rgba(15,23,42,0.18);
+  --white: #ffffff;
+  --glass: rgba(255,255,255,0.86);
+  --glass2: rgba(255,255,255,0.74);
+  --border: rgba(17,24,39,0.10);
 
-  --r-xl: 32px;
-  --r-lg: 26px;
-  --r-md: 18px;
+  --shadow: 0 12px 26px rgba(15,23,42,0.12);
+  --shadowHover: 0 18px 38px rgba(15,23,42,0.16);
 
-  --ease: cubic-bezier(.2,.8,.2,1);
+  --r-xl: 28px;
+  --r-lg: 22px;
+  --r-md: 16px;
+
+  --sidebar-w: 290px;
+
+  /* background overlay (lagi jelas) */
+  --bgOverlayTop: rgba(255,255,255,0.14);
+  --bgOverlayMid: rgba(255,255,255,0.20);
+  --bgOverlayBot: rgba(246,251,255,0.22);
 }
 
-/* IMPORTANT:
-   Jangan override body/theme sebab student-layout.css dah manage */
+*{ box-sizing:border-box; margin:0; padding:0; }
+html,body{ height:100%; }
 body{
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--body);
+  color: var(--text);
+  overflow-x:hidden;
+  display:block;              /* FIX: elak body jadi flex dari CSS lain */
 }
 
-/* Smooth animation tapi jangan "all" untuk elak lag */
-.hero-card,
-.stat-box,
-.quick-card,
-.quick-btn,
-.hero-dino-small img{
-  transition: transform .25s var(--ease), box-shadow .25s var(--ease), filter .25s var(--ease), background .25s var(--ease);
+/* =========================
+   BACKGROUND (bgdino.png)
+   ========================= */
+.game-bg{
+  position:fixed;
+  inset:0;
+  background: url('../images/bgdino.png') center bottom / cover no-repeat;
+  z-index:-3;
+  filter: saturate(1.12) contrast(1.06);
 }
-
-/* ===============================
-   HERO SECTION
-   =============================== */
-
-.hero-section{
-  display:flex;
-  gap: 22px;
-  align-items: stretch;
-  margin-bottom: 24px;
-}
-
-/* HERO CARD */
-.hero-card{
-  flex: 2;
-  border-radius: var(--r-xl);
-  padding: 34px 34px;
-  position: relative;
-  overflow: hidden;
-
-  /* gradient lembut macam screenshot */
-  background: linear-gradient(135deg, rgba(0,184,148,0.88), rgba(108,92,231,0.86));
-  box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(255,255,255,0.22);
-  backdrop-filter: blur(10px);
-}
-
-/* pattern lembut (kurangkan garis terang) */
-.hero-card::before{
+.game-bg::after{
   content:"";
   position:absolute;
   inset:0;
   background:
-    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22), transparent 45%),
-    radial-gradient(circle at 80% 30%, rgba(255,255,255,0.12), transparent 40%),
-    linear-gradient(45deg, rgba(255,255,255,0.08) 0 20%, transparent 20% 40%, rgba(255,255,255,0.06) 40% 60%, transparent 60% 80%, rgba(255,255,255,0.05) 80% 100%);
-  opacity: .55;
-  pointer-events:none;
+    radial-gradient(circle at 30% 12%, var(--bgOverlayTop), var(--bgOverlayMid)),
+    linear-gradient(180deg, rgba(255,255,255,0.08), var(--bgOverlayBot));
+  z-index:-2;
 }
 
-.hero-card:hover{
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+/* =========================
+   SIDEBAR
+   ========================= */
+.sidebar{
+  position:fixed;
+  top:18px; left:18px; bottom:18px;
+  width: var(--sidebar-w);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow);
+  padding: 12px;
+  display:flex;
+  flex-direction:column;
+  z-index: 1000;
 }
 
-.hero-text{
-  max-width: 62%;
-  position: relative;
-  z-index: 2;
+.sidebar-header{
+  padding: 14px;
+  border-radius: var(--r-lg);
+  background: rgba(255,255,255,0.72);
+  border: 1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 10px;
 }
 
-.hero-text h1{
-  font-family: 'Fredoka One', cursive;
-  font-size: 2.65rem;
-  line-height: 1.08;
-  color: var(--dash-title);
-  text-shadow: 0 10px 22px rgba(0,0,0,0.18);
+.logo-text{
+  font-family: var(--title);
+  font-size: 22px;
   letter-spacing: .5px;
+  color: #0f766e;
 }
-
-.hero-text p{
-  margin-top: 10px;
-  font-size: 1.05rem;
-  color: var(--dash-text);
-  text-shadow: 0 8px 18px rgba(0,0,0,0.16);
-}
-
-/* DINO (kanan hero) */
-.hero-dino-small{
-  position: absolute;
-  right: 18px;
-  bottom: -8px;
-  z-index: 2;
-}
-
-.hero-dino-small img{
-  width: 240px;
-  filter: drop-shadow(0 18px 22px rgba(0,0,0,0.22));
-  animation: floaty 2.8s ease-in-out infinite;
-}
-
-@keyframes floaty{
-  0%,100%{ transform: translateY(0); }
-  50%{ transform: translateY(-10px); }
-}
-
-/* ===============================
-   HUD STATS (NYAWA / COINS)
-   =============================== */
-
-.hud-stats{
-  flex: 1;
-  display:flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.stat-box{
-  background: linear-gradient(180deg, var(--glass-1), var(--glass-2));
-  border: 1px solid var(--glass-border);
-  backdrop-filter: blur(12px);
-  border-radius: 22px;
-  padding: 16px 16px;
-  display:flex;
-  align-items:center;
-  gap: 14px;
-  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat-box:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 16px 30px rgba(15,23,42,0.14);
-}
-
-/* highlight shimmer lembut */
-.stat-box::after{
-  content:"";
-  position:absolute;
-  inset:-40% -60%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.22), transparent);
-  transform: rotate(10deg);
-  opacity: 0;
-  transition: opacity .25s var(--ease);
-  pointer-events:none;
-}
-.stat-box:hover::after{ opacity: 1; }
-
-.stat-icon{
-  width: 54px;
-  height: 54px;
-  border-radius: 16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size: 24px;
-  color: #fff;
-  flex-shrink: 0;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.14);
-}
-
-/* ikut vibe screenshot (icon kotak warna solid) */
-.stat-box.red .stat-icon{ background: #ff6b6b; }
-.stat-box.yellow .stat-icon{ background: #feca57; color:#3b2f00; }
-.stat-box.blue .stat-icon{ background: #54a0ff; }
-
-.stat-info strong{
-  font-family: 'Fredoka One', cursive;
-  font-size: 1.55rem;
-  color: #fff;
-  letter-spacing: .3px;
-  text-shadow: 0 10px 18px rgba(0,0,0,0.18);
-}
-
-.stat-info small{
+.sidebar-header small{
   display:block;
-  margin-top: 2px;
-  font-size: 0.72rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: rgba(255,255,255,0.72);
+  color: var(--muted);
+  font-weight: 800;
 }
 
-.stat-desc{
-  margin-left: auto;
-  font-size: 0.85rem;
-  color: rgba(255,255,255,0.88);
-  font-weight: 700;
-  opacity: .95;
+.close-btn{
+  width: 36px;
+  height: 36px;
+  border-radius: 14px;
+  border: none;
+  cursor: pointer;
+  background: #ff4d4d;
+  color: white;
+  font-weight: 900;
+  box-shadow: 0 10px 18px rgba(255,77,77,0.22);
+}
+.close-btn:active{ transform: translateY(1px); }
+
+.side-nav{
+  display:flex;
+  flex-direction:column;
+  gap: 8px;
+  padding: 6px;
+  flex: 1;
 }
 
-/* ===============================
-   QUICK LINKS (kad bawah)
-   =============================== */
-
-.quick-links{
-  display:grid;
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  gap: 18px;
-  margin-top: 10px;
-}
-
-/* Kad quick jadi lebih panjang & low contrast macam screenshot */
-.quick-card{
-  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.10));
-  border: 1px solid rgba(255,255,255,0.26);
-  backdrop-filter: blur(12px);
-  border-radius: 24px;
-  padding: 18px 20px;
-  box-shadow: 0 10px 22px rgba(15,23,42,0.10);
-  position: relative;
-  overflow:hidden;
-  min-height: 86px;
+.nav-item{
+  text-decoration:none;
+  color: var(--text);
+  font-weight: 900;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.70);
+  border: 1px solid rgba(17,24,39,0.06);
   display:flex;
   align-items:center;
+  gap: 10px;
+  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+}
+.nav-item:hover{
+  background: #fff;
+  box-shadow: 0 12px 22px rgba(15,23,42,0.08);
+  transform: translateY(-1px);
+}
+.nav-item.active{
+  background: #fff;
+  border-color: rgba(0,184,148,0.30);
+  box-shadow: 0 14px 26px rgba(0,184,148,0.10);
 }
 
-.quick-card:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 16px 32px rgba(15,23,42,0.14);
+.nav-item.logout{
+  margin-top:auto;
+  color: #b91c1c;
+  background: rgba(255,255,255,0.74);
+  border-color: rgba(185,28,28,0.18);
 }
+.nav-item.logout:hover{ background:#fff1f2; }
 
-/* shimmer lembut */
-.quick-card::after{
-  content:"";
-  position:absolute;
-  inset:-60% -80%;
-  background: linear-gradient(120deg, transparent, rgba(255,255,255,0.22), transparent);
-  transform: rotate(8deg);
-  opacity: 0;
-  transition: opacity .25s var(--ease);
-}
-.quick-card:hover::after{ opacity: 1; }
+.sidebar-footer{ padding: 6px; }
 
-/* Header content */
-.quick-header{
+.player-card{
   display:flex;
   align-items:center;
   gap: 12px;
-  width: 100%;
+  padding: 12px;
+  border-radius: 20px;
+  background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 18px rgba(15,23,42,0.06);
 }
 
-.quick-icon{
-  width: 46px;
-  height: 46px;
-  border-radius: 16px;
+.avatar-frame{
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  border: 3px solid rgba(254,202,87,0.85);
+  overflow:hidden;
+  background:#fff;
+  flex-shrink:0;
+}
+.avatar-frame img{ width:100%; height:100%; object-fit:cover; }
+
+.player-info{ flex:1; min-width:0; }
+.player-info strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-weight: 900;
+}
+
+.lvl-badge{
+  display:inline-block;
+  font-family: var(--title);
+  font-size: 11px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #feca57;
+  color:#2d1b00;
+  box-shadow: 0 3px 0 rgba(220,176,55,0.7);
+  margin-bottom: 6px;
+}
+
+.xp-track{
+  height: 10px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: #eef2ff;
+  border: 1px solid rgba(17,24,39,0.08);
+  overflow:hidden;
+}
+.xp-fill{
+  height: 100%;
+  background: linear-gradient(90deg, #22c55e, #60a5fa);
+}
+
+/* =========================
+   MAIN CONTENT
+   ========================= */
+.main-content{
+  margin-left: calc(var(--sidebar-w) + 40px);
+  padding: 18px 22px 24px 0;
+  min-height: 100vh;
+  position: relative;
+}
+.main-content *{ max-width: 100%; } /* elak overflow pelik */
+
+.top-bar{
   display:flex;
   align-items:center;
-  justify-content:center;
-  color:#fff;
-  font-size: 22px;
-  flex-shrink:0;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.14);
+  justify-content:space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 
-/* ikut warna tema (kurangkan neon glow) */
-.q-map .quick-icon{ background: #00b894; }
-.q-note .quick-icon{ background: #feca57; color:#3b2f00; }
-.q-badge .quick-icon{ background: #6c5ce7; }
-
-.quick-header h3{
-  font-size: 1.05rem;
-  font-weight: 800;
-  color: #fff;
-  text-shadow: 0 10px 18px rgba(0,0,0,0.16);
-  margin-bottom: 2px;
+.welcome-badge{
+  background: rgba(255,255,255,0.86);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 900;
+  box-shadow: 0 10px 18px rgba(15,23,42,0.06);
 }
+.highlight{ font-family: var(--title); color: #2563eb; }
 
-.quick-sub{
-  font-size: 0.86rem;
-  color: rgba(255,255,255,0.80);
-  font-weight: 600;
-}
-
-/* Kalau masih guna quick-progress, bagi kemas */
-.quick-progress{
-  margin-top: 6px;
-  font-size: 0.9rem;
-  color: rgba(255,255,255,0.86);
-  font-weight: 700;
-}
-
-/* Button (kalau ada) – style game but clean */
-.quick-btn{
-  margin-left: auto;
-  padding: 10px 16px;
+.game-clock{
+  background: #111827;
+  color: #fcd34d;
+  font-family: var(--title);
   border-radius: 16px;
-  border: 0;
-  cursor: pointer;
-  font-family: 'Fredoka One', cursive;
-  background: rgba(255,255,255,0.88);
+  padding: 10px 12px;
+  border: 1px solid rgba(255,255,255,0.10);
+  box-shadow: 0 10px 18px rgba(15,23,42,0.10);
+}
+
+/* =========================
+   FIX: Hai anis... (welcome pill) nampak jelas
+   ========================= */
+.top-bar{
+  position: relative;
+  z-index: 5;
+}
+
+.welcome-pill{
+  display:inline-flex;
+  align-items:center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-radius: 999px;
+
+  background: rgba(255,255,255,0.92);
+  border: 1px solid rgba(17,24,39,0.14);
+  box-shadow: 0 16px 34px rgba(15,23,42,0.18);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  font-weight: 900;
+  font-size: 14px;
   color: #0f172a;
-  box-shadow: 0 10px 18px rgba(15,23,42,0.14);
 }
-.quick-btn:hover{ transform: translateY(-1px); filter: brightness(1.02); }
-.quick-btn:active{ transform: translateY(0px); }
 
-/* ===============================
+.welcome-pill .highlight{
+  font-family: var(--title);
+  color: #2563eb;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+}
+
+
+/* =========================
+   FLOATING MENU (tablet/phone)
+   ========================= */
+.floating-menu-btn{
+  position:fixed;
+  left: 18px;
+  top: 18px;
+  width: 52px; height: 52px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.92);
+  box-shadow: var(--shadow);
+  font-size: 22px;
+  cursor:pointer;
+  z-index: 999;
+  display:none;               /* desktop: off */
+}
+
+/* =========================
+   MOBILE NAV (jika ada HTML .mobile-nav)
+   default OFF, on phone only
+   ========================= */
+.mobile-nav{ display:none !important; }
+.safe-space{ height: 0; }
+
+/* =========================
    RESPONSIVE
-   =============================== */
+   ========================= */
 
-@media (max-width: 1100px){
-  .hero-text{ max-width: 70%; }
-  .hero-dino-small img{ width: 210px; }
-}
-
+/* Tablet & bawah: sidebar jadi drawer (ikut class collapsed) */
 @media (max-width: 900px){
-  .hero-section{ flex-direction: column; }
-  .hero-text{ max-width: 100%; }
-  .hero-dino-small{ position: static; margin-top: 12px; text-align:center; }
-  .hero-dino-small img{ width: 190px; }
-  .quick-links{ grid-template-columns: 1fr; }
+  .floating-menu-btn{ display:block; }
+
+  .main-content{
+    margin-left: 0;
+    padding: 18px;
+  }
+
+  .sidebar{
+    top: 14px; bottom: 14px; left: 14px;
+    width: min(86vw, 330px);
+    transform: translateX(-120%);
+    transition: transform .25s ease;
+  }
+  /* toggleSidebar() akan tambah/kurang class collapsed.
+     Di sini: collapsed = BUKA (senang) */
+  .sidebar.collapsed{
+    transform: translateX(0);
+  }
 }
 
-/* Reduce motion (mesra accessibility) */
-@media (prefers-reduced-motion: reduce){
-  .hero-dino-small img{ animation: none; }
-  .hero-card, .stat-box, .quick-card, .quick-btn{ transition: none; }
+/* Phone sahaja: show bottom nav kalau ada */
+@media (max-width: 600px){
+  .mobile-nav{
+    display:grid !important;
+    position: fixed;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 980;
+
+    background: rgba(255,255,255,0.92);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    box-shadow: var(--shadow);
+    padding: 10px;
+
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+  .safe-space{ height: 92px; }
 }

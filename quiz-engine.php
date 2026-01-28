@@ -13,7 +13,6 @@ $questions = (include $file)[$level];
     <meta charset="UTF-8">
     <title>Mathventure Quiz</title>
     <link rel="stylesheet" href="asset/css/student-layout.css">
-    <link rel="stylesheet" href="asset/css/game-play.css">
     <style>
         .quiz-card { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); text-align: center; }
         .q-img { max-width: 100%; height: auto; border-radius: 10px; margin: 15px 0; border: 3px solid #f0f0f0; }
