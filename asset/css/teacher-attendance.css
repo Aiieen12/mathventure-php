@@ -1,183 +1,268 @@
-:root {
-    --primary: #55E6C1;
-    --primary-dark: #2bc4a1;
-    --danger: #ff7675;
-    --bg: #f0f7f4;
-    --text: #2c3e50;
-    --white: #ffffff;
-    --shadow: 0 10px 30px rgba(0,0,0,0.08);
+/* =================================================
+   TEACHER ATTENDANCE UI (PROPER + RESPONSIVE)
+   ================================================= */
+
+.attendance-shell{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-body {
-    font-family: 'Nunito', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    margin: 0;
-    padding: 20px;
+/* Header */
+.page-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
 }
 
-.container {
-    max-width: 900px;
-    margin: 40px auto;
+.btn-back{
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.06);
+  color: #2c3e50;
+  font-weight: 900;
+  box-shadow: 0 10px 22px rgba(0,0,0,0.06);
+  transition: transform .14s ease, box-shadow .14s ease;
 }
 
-/* Header & Back Button */
-.page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
+.btn-back:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(0,0,0,0.08);
 }
 
-.btn-back {
-    text-decoration: none;
-    background: var(--white);
-    color: #7f8c8d;
-    padding: 12px 24px;
-    border-radius: 15px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: var(--shadow);
-    transition: 0.3s;
+.page-title{
+  text-align: right;
 }
 
-.btn-back:hover {
-    transform: translateX(-5px);
-    background: #f9f9f9;
+.page-title h2{
+  margin: 0;
+  font-size: 20px;
+  font-weight: 900;
+  color: #0f172a;
 }
 
-/* Table Card */
-.attendance-card {
-    background: var(--white);
-    border-radius: 30px;
-    padding: 40px;
-    box-shadow: var(--shadow);
+.page-title p{
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 800;
 }
 
-.nice-table {
-    width: 100%;
-    border-collapse: collapse;
+/* Card */
+.attendance-card{
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  box-shadow: 0 16px 34px rgba(0,0,0,0.06);
+  padding: 16px;
+  overflow: hidden;
 }
 
-.nice-table th {
-    text-align: left;
-    padding: 20px;
-    color: #bdc3c7;
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 1.5px;
-    border-bottom: 2px solid #f8f9fa;
+/* Table wrap */
+.table-wrap{
+  width: 100%;
+  overflow: auto;
+  border-radius: 18px;
 }
 
-.nice-table td {
-    padding: 25px 20px;
-    border-bottom: 1px solid #f8f9fa;
+/* Table */
+.attendance-table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 720px;
 }
 
-/* Student Row */
-.student-info {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.attendance-table thead th{
+  position: sticky;
+  top: 0;
+  background: #f8fafc;
+  z-index: 1;
+  padding: 14px 16px;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: #64748b;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
-.avatar-circle {
-    width: 45px;
-    height: 45px;
-    background: #e8fcf6;
-    color: var(--primary-dark);
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 18px;
+.attendance-table td{
+  padding: 16px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+  vertical-align: middle;
+  background: #ffffff;
 }
 
-/* Radio Buttons Styling */
-.status-container {
-    display: flex;
-    gap: 15px;
+.th-center,
+.td-center{
+  text-align: center;
 }
 
-.status-label {
-    flex: 1;
-    cursor: pointer;
+.empty-row{
+  padding: 18px 16px;
+  text-align: center;
+  color: #64748b;
+  font-weight: 800;
 }
 
-.status-label input {
-    display: none;
+/* Student info */
+.student-box{
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.status-box {
-    display: block;
-    text-align: center;
-    padding: 12px;
-    background: #f8f9fa;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 13px;
-    color: #d1d8e0;
-    transition: 0.3s;
-    border: 2px solid transparent;
+.avatar{
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: rgba(0, 209, 163, 0.14);
+  color: #00b089;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+  flex: 0 0 auto;
+  border: 1px solid rgba(0, 209, 163, 0.22);
 }
 
-/* Active Colors */
-input[value="H"]:checked + .status-box {
-    background: #e3fcef;
-    color: var(--primary-dark);
-    border-color: var(--primary);
+.student-meta{
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
 }
 
-input[value="TH"]:checked + .status-box {
-    background: #fff0f0;
-    color: var(--danger);
-    border-color: var(--danger);
+.student-name{
+  font-size: 14px;
+  color: #0f172a;
 }
 
-/* Save Button */
-.btn-save {
-    width: 100%;
-    background: var(--primary);
-    color: white;
-    border: none;
-    padding: 20px;
-    border-radius: 20px;
-    font-size: 18px;
-    font-weight: 800;
-    cursor: pointer;
-    margin-top: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    box-shadow: 0 10px 20px rgba(85, 230, 193, 0.3);
-    transition: 0.3s;
+.student-hint{
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 800;
 }
 
-.btn-save:hover {
-    background: var(--primary-dark);
-    transform: translateY(-3px);
-    box-shadow: 0 15px 25px rgba(85, 230, 193, 0.4);
+/* Status buttons */
+.status-options{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* Animation Notifikasi */
-.alert-success {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: #2ecc71;
-    color: white;
-    padding: 15px 30px;
-    border-radius: 12px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-    z-index: 1000;
-    animation: slideIn 0.5s ease-out;
+.status-pill input{
+  display: none;
 }
 
-@keyframes slideIn {
-    from { transform: translateX(100%); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
+.status-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: #ffffff;
+  color: #64748b;
+  font-weight: 900;
+  font-size: 13px;
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, background .12s ease, border-color .12s ease;
+  user-select: none;
+}
+
+.status-btn:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+}
+
+/* checked state */
+.status-pill.hadir input:checked + .status-btn{
+  background: rgba(0, 209, 163, 0.16);
+  color: #007a61;
+  border-color: rgba(0, 209, 163, 0.45);
+}
+
+.status-pill.tiada input:checked + .status-btn{
+  background: rgba(255, 118, 117, 0.14);
+  color: #b42323;
+  border-color: rgba(255, 118, 117, 0.45);
+}
+
+/* Save button */
+.btn-save{
+  width: 100%;
+  margin-top: 14px;
+  border: none;
+  border-radius: 999px;
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, #00d1a3, #00b089);
+  color: #ffffff;
+  box-shadow: 0 18px 34px rgba(0, 209, 163, 0.30);
+  transition: transform .12s ease, box-shadow .14s ease, filter .12s ease;
+}
+
+.btn-save:hover{
+  transform: translateY(-1px);
+  box-shadow: 0 22px 40px rgba(0, 209, 163, 0.38);
+  filter: brightness(0.98);
+}
+
+.btn-save:active{
+  transform: translateY(1px);
+}
+
+/* =========================
+   CENTERKAN KOLOM STATUS
+   ========================= */
+
+/* Pastikan sel status center betul-betul */
+.attendance-table td.td-center{
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Bagi wrapper status guna full width & center */
+.attendance-table td.td-center .status-options{
+  width: 100%;
+  display: flex;              /* override inline-flex */
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+/* (Optional) supaya button nampak seimbang saiz */
+.attendance-table td.td-center .status-btn{
+  min-width: 120px;
+  justify-content: center;
+}
+
+.attendance-table thead th.th-center{
+  text-align: center;
+}
+
+
+
+/* Mobile */
+@media (max-width: 720px){
+  .page-title{ text-align: left; width: 100%; }
+  .btn-back{ width: 100%; justify-content: center; }
 }

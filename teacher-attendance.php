@@ -63,60 +63,142 @@ $students = $stmtS->get_result();
     <title>Kehadiran | Mathventure</title>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="asset/css/teacher-attendance.css">
+
+    <!-- ✅ UI sahaja: guna layout teacher yang sama (nav bar/ sidebar) -->
+    <link rel="stylesheet" href="asset/css/dashboard-teacher.css">
+    <link rel="stylesheet" href="asset/css/teacher-attendance.css?v=<?php echo time(); ?>">
 </head>
 <body>
 
-<div class="container">
-    <div class="page-header">
-        <a href="dashboard-teacher.php" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
-        <h2 style="margin:0;">Kelas <?php echo htmlspecialchars($myClass); ?></h2>
-    </div>
+<div class="teacher-layout">
+    <!-- SIDEBAR / NAVBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <div class="brand">
+                <div class="brand-avatar">M</div>
+                <div class="brand-text">
+                    <h1>Mathventure</h1>
+                    <span>Teacher Mode</span>
+                </div>
+            </div>
 
-    <div class="attendance-card">
-        <form action="" method="POST">
-            <table class="nice-table">
-                <thead>
-                    <tr>
-                        <th>Nama Murid</th>
-                        <th style="text-align: center;">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if ($students->num_rows > 0): ?>
-                        <?php while($s = $students->fetch_assoc()): 
-                            $name = !empty($s['firstname']) ? $s['firstname'] . ' ' . $s['lastname'] : $s['username'];
-                            $status = $s['status'] ?? 'H';
-                        ?>
-                        <tr>
-                            <td>
-                                <div class="student-box">
-                                    <div class="avatar"><?php echo strtoupper($name[0]); ?></div>
-                                    <strong><?php echo htmlspecialchars($name); ?></strong>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="status-options">
-                                    <label>
-                                        <input type="radio" name="attendance[<?php echo $s['id_user']; ?>]" value="H" <?php echo ($status == 'H') ? 'checked' : ''; ?>>
-                                        <span class="status-btn">HADIR</span>
-                                    </label>
-                                    <label>
-                                        <input type="radio" name="attendance[<?php echo $s['id_user']; ?>]" value="TH" <?php echo ($status == 'TH') ? 'checked' : ''; ?>>
-                                        <span class="status-btn">TIADA</span>
-                                    </label>
-                                </div>
-                            </td>
-                        </tr>
-                        <?php endwhile; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-            <button type="submit" name="save_attendance" class="btn-save">
-                <i class="fa-solid fa-cloud-arrow-up"></i> SIMPAN KEHADIRAN
-            </button>
-        </form>
-    </div>
+            <nav class="side-nav">
+                <a href="dashboard-teacher.php" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-house"></i></div>
+                    <div class="nav-label">Dashboard</div>
+                </a>
+
+                <a href="teacher-attendance.php" class="nav-item active">
+                    <div class="nav-icon"><i class="fa-solid fa-calendar-check"></i></div>
+                    <div class="nav-label">Kehadiran</div>
+                </a>
+
+                <a href="teacher-marks.php" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-chart-column"></i></div>
+                    <div class="nav-label">Markah Pelajar</div>
+                </a>
+
+                <a href="teacher-profile.php" class="nav-item">
+                    <div class="nav-icon"><i class="fa-solid fa-id-badge"></i></div>
+                    <div class="nav-label">Profil Guru</div>
+                </a>
+            </nav>
+        </div>
+
+        <div class="sidebar-bottom">
+            <form action="logout.php" method="post">
+                <button type="submit" class="btn-logout">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="dashboard-shell attendance-shell">
+
+            <div class="page-header">
+                <a href="dashboard-teacher.php" class="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i> Kembali
+                </a>
+
+                <div class="page-title">
+                    <h2>Kehadiran Murid</h2>
+                    <p>Kelas <?php echo htmlspecialchars($myClass); ?></p>
+                </div>
+            </div>
+
+            <div class="attendance-card">
+                <form action="" method="POST">
+                    <div class="table-wrap">
+                        <table class="nice-table attendance-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Murid</th>
+                                    <th class="th-center">Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                            <?php if ($students->num_rows > 0): ?>
+                                <?php while($s = $students->fetch_assoc()):
+                                    $name = !empty($s['firstname']) ? $s['firstname'] . ' ' . $s['lastname'] : $s['username'];
+                                    $status = $s['status'] ?? 'H';
+                                ?>
+                                <tr>
+                                    <td>
+                                        <div class="student-box">
+                                            <div class="avatar"><?php echo strtoupper($name[0]); ?></div>
+                                            <div class="student-meta">
+                                                <strong class="student-name"><?php echo htmlspecialchars($name); ?></strong>
+                                                <small class="student-hint">Tandakan status untuk hari ini</small>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <td class="td-center">
+                                        <div class="status-options">
+                                            <label class="status-pill hadir">
+                                                <input type="radio"
+                                                       name="attendance[<?php echo $s['id_user']; ?>]"
+                                                       value="H"
+                                                       <?php echo ($status == 'H') ? 'checked' : ''; ?>>
+                                                <span class="status-btn">
+                                                    <i class="fa-solid fa-check"></i> Hadir
+                                                </span>
+                                            </label>
+
+                                            <label class="status-pill tiada">
+                                                <input type="radio"
+                                                       name="attendance[<?php echo $s['id_user']; ?>]"
+                                                       value="TH"
+                                                       <?php echo ($status == 'TH') ? 'checked' : ''; ?>>
+                                                <span class="status-btn">
+                                                    <i class="fa-solid fa-xmark"></i> Tiada
+                                                </span>
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="2" class="empty-row">Tiada murid dijumpai untuk kelas ini.</td>
+                                </tr>
+                            <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <button type="submit" name="save_attendance" class="btn-save">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Kehadiran
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </main>
 </div>
 
 </body>
