@@ -1,15 +1,20 @@
 /* =================================================
-   TEACHER MARKS – FINAL FIXED & PREMIUM
+   TEACHER MARKS – FINAL
    ================================================= */
+
+/* Khas untuk page markah: bagi spacing kemas dalam dashboard-shell */
+.teacher-marks-shell{
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+}
 
 /* ===============================
    TAJUK
    =============================== */
-.content-header {
-    margin-bottom: 48px;
-}
+.content-header { margin: 0; }
 
-.main-title {
+.main-title{
     font-size: 28px;
     font-weight: 900;
     color: #0f172a;
@@ -20,11 +25,10 @@
 /* ===============================
    STATS (TOP PLAYER + CHART)
    =============================== */
-.stats-container {
+.stats-container{
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 30px;
-    margin-bottom: 40px; /* ⬅️ ASINGKAN DENGAN JADUAL */
 }
 
 /* ===============================
@@ -32,7 +36,7 @@
    =============================== */
 .champion-card,
 .chart-card,
-.table-card {
+.table-card{
     background: #ffffff;
     border-radius: 22px;
     box-shadow: 0 14px 40px rgba(0,0,0,0.08);
@@ -43,7 +47,7 @@
 
 .champion-card:hover,
 .chart-card:hover,
-.table-card:hover {
+.table-card:hover{
     transform: translateY(-5px);
     box-shadow: 0 22px 55px rgba(0,0,0,0.12);
 }
@@ -51,32 +55,30 @@
 /* ===============================
    TOP PLAYER CARD
    =============================== */
-.champion-card {
+.champion-card{
     background: linear-gradient(135deg, #ff9f43, #ff6b6b);
     color: #fff;
     min-height: 230px;
-
     padding: 28px;
     padding-bottom: 40px;
-
     display: flex;
     align-items: flex-end;
 }
 
-.champ-info .tag {
+.champ-info .tag{
     font-size: 11px;
     font-weight: 900;
     letter-spacing: 1.2px;
     opacity: .9;
 }
 
-.champ-info .name {
+.champ-info .name{
     font-size: 30px;
     font-weight: 900;
     margin: 8px 0;
 }
 
-.champ-info .xp-badge {
+.champ-info .xp-badge{
     background: rgba(255,255,255,.25);
     padding: 8px 18px;
     border-radius: 999px;
@@ -84,7 +86,7 @@
     font-weight: 800;
 }
 
-.trophy-bg {
+.trophy-bg{
     position: absolute;
     right: -30px;
     bottom: -40px;
@@ -96,16 +98,15 @@
 /* ===============================
    CHART CARD
    =============================== */
-.chart-card {
+.chart-card{
     min-height: 230px;
     padding: 28px;
-
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
 
-.chart-label {
+.chart-label{
     font-size: 13px;
     font-weight: 900;
     text-transform: uppercase;
@@ -114,48 +115,34 @@
     margin-bottom: 16px;
 }
 
-.canvas-wrapper {
+.canvas-wrapper{
     flex: 1;
     position: relative;
+    min-height: 190px;
 }
 
 /* ===============================
-   TABLE CARD (FIX TERSAMBUNG)
+   TABLE CARD
    =============================== */
-.table-card {
-    margin-top: 0;        /* ⬅️ TIADA LAGI MELEKAT */
+.table-card{
     padding: 0;
-}
-
-/* Divider lembut antara section */
-.table-card::before {
-    content: "";
-    position: absolute;
-    top: -22px;
-    left: 40px;
-    right: 40px;
-    height: 1px;
-    background: linear-gradient(
-        to right,
-        transparent,
-        rgba(0,0,0,0.1),
-        transparent
-    );
+    overflow-x: auto; /* ✅ penting bila screen kecil */
 }
 
 /* ===============================
    TABLE STYLE
    =============================== */
-.marks-table {
+.marks-table{
     width: 100%;
     border-collapse: collapse;
+    min-width: 760px; /* ✅ elak pecah kolum */
 }
 
-.marks-table thead {
+.marks-table thead{
     background: #f8fafc;
 }
 
-.marks-table th {
+.marks-table th{
     padding: 16px 20px;
     font-size: 11px;
     text-transform: uppercase;
@@ -164,24 +151,24 @@
     border-bottom: 1px solid #e5e7eb;
 }
 
-.marks-table td {
+.marks-table td{
     padding: 20px;
     font-size: 14px;
     border-bottom: 1px solid #eef2f7;
 }
 
-.marks-table tbody tr {
+.marks-table tbody tr{
     transition: background .25s ease;
 }
 
-.marks-table tbody tr:hover {
+.marks-table tbody tr:hover{
     background: #f1f7ff;
 }
 
 /* ===============================
    TABLE BADGES
    =============================== */
-.rank {
+.rank{
     background: linear-gradient(135deg, #facc15, #f59e0b);
     color: #fff;
     padding: 6px 14px;
@@ -190,18 +177,18 @@
     font-size: 12px;
 }
 
-.xp-bold {
+.xp-bold{
     color: #22c55e;
     font-weight: 900;
 }
 
-.lvl-txt {
+.lvl-txt{
     color: #3b82f6;
     font-weight: 700;
     font-size: 12px;
 }
 
-.status {
+.status{
     background: #dcfce7;
     color: #16a34a;
     padding: 7px 16px;
@@ -210,20 +197,61 @@
     font-weight: 800;
 }
 
+/* =========================
+   FIX TABLE ROW ALIGNMENT
+   ========================= */
+
+/* Stabilkan lebar kolum & alignment */
+.marks-table{
+  table-layout: fixed;
+  width: 100%;
+}
+
+.marks-table th,
+.marks-table td{
+  vertical-align: middle;
+  text-align: center;   /* center semua kolum default */
+  white-space: nowrap;  /* elak text jadi turun bawah */
+}
+
+/* Kolum NAMA biasanya lagi cantik left */
+.marks-table th:nth-child(2),
+.marks-table td:nth-child(2){
+  text-align: left;
+}
+
+/* Kolum RANK: bagi ruang & center betul */
+.marks-table th:nth-child(1),
+.marks-table td:nth-child(1){
+  width: 120px;
+  text-align: center;
+}
+
+/* Badge rank betul-betul center & konsisten saiz */
+.rank{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  height: 34px;
+  padding: 0 14px;      /* override padding lama */
+  line-height: 1;
+}
+
+/* Kolum STATUS: biar pill tak “tarik” layout */
+.status{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+}
+
+
 /* ===============================
    RESPONSIVE
    =============================== */
-@media (max-width: 900px) {
-    .stats-container {
-        grid-template-columns: 1fr;
-    }
-
-    .main-title {
-        font-size: 22px;
-    }
-
-    .champion-card,
-    .chart-card {
-        min-height: 210px;
-    }
+@media (max-width: 900px){
+    .stats-container{ grid-template-columns: 1fr; }
+    .main-title{ font-size: 22px; }
+    .champion-card, .chart-card{ min-height: 210px; }
 }
